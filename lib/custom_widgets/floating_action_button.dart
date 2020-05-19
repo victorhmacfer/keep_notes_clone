@@ -12,11 +12,7 @@ class MyCustomFab extends StatelessWidget {
       width: 58,
       child: FloatingActionButton(
         backgroundColor: appWhite,
-        child: Icon(
-          Icons.add,
-          size: 40,
-          color: Colors.red,
-        ),
+        child: Image.asset('assets/icons/google-plus-icon.png', width: 24, height: 24,),
         onPressed: () {},
       ),
     );
