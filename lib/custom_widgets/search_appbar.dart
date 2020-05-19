@@ -1,3 +1,4 @@
+import 'package:keep_notes_clone/custom_widgets/png_icon_button.dart';
 import 'package:keep_notes_clone/styles.dart';
 
 import 'package:flutter/material.dart';
@@ -39,7 +40,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                 color: appIconGrey, fontFamily: 'Jost', fontSize: 18)),
         titleSpacing: 0,
         actions: <Widget>[
-          Icon(Icons.view_agenda),
+          PngIconButton(fileName: 'outline_view_agenda_black_48.png', onTap: () {}),
+          
           //Icon(Icons.dashboard),
 
           Padding(

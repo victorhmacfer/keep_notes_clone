@@ -44,11 +44,20 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets:
+    - assets/icons/
+    - assets/icons/1.5x/
+    - assets/icons/2.0x/
+    - assets/icons/3.0x/
+    - assets/icons/4.0x/
+
+
+
   fonts:
     - family: Jost
       fonts:
-        - asset: fonts/Jost-Light.ttf
-        - asset: fonts/Jost-Regular.ttf
+        - asset: assets/fonts/Jost-Light.ttf
+        - asset: assets/fonts/Jost-Regular.ttf
           weight: 400
 
   # To add assets to your application, add an assets section, like this:

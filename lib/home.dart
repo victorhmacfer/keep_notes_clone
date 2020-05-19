@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 
 import 'package:keep_notes_clone/styles.dart';
 
 import 'package:keep_notes_clone/custom_widgets/search_appbar.dart';
 
-class HomeScreen extends StatelessWidget {
-  Widget bottomNavBar() {
-    return Container(
-      color: Colors.green,
-      height: 50,
-    );
-  }
+import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 
+class HomeScreen extends StatelessWidget {
   Widget fakeSliverItem() {
     return SliverPadding(
       padding: EdgeInsets.all(12),
@@ -25,35 +21,38 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: appWhite, statusBarIconBrightness: Brightness.dark));
+        statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.dark));
 
     return Scaffold(
-      backgroundColor: appWhite,
-      body: SafeArea(
-        child: Container(
-          // color: Colors.red[200],
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SearchAppBar(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-              fakeSliverItem(),
-            ],
+        backgroundColor: appWhite,
+        extendBody: true, // making the bottom bar notch transparent
+        body: SafeArea(
+          // ignoring the bottom safearea is necessary for "extendBody" to work
+          bottom: false,
+          child: Container(
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SearchAppBar(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+                fakeSliverItem(),
+              ],
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: bottomNavBar(),
-    );
+        floatingActionButton: MyCustomFab(),
+        floatingActionButtonLocation: MyCustomFabLocation(),
+        bottomNavigationBar: MyBottomAppBar());
   }
 }
