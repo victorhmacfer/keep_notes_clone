@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/styles.dart';
 import 'package:keep_notes_clone/colors.dart';
 
-
 class NoteCard extends StatelessWidget {
   final String title;
 
   final String text;
 
   final CardColor color;
+
+  static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;
 
   NoteCard({this.title, this.text, this.color = CardColor.white});
 
@@ -35,7 +36,9 @@ class NoteCard extends StatelessWidget {
     return (theText != null)
         ? Text(
             theText,
-            style: cardSmallTextStyle,
+            style: (theText.length <= _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE)
+                ? cardBigTextStyle
+                : cardSmallTextStyle,
           )
         : Container();
   }
