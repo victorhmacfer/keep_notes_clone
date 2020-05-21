@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/colors.dart';
+
 
 class NoteCard extends StatelessWidget {
   final String title;

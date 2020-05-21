@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+
 import 'package:keep_notes_clone/custom_widgets/png_icon_button.dart';
 import 'package:keep_notes_clone/styles.dart';
-
-import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/colors.dart';
 
 class SearchAppBar extends StatelessWidget {
   @override

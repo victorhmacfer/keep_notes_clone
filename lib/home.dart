@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/colors.dart';
 
 import 'package:keep_notes_clone/custom_widgets/search_appbar.dart';
 
