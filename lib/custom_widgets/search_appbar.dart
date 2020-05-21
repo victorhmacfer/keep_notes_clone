@@ -35,15 +35,13 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
         iconTheme: IconThemeData(color: appIconGrey),
         elevation: 2,
         leading: Icon(Icons.menu),
-        title: Text('Search your notes',
-            style: TextStyle(
-                color: appIconGrey, fontFamily: 'Jost', fontSize: 18)),
+        title: Text('Search your notes', style: searchAppBarStyle),
         titleSpacing: 0,
         actions: <Widget>[
-          PngIconButton(fileName: 'outline_view_agenda_black_48.png', onTap: () {}),
-          
-          //Icon(Icons.dashboard),
-
+          PngIconButton(
+              fileName: 'outline_dashboard_black_48.png',
+              size: 25,
+              onTap: () {}),
           Padding(
             padding: const EdgeInsets.only(right: 12, left: 20),
             child: CircleAvatar(

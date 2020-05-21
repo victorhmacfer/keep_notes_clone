@@ -23,7 +23,7 @@ class MyBottomAppBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               PngIconButton(
-                  fileName: 'outline_check_box_black_48.png',  onTap: () {}),
+                  fileName: 'outline_check_box_black_48.png', onTap: () {}),
               PngIconButton(
                   fileName: 'outline_brush_black_48.png', onTap: () {}),
               PngIconButton(
