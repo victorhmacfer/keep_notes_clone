@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
 
 import 'package:keep_notes_clone/custom_widgets/png_icon_button.dart';
 import 'package:keep_notes_clone/styles.dart';
@@ -35,13 +36,18 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
       child: AppBar(
         iconTheme: IconThemeData(color: appIconGrey),
         elevation: 2,
-        leading: Icon(Icons.menu),
+        leading: GestureDetector(
+            onTap: () {
+              Scaffold.of(context).openDrawer();
+            },
+            child: Icon(Icons.menu)),
         title: Text('Search your notes', style: searchAppBarStyle),
         titleSpacing: 0,
         actions: <Widget>[
           PngIconButton(
-              fileName: 'outline_dashboard_black_48.png',
-              size: 25,
+              pngIcon: PngIcon(
+                fileName: 'outline_dashboard_black_48.png',
+              ),
               onTap: () {}),
           Padding(
             padding: const EdgeInsets.only(right: 12, left: 20),

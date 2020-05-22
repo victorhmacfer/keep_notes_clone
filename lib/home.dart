@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
+import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 
 import 'package:keep_notes_clone/colors.dart';
@@ -85,7 +86,9 @@ class HomeScreen extends StatelessWidget {
         color: CardColor.white,
       ),
       NoteCard(
-        title: 'only title',
+        title: 'my new note with huge text',
+        text:
+            'oijdoqjisdoi qjsoiqjsdoqjs qjsoi qjsoiqsqsdjqsqs oqisjdoiqsj doiqsjd oiqs jdoiqs doiqs jdoiqjs qjsdojqjqs jq djqsoi doqis jdoiqsjdoqjs oiqsd qsidqs uiqhsd qhuisd quisdhuiqshduiqhsdu qsuiqhsduqishd quiqhsduqhsd qs uidhqsui dhquisdu qsuquisdhquishd qsdqhsuhqsui duiqhsduiqhsdu quidh quisdqhs dqhusqs uiqhsd qsui hquis qsduiqsdquisdh qshduidqsu qsuid uiqsdihsui dhq suid hquis duisqdhqushdqs uiqshduiqsh uidh uid qsuihqsuid quisdhuiq hq quisdqhs dqhusqs uiqhsd qsui hquis qsduiqsdquisdh qshduidqsu qsuid QUEOTA dhq suid hquis duisqdhqushdqs uiqshduiqsh uidh uid qsuihqsuid quisdhuiq hq quisdqhs dqhusqs uiqhsd qsui hquis qsduiqsdquisdh qshduidqsu qsuid uiqsdihsui dhq suid hquis duisqdhqushdqs uiqshduiqsh uidh uid qsuihqsuid quisdhuiq hQUEOTA',
         color: CardColor.brown,
       ),
       NoteCard(
@@ -124,6 +127,67 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: MyCustomFab(),
       floatingActionButtonLocation: MyCustomFabLocation(),
       bottomNavigationBar: MyBottomAppBar(),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            MyCustomDrawerHeader(),
+            SelectableDrawerItem(
+              'Notes',
+              iconFileName: 'keep-quadrado.png',
+              selected: true,
+            ),
+            SelectableDrawerItem(
+              'Reminders',
+              iconFileName: 'outline_notifications_black_48.png',
+              selected: false,
+            ),
+            Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('LABELS', style: drawerLabelsEditStyle),
+                      Text('EDIT', style: drawerLabelsEditStyle),
+                    ],
+                  ),
+                ),
+                SelectableDrawerItem(
+                  'duvidas',
+                  selected: false,
+                ),
+                SelectableDrawerItem(
+                  'investimentos',
+                  selected: true,
+                ),
+              ],
+            ),
+            SimpleDrawerItem(
+                text: 'Create new label',
+                iconFileName: 'outline_add_black_48.png'),
+            MyCustomDrawerDivider(),
+            SelectableDrawerItem(
+              'Archive',
+              iconFileName: 'outline_archive_black_48.png',
+              selected: false,
+            ),
+            SelectableDrawerItem(
+              'Trash',
+              iconFileName: 'outline_delete_black_48.png',
+              selected: false,
+            ),
+            MyCustomDrawerDivider(),
+            SimpleDrawerItem(
+                text: 'Settings',
+                iconFileName: 'outline_settings_black_48.png'),
+            SimpleDrawerItem(
+                text: 'Help & feedback',
+                iconFileName: 'outline_help_outline_black_48.png'),
+          ],
+        ),
+      ),
       body: SafeArea(
         // ignoring the bottom safearea is necessary for "extendBody" to work
         bottom: false,
@@ -132,9 +196,9 @@ class HomeScreen extends StatelessWidget {
             slivers: <Widget>[
               SearchAppBar(),
 
-              _sliverForNoCardsAdded(screenHeight),
+              // _sliverForNoCardsAdded(screenHeight),
 
-              // _sliverForCardsList(),
+              _sliverForCardsList(),
             ],
           ),
         ),

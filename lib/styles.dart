@@ -25,7 +25,16 @@ var searchAppBarStyle = TextStyle(
     fontFamily: 'Montserrat',
     fontWeight: FontWeight.w500);
 
+var drawerItemStyle = TextStyle(
+    color: appBlack,
+    fontSize: 15,
+    fontFamily: 'Montserrat',
+    fontWeight: FontWeight.w500);
+
+var drawerLabelsEditStyle =
+    TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: appIconGrey);
+
 final appLightThemeData = ThemeData(
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-  iconTheme: IconThemeData(color: appIconGrey),
-);
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    iconTheme: IconThemeData(color: appIconGrey),
+    canvasColor: appWhite);

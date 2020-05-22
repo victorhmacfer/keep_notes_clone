@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 const appWhite = Color.fromARGB(255, 255, 255, 255);
 
-// const appIconGrey = Color.fromARGB(255, 116, 116, 116);
-
 const appTranslucentWhite = Color.fromARGB(244, 255, 255, 255);
 
 const appIconGrey = Color.fromARGB(255, 95, 98, 103);
@@ -13,6 +11,8 @@ const appCardTextGrey = Color.fromARGB(255, 88, 88, 88);
 const appStatusBarIconsGrey = Color.fromARGB(255, 102, 102, 102);
 
 const appCardBorderGrey = Color.fromARGB(255, 220, 220, 220);
+
+const appDrawerItemSelected = Color.fromARGB(255, 253, 239, 194);
 
 const appBlack = Color.fromARGB(255, 0, 0, 0);
 

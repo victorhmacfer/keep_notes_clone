@@ -36,6 +36,8 @@ class NoteCard extends StatelessWidget {
     return (theText != null)
         ? Text(
             theText,
+            maxLines: 10,
+            overflow: TextOverflow.ellipsis,
             style: (theText.length <= _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE)
                 ? cardBigTextStyle
                 : cardSmallTextStyle,
@@ -45,23 +47,21 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
-      child: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.getColor(),
-          border: Border.all(color: appCardBorderGrey),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _title(title),
-            _spacing(),
-            _text(text),
-          ],
-        ),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.getColor(),
+        border: Border.all(color: appCardBorderGrey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _title(title),
+          _spacing(),
+          _text(text),
+        ],
       ),
     );
   }

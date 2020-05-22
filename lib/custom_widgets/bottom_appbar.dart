@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
 
 import 'package:keep_notes_clone/custom_widgets/png_icon_button.dart';
 
@@ -23,13 +24,25 @@ class MyBottomAppBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               PngIconButton(
-                  fileName: 'outline_check_box_black_48.png', onTap: () {}),
+                  pngIcon: PngIcon(
+                    fileName: 'outline_check_box_black_48.png',
+                  ),
+                  onTap: () {}),
               PngIconButton(
-                  fileName: 'outline_brush_black_48.png', onTap: () {}),
+                  pngIcon: PngIcon(
+                    fileName: 'outline_brush_black_48.png',
+                  ),
+                  onTap: () {}),
               PngIconButton(
-                  fileName: 'outline_mic_none_black_48.png', onTap: () {}),
+                  pngIcon: PngIcon(
+                    fileName: 'outline_mic_none_black_48.png',
+                  ),
+                  onTap: () {}),
               PngIconButton(
-                  fileName: 'outline_photo_black_48.png', onTap: () {}),
+                  pngIcon: PngIcon(
+                    fileName: 'outline_photo_black_48.png',
+                  ),
+                  onTap: () {}),
             ],
           ),
         ),
