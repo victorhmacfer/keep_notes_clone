@@ -50,3 +50,34 @@ class MyBottomAppBar extends StatelessWidget {
     );
   }
 }
+
+
+class MyStickyBottomAppBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+        offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
+        child: BottomAppBar(
+          color: Colors.red[200],
+          child: Container(
+            height: 48,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                PngIconButton(
+                    pngIcon: PngIcon(
+                      fileName: 'outline_add_box_black_48.png',
+                    ),
+                    onTap: () {}),
+                PngIconButton(
+                    pngIcon: PngIcon(
+                      fileName: 'outline_more_vert_black_48.png',
+                    ),
+                    onTap: () {})
+              ],
+            ),
+          ),
+        ));
+  }
+}

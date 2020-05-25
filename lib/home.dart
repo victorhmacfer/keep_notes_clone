@@ -162,6 +162,46 @@ class HomeScreen extends StatelessWidget {
                   'investimentos',
                   selected: true,
                 ),
+                SelectableDrawerItem(
+                  'duvidas',
+                  selected: false,
+                ),
+                SelectableDrawerItem(
+                  'investimentos',
+                  selected: true,
+                ),
+                SelectableDrawerItem(
+                  'duvidas',
+                  selected: false,
+                ),
+                SelectableDrawerItem(
+                  'investimentos',
+                  selected: true,
+                ),
+                SelectableDrawerItem(
+                  'duvidas',
+                  selected: false,
+                ),
+                SelectableDrawerItem(
+                  'investimentos',
+                  selected: true,
+                ),
+                SelectableDrawerItem(
+                  'duvidas',
+                  selected: false,
+                ),
+                SelectableDrawerItem(
+                  'investimentos',
+                  selected: true,
+                ),
+                SelectableDrawerItem(
+                  'duvidas',
+                  selected: false,
+                ),
+                SelectableDrawerItem(
+                  'investimentos',
+                  selected: true,
+                ),
               ],
             ),
             SimpleDrawerItem(
