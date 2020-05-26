@@ -43,69 +43,69 @@ class HomeScreen extends StatelessWidget {
       NoteCard(
         title: 'small title',
         text: 'some small text',
-        color: CardColor.white,
+        color: NoteColor.white,
       ),
       NoteCard(
         title: 'filmes para ver',
         text: 'diamante de sangue',
-        color: CardColor.white,
+        color: NoteColor.white,
       ),
       NoteCard(
         title:
             'very huge title with many words lets see where it breaks or ellipsis overflows',
-        color: CardColor.red,
+        color: NoteColor.red,
       ),
       NoteCard(
         title: 'only title',
-        color: CardColor.brown,
+        color: NoteColor.brown,
       ),
       NoteCard(
         title:
             'very very very extremely large title that should be put in the card correctly',
         text: 'some small text',
-        color: CardColor.darkBlue,
+        color: NoteColor.darkBlue,
       ),
       NoteCard(
         text:
             'A very very very very big text that should be put inside the card and fit correctly.',
-        color: CardColor.white,
+        color: NoteColor.white,
       ),
       NoteCard(
         text:
             'A very very very very big text thatshould be put inside the card and fit correctlyqiudhquiwdhquihduiqdhuiqdhuiqdhuidqhdqsduiashuiashas',
-        color: CardColor.purple,
+        color: NoteColor.purple,
       ),
       NoteCard(
         title: 'small title',
         text: 'some small text',
-        color: CardColor.white,
+        color: NoteColor.white,
       ),
       NoteCard(
         title: 'filmes para ver',
         text: 'diamante de sangue',
-        color: CardColor.white,
+        color: NoteColor.white,
       ),
       NoteCard(
         title: 'my new note with huge text',
         text:
             'oijdoqjisdoi qjsoiqjsdoqjs qjsoi qjsoiqsqsdjqsqs oqisjdoiqsj doiqsjd oiqs jdoiqs doiqs jdoiqjs qjsdojqjqs jq djqsoi doqis jdoiqsjdoqjs oiqsd qsidqs uiqhsd qhuisd quisdhuiqshduiqhsdu qsuiqhsduqishd quiqhsduqhsd qs uidhqsui dhquisdu qsuquisdhquishd qsdqhsuhqsui duiqhsduiqhsdu quidh quisdqhs dqhusqs uiqhsd qsui hquis qsduiqsdquisdh qshduidqsu qsuid uiqsdihsui dhq suid hquis duisqdhqushdqs uiqshduiqsh uidh uid qsuihqsuid quisdhuiq hq quisdqhs dqhusqs uiqhsd qsui hquis qsduiqsdquisdh qshduidqsu qsuid QUEOTA dhq suid hquis duisqdhqushdqs uiqshduiqsh uidh uid qsuihqsuid quisdhuiq hq quisdqhs dqhusqs uiqhsd qsui hquis qsduiqsdquisdh qshduidqsu qsuid uiqsdihsui dhq suid hquis duisqdhqushdqs uiqshduiqsh uidh uid qsuihqsuid quisdhuiq hQUEOTA',
-        color: CardColor.brown,
+        color: NoteColor.brown,
       ),
       NoteCard(
         title:
             'very very very extremely large title that should be put in the card correctly',
         text: 'some small text',
-        color: CardColor.darkBlue,
+        color: NoteColor.darkBlue,
       ),
       NoteCard(
         text:
             'A very very very very big text that should be put inside the card and fit correctly.',
-        color: CardColor.white,
+        color: NoteColor.white,
       ),
       NoteCard(
         text:
             'A very very very very big text thatshould be put inside the card and fit correctlyqiudhquiwdhquihduiqdhuiqdhuiqdhuidqhdqsduiashuiashas',
-        color: CardColor.purple,
+        color: NoteColor.purple,
       ),
       SizedBox(
         height: 56,

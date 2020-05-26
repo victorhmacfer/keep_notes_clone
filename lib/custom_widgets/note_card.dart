@@ -8,11 +8,11 @@ class NoteCard extends StatelessWidget {
 
   final String text;
 
-  final CardColor color;
+  final NoteColor color;
 
   static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;
 
-  NoteCard({this.title, this.text, this.color = CardColor.white});
+  NoteCard({this.title, this.text, this.color = NoteColor.white});
 
   Widget _title(String theTitle) {
     return (theTitle != null)

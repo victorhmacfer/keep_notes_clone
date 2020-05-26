@@ -18,104 +18,104 @@ const appDrawerItemSelected = Color.fromARGB(255, 253, 239, 194);
 
 const appBlack = Color.fromARGB(255, 0, 0, 0);
 
-abstract class CardColor {
-  const CardColor();
+abstract class NoteColor {
+  const NoteColor();
 
   Color getColor();
 
-  static const CardColor white = _WhiteCardColor();
-  static const CardColor darkBlue = _DarkBlueCardColor();
-  static const CardColor mediumBlue = _MediumBlueCardColor();
-  static const CardColor lightBlue = _LightBlueCardColor();
-  static const CardColor purple = _PurpleCardColor();
-  static const CardColor orange = _OrangeCardColor();
-  static const CardColor green = _GreenCardColor();
-  static const CardColor brown = _BrownCardColor();
-  static const CardColor yellow = _YellowCardColor();
-  static const CardColor grey = _GreyCardColor();
-  static const CardColor red = _RedCardColor();
-  static const CardColor pink = _PinkCardColor();
+  static const NoteColor white = _WhiteNoteColor();
+  static const NoteColor darkBlue = _DarkBlueNoteColor();
+  static const NoteColor mediumBlue = _MediumBlueNoteColor();
+  static const NoteColor lightBlue = _LightBlueNoteColor();
+  static const NoteColor purple = _PurpleNoteColor();
+  static const NoteColor orange = _OrangeNoteColor();
+  static const NoteColor green = _GreenNoteColor();
+  static const NoteColor brown = _BrownNoteColor();
+  static const NoteColor yellow = _YellowNoteColor();
+  static const NoteColor grey = _GreyNoteColor();
+  static const NoteColor red = _RedNoteColor();
+  static const NoteColor pink = _PinkNoteColor();
 }
 
-class _WhiteCardColor extends CardColor {
-  const _WhiteCardColor();
+class _WhiteNoteColor extends NoteColor {
+  const _WhiteNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 255, 255, 255);
 }
 
-class _DarkBlueCardColor extends CardColor {
-  const _DarkBlueCardColor();
+class _DarkBlueNoteColor extends NoteColor {
+  const _DarkBlueNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 175, 203, 250);
 }
 
-class _MediumBlueCardColor extends CardColor {
-  const _MediumBlueCardColor();
+class _MediumBlueNoteColor extends NoteColor {
+  const _MediumBlueNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 203, 240, 248);
 }
 
-class _LightBlueCardColor extends CardColor {
-  const _LightBlueCardColor();
+class _LightBlueNoteColor extends NoteColor {
+  const _LightBlueNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 167, 254, 235);
 }
 
-class _PurpleCardColor extends CardColor {
-  const _PurpleCardColor();
+class _PurpleNoteColor extends NoteColor {
+  const _PurpleNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 216, 173, 252);
 }
 
-class _OrangeCardColor extends CardColor {
-  const _OrangeCardColor();
+class _OrangeNoteColor extends NoteColor {
+  const _OrangeNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 250, 189, 3);
 }
 
-class _GreenCardColor extends CardColor {
-  const _GreenCardColor();
+class _GreenNoteColor extends NoteColor {
+  const _GreenNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 205, 255, 144);
 }
 
-class _BrownCardColor extends CardColor {
-  const _BrownCardColor();
+class _BrownNoteColor extends NoteColor {
+  const _BrownNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 230, 201, 169);
 }
 
-class _YellowCardColor extends CardColor {
-  const _YellowCardColor();
+class _YellowNoteColor extends NoteColor {
+  const _YellowNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 255, 244, 118);
 }
 
-class _GreyCardColor extends CardColor {
-  const _GreyCardColor();
+class _GreyNoteColor extends NoteColor {
+  const _GreyNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 233, 234, 238);
 }
 
-class _RedCardColor extends CardColor {
-  const _RedCardColor();
+class _RedNoteColor extends NoteColor {
+  const _RedNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 242, 139, 130);
 }
 
-class _PinkCardColor extends CardColor {
-  const _PinkCardColor();
+class _PinkNoteColor extends NoteColor {
+  const _PinkNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 253, 207, 233);
