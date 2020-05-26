@@ -34,14 +34,46 @@ class CreateNoteScreen extends StatelessWidget {
           ],
         ),
         body: Container(
-          color: Colors.red[200],
           child: CustomScrollView(
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: Container(
                     color: appWhite,
-                    child: TextField(
-                      maxLines: 80,
+                    padding: EdgeInsets.only(
+                        top: 24, bottom: 40, left: 20, right: 20),
+                    child: Column(
+                      children: <Widget>[
+                        TextField(
+                          keyboardType: TextInputType.text,
+                          minLines: 1,
+                          maxLines: 10,
+                          cursorWidth: 1,
+                          cursorColor: appIconGrey,
+                          style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -0.5),
+                          decoration: InputDecoration.collapsed(
+                            hintText: 'Title',
+                          ),
+                        ),
+                        TextField(
+                          keyboardType: TextInputType.multiline,
+                          minLines: 1,
+                          maxLines: 2000,
+                          cursorWidth: 1,
+                          cursorColor: appIconGrey,
+                          style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -0.5),
+                          decoration: InputDecoration.collapsed(
+                            hintText: 'Note',
+                          ),
+                        ),
+                      ],
                     )),
               )
             ],

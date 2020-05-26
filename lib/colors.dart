@@ -6,6 +6,8 @@ const appTranslucentWhite = Color.fromARGB(244, 255, 255, 255);
 
 const appIconGrey = Color.fromARGB(255, 95, 98, 103);
 
+const appVeryDarkGrey = Color.fromARGB(255, 64, 64, 64);
+
 const appCardTextGrey = Color.fromARGB(255, 88, 88, 88);
 
 const appStatusBarIconsGrey = Color.fromARGB(255, 102, 102, 102);
@@ -26,7 +28,7 @@ abstract class CardColor {
   static const CardColor mediumBlue = _MediumBlueCardColor();
   static const CardColor lightBlue = _LightBlueCardColor();
   static const CardColor purple = _PurpleCardColor();
-  static const CardColor gold = _GoldCardColor();
+  static const CardColor orange = _OrangeCardColor();
   static const CardColor green = _GreenCardColor();
   static const CardColor brown = _BrownCardColor();
   static const CardColor yellow = _YellowCardColor();
@@ -70,8 +72,8 @@ class _PurpleCardColor extends CardColor {
   Color getColor() => Color.fromARGB(255, 216, 173, 252);
 }
 
-class _GoldCardColor extends CardColor {
-  const _GoldCardColor();
+class _OrangeCardColor extends CardColor {
+  const _OrangeCardColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 250, 189, 3);

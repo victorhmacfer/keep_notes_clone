@@ -35,12 +35,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: AppBar(
         iconTheme: IconThemeData(color: appIconGrey),
-        elevation: 2,
-        leading: GestureDetector(
-            onTap: () {
-              Scaffold.of(context).openDrawer();
-            },
-            child: Icon(Icons.menu)),
+        elevation: 2,   
         title: Text('Search your notes', style: searchAppBarStyle),
         titleSpacing: 0,
         actions: <Widget>[
