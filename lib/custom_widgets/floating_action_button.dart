@@ -64,7 +64,7 @@ class MyCustomFabLocation extends FloatingActionButtonLocation {
       fabY = math.min(fabY, contentBottom - snackBarHeight - fabHeight / 1.4);
 
     if (bottomSheetHeight > 0.0)
-      // THIS IS WRONG... IM ASSUMING I WONT SHOW ANY BOTTOM SHEETS IN THIS APP.
+      // FIXME: THIS IS WRONG... IM ASSUMING I WONT SHOW ANY BOTTOM SHEETS IN THIS APP.
       fabY =
           math.min(fabY, contentBottom - bottomSheetHeight - fabHeight / 1.5);
 

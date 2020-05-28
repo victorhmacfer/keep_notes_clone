@@ -35,6 +35,27 @@ abstract class NoteColor {
   static const NoteColor grey = _GreyNoteColor();
   static const NoteColor red = _RedNoteColor();
   static const NoteColor pink = _PinkNoteColor();
+
+  static NoteColor getNoteColorFromIndex(int index) {
+    assert(((index >= 0) && (index <= 11)),
+        'NoteColor index should be:  0 <= index <= 11');
+
+    var noteColors = [
+      NoteColor.white,
+      NoteColor.red,
+      NoteColor.orange,
+      NoteColor.yellow,
+      NoteColor.green,
+      NoteColor.lightBlue,
+      NoteColor.mediumBlue,
+      NoteColor.darkBlue,
+      NoteColor.purple,
+      NoteColor.pink,
+      NoteColor.brown,
+      NoteColor.grey,
+    ];
+    return noteColors[index];
+  }
 }
 
 class _WhiteNoteColor extends NoteColor {

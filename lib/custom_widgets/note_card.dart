@@ -50,6 +50,7 @@ class NoteCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       padding: EdgeInsets.all(16),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: color.getColor(),
         border: Border.all(color: appCardBorderGrey),
