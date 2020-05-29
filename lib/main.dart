@@ -21,7 +21,10 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         theme: appLightThemeData,
-        home: HomeScreen(),
+        initialRoute: '/home',
+        routes: {
+          '/home': (context) => HomeScreen(),
+        },
       ),
     );
   }

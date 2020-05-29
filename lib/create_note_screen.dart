@@ -4,15 +4,15 @@ import 'package:keep_notes_clone/colors.dart';
 
 import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
 import 'package:keep_notes_clone/custom_widgets/png_icon_button.dart';
-import 'package:keep_notes_clone/notifiers/note_color_selection.dart';
+import 'package:keep_notes_clone/notifiers/note_creation_shared_state.dart';
 import 'package:keep_notes_clone/styles.dart';
 import 'package:provider/provider.dart';
 
 class CreateNoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NoteColorSelection>(
-      create: (context) => NoteColorSelection(),
+    return ChangeNotifierProvider<NoteCreationSharedState>(
+      create: (context) => NoteCreationSharedState(),
       child: Scaffold(
           appBar: CreateNoteAppBar(),
           body: CreateNoteBody(),
@@ -23,24 +23,26 @@ class CreateNoteScreen extends StatelessWidget {
 
 class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final noteColorSelection = Provider.of<NoteColorSelection>(context);
+    final noteCreationSharedState =
+        Provider.of<NoteCreationSharedState>(context);
     final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return AppBar(
-      backgroundColor: noteColorSelection.selectedColor.getColor(),
+      backgroundColor: noteCreationSharedState.selectedColor.getColor(),
       iconTheme: IconThemeData(color: appIconGrey),
       leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            var title = noteColorSelection.titleController.text;
-            var text = noteColorSelection.textController.text;
-            var colorIndex = noteColorSelection.selectedColorIndex;
+            var title = noteCreationSharedState.titleController.text;
+            var text = noteCreationSharedState.textController.text;
+            var colorIndex = noteCreationSharedState.selectedColorIndex;
             noteBloc.onCreateNewNote(title, text, colorIndex);
+            noteCreationSharedState.closeLeftBottomSheet();
+            noteCreationSharedState.closeRightBottomSheet();
             Navigator.pop(context);
           }),
       actions: <Widget>[
@@ -70,10 +72,11 @@ class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
 class CreateNoteBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final noteColorSelection = Provider.of<NoteColorSelection>(context);
+    final noteCreationSharedState =
+        Provider.of<NoteCreationSharedState>(context);
 
     return Container(
-      color: noteColorSelection.selectedColor.getColor(),
+      color: noteCreationSharedState.selectedColor.getColor(),
       child: CustomScrollView(
         slivers: <Widget>[
           SliverToBoxAdapter(
@@ -83,7 +86,12 @@ class CreateNoteBody extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     TextField(
-                      controller: noteColorSelection.titleController,
+                      controller: noteCreationSharedState.titleController,
+                      focusNode: noteCreationSharedState.titleFocusNode,
+                      onTap: () {
+                        noteCreationSharedState.closeLeftBottomSheet();
+                        noteCreationSharedState.closeRightBottomSheet();
+                      },
                       keyboardType: TextInputType.text,
                       minLines: 1,
                       maxLines: 10,
@@ -99,7 +107,13 @@ class CreateNoteBody extends StatelessWidget {
                       ),
                     ),
                     TextField(
-                      controller: noteColorSelection.textController,
+                      controller: noteCreationSharedState.textController,
+                      focusNode: noteCreationSharedState.textFocusNode,
+                      autofocus: true,
+                      onTap: () {
+                        noteCreationSharedState.closeLeftBottomSheet();
+                        noteCreationSharedState.closeRightBottomSheet();
+                      },
                       keyboardType: TextInputType.multiline,
                       minLines: 1,
                       maxLines: 2000,
@@ -187,12 +201,13 @@ class MyStickyBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteColorSelection = Provider.of<NoteColorSelection>(context);
+    final noteCreationSharedState =
+        Provider.of<NoteCreationSharedState>(context);
 
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
         child: BottomAppBar(
-          color: noteColorSelection.selectedColor.getColor(),
+          color: noteCreationSharedState.selectedColor.getColor(),
           child: Container(
             height: 48,
             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -204,16 +219,42 @@ class MyStickyBottomAppBar extends StatelessWidget {
                       fileName: 'outline_add_box_black_48.png',
                     ),
                     onTap: () {
-                      Scaffold.of(context)
-                          .showBottomSheet(_leftBottomSheetBuilder);
+                      print(
+                          'first line of left tap.. open is ${noteCreationSharedState.leftBottomSheetOpen}');
+                      if (noteCreationSharedState.leftBottomSheetOpen ==
+                          false) {
+                        noteCreationSharedState.titleFocusNode.unfocus();
+                        noteCreationSharedState.textFocusNode.unfocus();
+                        noteCreationSharedState.openLeftBottomSheet();
+                        noteCreationSharedState.leftBottomSheetController =
+                            Scaffold.of(context)
+                                .showBottomSheet(_leftBottomSheetBuilder);
+                      } else {
+                        noteCreationSharedState.closeLeftBottomSheet();
+                      }
+                      print(
+                          'last line of left tap.. open is ${noteCreationSharedState.leftBottomSheetOpen}');
                     }),
                 PngIconButton(
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
                     ),
                     onTap: () {
-                      Scaffold.of(context)
-                          .showBottomSheet(_rightBottomSheetBuilder);
+                      print(
+                          'first line of right tap.. open is ${noteCreationSharedState.rightBottomSheetOpen}');
+                      if (noteCreationSharedState.rightBottomSheetOpen ==
+                          false) {
+                        noteCreationSharedState.titleFocusNode.unfocus();
+                        noteCreationSharedState.textFocusNode.unfocus();
+                        noteCreationSharedState.openRightBottomSheet();
+                        noteCreationSharedState.rightBottomSheetController =
+                            Scaffold.of(context)
+                                .showBottomSheet(_rightBottomSheetBuilder);
+                      } else {
+                        noteCreationSharedState.closeRightBottomSheet();
+                      }
+                      print(
+                          'last line of right tap.. open is ${noteCreationSharedState.rightBottomSheetOpen}');
                     })
               ],
             ),
@@ -226,10 +267,10 @@ class _ColorSelectionList extends StatelessWidget {
   Widget _colorSelectionCircle(
       {NoteColor noteColor,
       int index,
-      NoteColorSelection colorSelectionState}) {
+      NoteCreationSharedState noteCreationSharedState}) {
     return GestureDetector(
       onTap: () {
-        colorSelectionState.selectedColorIndex = index;
+        noteCreationSharedState.selectedColorIndex = index;
       },
       child: Container(
         decoration: BoxDecoration(
@@ -239,7 +280,7 @@ class _ColorSelectionList extends StatelessWidget {
         width: 32,
         margin: EdgeInsets.symmetric(horizontal: 7),
         child: Visibility(
-            visible: colorSelectionState.selectedColorIndex == index,
+            visible: noteCreationSharedState.selectedColorIndex == index,
             child: Icon(Icons.check)),
       ),
     );
@@ -247,10 +288,11 @@ class _ColorSelectionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteColorSelection = Provider.of<NoteColorSelection>(context);
+    final noteCreationSharedState =
+        Provider.of<NoteCreationSharedState>(context);
 
     return Container(
-      color: noteColorSelection.selectedColor.getColor(),
+      color: noteCreationSharedState.selectedColor.getColor(),
       height: 52,
       padding: EdgeInsets.symmetric(vertical: 10),
       child: ListView(
@@ -263,51 +305,51 @@ class _ColorSelectionList extends StatelessWidget {
           _colorSelectionCircle(
               index: 0,
               noteColor: NoteColor.white,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 1,
               noteColor: NoteColor.red,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 2,
               noteColor: NoteColor.orange,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 3,
               noteColor: NoteColor.yellow,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 4,
               noteColor: NoteColor.green,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 5,
               noteColor: NoteColor.lightBlue,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 6,
               noteColor: NoteColor.mediumBlue,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 7,
               noteColor: NoteColor.darkBlue,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 8,
               noteColor: NoteColor.purple,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 9,
               noteColor: NoteColor.pink,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 10,
               noteColor: NoteColor.brown,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           _colorSelectionCircle(
               index: 11,
               noteColor: NoteColor.grey,
-              colorSelectionState: noteColorSelection),
+              noteCreationSharedState: noteCreationSharedState),
           SizedBox(
             width: 6,
           )
@@ -328,12 +370,13 @@ class _CreateNoteBottomSheetTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteColorSelection = Provider.of<NoteColorSelection>(context);
+    final noteCreationSharedState =
+        Provider.of<NoteCreationSharedState>(context);
 
     return Container(
       alignment: Alignment.centerLeft,
       height: 48,
-      color: noteColorSelection.selectedColor.getColor(),
+      color: noteCreationSharedState.selectedColor.getColor(),
       width: double.infinity,
       padding: EdgeInsets.only(left: 16),
       child: Row(

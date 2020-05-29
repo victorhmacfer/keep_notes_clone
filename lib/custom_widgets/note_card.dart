@@ -15,7 +15,7 @@ class NoteCard extends StatelessWidget {
   NoteCard({this.title, this.text, this.color = NoteColor.white});
 
   Widget _title(String theTitle) {
-    return (theTitle != null)
+    return ((theTitle != null) && (theTitle.isNotEmpty))
         ? Text(
             theTitle,
             style: cardTitleStyle,
@@ -33,7 +33,7 @@ class NoteCard extends StatelessWidget {
   }
 
   Widget _text(String theText) {
-    return (theText != null)
+    return ((theText != null) && (theText.isNotEmpty))
         ? Text(
             theText,
             maxLines: 10,
