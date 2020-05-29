@@ -127,3 +127,109 @@ class MyCustomDrawerDivider extends StatelessWidget {
     );
   }
 }
+
+class MyDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          MyCustomDrawerHeader(),
+          SelectableDrawerItem(
+            'Notes',
+            iconFileName: 'keep-quadrado.png',
+            selected: true,
+          ),
+          SelectableDrawerItem(
+            'Reminders',
+            iconFileName: 'outline_notifications_black_48.png',
+            selected: false,
+          ),
+          Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('LABELS', style: drawerLabelsEditStyle),
+                    Text('EDIT', style: drawerLabelsEditStyle),
+                  ],
+                ),
+              ),
+              SelectableDrawerItem(
+                'duvidas',
+                selected: false,
+              ),
+              SelectableDrawerItem(
+                'investimentos',
+                selected: true,
+              ),
+              SelectableDrawerItem(
+                'duvidas',
+                selected: false,
+              ),
+              SelectableDrawerItem(
+                'investimentos',
+                selected: true,
+              ),
+              SelectableDrawerItem(
+                'duvidas',
+                selected: false,
+              ),
+              SelectableDrawerItem(
+                'investimentos',
+                selected: true,
+              ),
+              SelectableDrawerItem(
+                'duvidas',
+                selected: false,
+              ),
+              SelectableDrawerItem(
+                'investimentos',
+                selected: true,
+              ),
+              SelectableDrawerItem(
+                'duvidas',
+                selected: false,
+              ),
+              SelectableDrawerItem(
+                'investimentos',
+                selected: true,
+              ),
+              SelectableDrawerItem(
+                'duvidas',
+                selected: false,
+              ),
+              SelectableDrawerItem(
+                'investimentos',
+                selected: true,
+              ),
+            ],
+          ),
+          SimpleDrawerItem(
+              text: 'Create new label',
+              iconFileName: 'outline_add_black_48.png'),
+          MyCustomDrawerDivider(),
+          SelectableDrawerItem(
+            'Archive',
+            iconFileName: 'outline_archive_black_48.png',
+            selected: false,
+          ),
+          SelectableDrawerItem(
+            'Trash',
+            iconFileName: 'outline_delete_black_48.png',
+            selected: false,
+          ),
+          MyCustomDrawerDivider(),
+          SimpleDrawerItem(
+              text: 'Settings', iconFileName: 'outline_settings_black_48.png'),
+          SimpleDrawerItem(
+              text: 'Help & feedback',
+              iconFileName: 'outline_help_outline_black_48.png'),
+        ],
+      ),
+    );
+  }
+}
