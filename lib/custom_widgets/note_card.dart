@@ -12,7 +12,7 @@ class NoteCard extends StatelessWidget {
 
   static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;
 
-  NoteCard({this.title, this.text, this.color = NoteColor.white});
+  NoteCard({this.title = '', this.text = '', this.color = NoteColor.white});
 
   Widget _title(String theTitle) {
     return ((theTitle != null) && (theTitle.isNotEmpty))
@@ -24,7 +24,7 @@ class NoteCard extends StatelessWidget {
   }
 
   Widget _spacing() {
-    if ((title != null) && (text != null)) {
+    if ((title.isNotEmpty) && (text.isNotEmpty)) {
       return SizedBox(
         height: 12,
       );
