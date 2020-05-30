@@ -18,6 +18,8 @@ const appDrawerItemSelected = Color.fromARGB(255, 253, 239, 194);
 
 const appBlack = Color.fromARGB(255, 0, 0, 0);
 
+const appSettingsBlue = Color.fromARGB(255, 26, 113, 228);
+
 abstract class NoteColor {
   const NoteColor();
 

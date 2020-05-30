@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
 
 import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/settings_screen.dart';
 
 import 'package:keep_notes_clone/styles.dart';
 
@@ -63,27 +64,34 @@ class SimpleDrawerItem extends StatelessWidget {
   final String text;
 
   final String iconFileName;
+  void Function() onPressed;
 
-  SimpleDrawerItem({@required this.text, @required this.iconFileName});
+  SimpleDrawerItem(
+      {@required this.text,
+      @required this.iconFileName,
+      @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: _drawerItemHeight,
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 24),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          PngIcon(fileName: iconFileName),
-          SizedBox(
-            width: _iconToTextSpacing,
-          ),
-          Text(
-            text,
-            style: drawerItemStyle,
-          ),
-        ],
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        height: _drawerItemHeight,
+        width: double.infinity,
+        padding: EdgeInsets.only(left: 24),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            PngIcon(fileName: iconFileName),
+            SizedBox(
+              width: _iconToTextSpacing,
+            ),
+            Text(
+              text,
+              style: drawerItemStyle,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -209,8 +217,10 @@ class MyDrawer extends StatelessWidget {
             ],
           ),
           SimpleDrawerItem(
-              text: 'Create new label',
-              iconFileName: 'outline_add_black_48.png'),
+            text: 'Create new label',
+            iconFileName: 'outline_add_black_48.png',
+            onPressed: () {},
+          ),
           MyCustomDrawerDivider(),
           SelectableDrawerItem(
             'Archive',
@@ -224,10 +234,18 @@ class MyDrawer extends StatelessWidget {
           ),
           MyCustomDrawerDivider(),
           SimpleDrawerItem(
-              text: 'Settings', iconFileName: 'outline_settings_black_48.png'),
+            text: 'Settings',
+            iconFileName: 'outline_settings_black_48.png',
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SettingsScreen()));
+            },
+          ),
           SimpleDrawerItem(
-              text: 'Help & feedback',
-              iconFileName: 'outline_help_outline_black_48.png'),
+            text: 'Help & feedback',
+            iconFileName: 'outline_help_outline_black_48.png',
+            onPressed: () {},
+          ),
         ],
       ),
     );
