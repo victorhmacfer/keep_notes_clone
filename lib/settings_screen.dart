@@ -12,7 +12,7 @@ class SettingsScreen extends StatelessWidget {
         elevation: 0,
         title: Text(
           'Settings',
-          style: drawerItemStyle.copyWith(fontSize: 17, letterSpacing: 0),
+          style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
         ),
         iconTheme: IconThemeData(color: appIconGrey),
         backgroundColor: appWhite,

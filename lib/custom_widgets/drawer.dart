@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
 
 import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/edit_labels_screen.dart';
+import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/settings_screen.dart';
 
 import 'package:keep_notes_clone/styles.dart';
+import 'package:provider/provider.dart';
 
 final _selectedBorderRadius = BorderRadius.only(
     topRight: Radius.circular(48), bottomRight: Radius.circular(48));
@@ -18,12 +22,14 @@ const double _iconToTextSpacing = 16;
 class SelectableDrawerItem extends StatelessWidget {
   final String text;
 
-  final bool selected;
+  final int drawerItemIndex;
 
   final String iconFileName;
 
+  final bool selected;
+
   SelectableDrawerItem(this.text,
-      {this.iconFileName = 'outline_label_black_48.png', this.selected});
+      {this.iconFileName = 'outline_label_black_48.png', this.drawerItemIndex, this.selected = false});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +70,7 @@ class SimpleDrawerItem extends StatelessWidget {
   final String text;
 
   final String iconFileName;
-  void Function() onPressed;
+  final void Function() onPressed;
 
   SimpleDrawerItem(
       {@required this.text,
@@ -130,15 +136,33 @@ class MyCustomDrawerDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 1,
-      color: Colors.grey[300],
+      color: appDividerGrey,
       margin: EdgeInsets.symmetric(vertical: 8),
     );
   }
 }
 
 class MyDrawer extends StatelessWidget {
+  //TODO: explain(document) the indexing of the items in the drawer..
+
+  List<Widget> _labelList(List<Label> labels) {
+    List<Widget> theList = [];
+
+    for (int i = 0; i < labels.length; i++) {
+      var selectableLabelItem = SelectableDrawerItem(
+        labels[i].text,
+        iconFileName: 'outline_label_black_48.png',
+        // accounting for the other 4 SELECTABLE drawer items that are not labels
+        drawerItemIndex: i + 4,
+      );
+      theList.add(selectableLabelItem);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+
     return Drawer(
       child: ListView(
         children: <Widget>[
@@ -146,91 +170,57 @@ class MyDrawer extends StatelessWidget {
           SelectableDrawerItem(
             'Notes',
             iconFileName: 'keep-quadrado.png',
+            drawerItemIndex: 0,
             selected: true,
           ),
           SelectableDrawerItem(
             'Reminders',
             iconFileName: 'outline_notifications_black_48.png',
-            selected: false,
+            drawerItemIndex: 1,
           ),
-          Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                height: 40,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('LABELS', style: drawerLabelsEditStyle),
-                    Text('EDIT', style: drawerLabelsEditStyle),
-                  ],
-                ),
-              ),
-              SelectableDrawerItem(
-                'duvidas',
-                selected: false,
-              ),
-              SelectableDrawerItem(
-                'investimentos',
-                selected: true,
-              ),
-              SelectableDrawerItem(
-                'duvidas',
-                selected: false,
-              ),
-              SelectableDrawerItem(
-                'investimentos',
-                selected: true,
-              ),
-              SelectableDrawerItem(
-                'duvidas',
-                selected: false,
-              ),
-              SelectableDrawerItem(
-                'investimentos',
-                selected: true,
-              ),
-              SelectableDrawerItem(
-                'duvidas',
-                selected: false,
-              ),
-              SelectableDrawerItem(
-                'investimentos',
-                selected: true,
-              ),
-              SelectableDrawerItem(
-                'duvidas',
-                selected: false,
-              ),
-              SelectableDrawerItem(
-                'investimentos',
-                selected: true,
-              ),
-              SelectableDrawerItem(
-                'duvidas',
-                selected: false,
-              ),
-              SelectableDrawerItem(
-                'investimentos',
-                selected: true,
-              ),
-            ],
-          ),
+          // StreamBuilder<List<Label>>(
+          //     stream: noteTrackingBloc.labelListStream,
+          //     builder: (context, snapshot) {
+          //       if (snapshot.hasData && snapshot.data.isNotEmpty) {
+          //         return Column(
+          //           children: <Widget>[
+          //             Container(
+          //               padding: EdgeInsets.symmetric(horizontal: 16),
+          //               height: 40,
+          //               child: Row(
+          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                 children: <Widget>[
+          //                   Text('LABELS', style: drawerLabelsEditStyle),
+          //                   Text('EDIT', style: drawerLabelsEditStyle),
+          //                 ],
+          //               ),
+          //             ),
+          //             Column(
+          //               children: _labelList(snapshot.data),
+          //             ),
+          //           ],
+          //         );
+          //       }
+          //       return MyCustomDrawerDivider();
+          //     }),
           SimpleDrawerItem(
             text: 'Create new label',
             iconFileName: 'outline_add_black_48.png',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditLabelsScreen()));
+            },
           ),
           MyCustomDrawerDivider(),
           SelectableDrawerItem(
             'Archive',
             iconFileName: 'outline_archive_black_48.png',
-            selected: false,
+            drawerItemIndex: 2,
           ),
           SelectableDrawerItem(
             'Trash',
             iconFileName: 'outline_delete_black_48.png',
-            selected: false,
+            drawerItemIndex: 3,
           ),
           MyCustomDrawerDivider(),
           SimpleDrawerItem(

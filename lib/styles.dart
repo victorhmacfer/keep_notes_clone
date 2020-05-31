@@ -33,18 +33,12 @@ var drawerItemStyle = TextStyle(
     fontSize: 15,
     fontFamily: 'Montserrat',
     fontWeight: FontWeight.w500,
-    letterSpacing: -0.5);
+    letterSpacing: -0.2);
 
 var drawerLabelsEditStyle =
     TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: appIconGrey);
 
-var bottomSheetStyle = TextStyle(
-  fontSize: 16,
-  color: appVeryDarkGrey
-);
-
-
-
+var bottomSheetStyle = TextStyle(fontSize: 16, color: appVeryDarkGrey);
 
 final appLightThemeData = ThemeData(
     visualDensity: VisualDensity.adaptivePlatformDensity,

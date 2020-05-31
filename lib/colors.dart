@@ -20,6 +20,8 @@ const appBlack = Color.fromARGB(255, 0, 0, 0);
 
 const appSettingsBlue = Color.fromARGB(255, 26, 113, 228);
 
+final appDividerGrey = Colors.grey[300];
+
 abstract class NoteColor {
   const NoteColor();
 
