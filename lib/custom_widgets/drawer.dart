@@ -29,7 +29,9 @@ class SelectableDrawerItem extends StatelessWidget {
   final bool selected;
 
   SelectableDrawerItem(this.text,
-      {this.iconFileName = 'outline_label_black_48.png', this.drawerItemIndex, this.selected = false});
+      {this.iconFileName = 'outline_label_black_48.png',
+      this.drawerItemIndex,
+      this.selected = false});
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +159,7 @@ class MyDrawer extends StatelessWidget {
       );
       theList.add(selectableLabelItem);
     }
+    return theList;
   }
 
   @override
@@ -178,31 +181,31 @@ class MyDrawer extends StatelessWidget {
             iconFileName: 'outline_notifications_black_48.png',
             drawerItemIndex: 1,
           ),
-          // StreamBuilder<List<Label>>(
-          //     stream: noteTrackingBloc.labelListStream,
-          //     builder: (context, snapshot) {
-          //       if (snapshot.hasData && snapshot.data.isNotEmpty) {
-          //         return Column(
-          //           children: <Widget>[
-          //             Container(
-          //               padding: EdgeInsets.symmetric(horizontal: 16),
-          //               height: 40,
-          //               child: Row(
-          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                 children: <Widget>[
-          //                   Text('LABELS', style: drawerLabelsEditStyle),
-          //                   Text('EDIT', style: drawerLabelsEditStyle),
-          //                 ],
-          //               ),
-          //             ),
-          //             Column(
-          //               children: _labelList(snapshot.data),
-          //             ),
-          //           ],
-          //         );
-          //       }
-          //       return MyCustomDrawerDivider();
-          //     }),
+          StreamBuilder<List<Label>>(
+              stream: noteTrackingBloc.labelListStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                  return Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        height: 40,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text('LABELS', style: drawerLabelsEditStyle),
+                            Text('EDIT', style: drawerLabelsEditStyle),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: _labelList(snapshot.data),
+                      ),
+                    ],
+                  );
+                }
+                return MyCustomDrawerDivider();
+              }),
           SimpleDrawerItem(
             text: 'Create new label',
             iconFileName: 'outline_add_black_48.png',
