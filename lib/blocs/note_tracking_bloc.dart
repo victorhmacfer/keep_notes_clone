@@ -24,7 +24,11 @@ class NoteTrackingBloc {
   void onCreateNewLabel(String text) {
     // TODO: check for label existence
 
+    //FIXME: this is temporary..
+    if (_labels.map((lab) => lab.text).contains(text)) return;
+
     _labels.add(Label(text: text));
+    _labels.sort((a, b) => a.text.compareTo(b.text));
     _labelsBS.add(_labels);
   }
 

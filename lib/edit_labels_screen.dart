@@ -8,8 +8,10 @@ import 'package:keep_notes_clone/colors.dart';
 
 class EditLabelsScreen extends StatelessWidget {
   List<Widget> _labelList(List<Label> labels) {
-    print(labels[0].text);
-    return labels.map((label) => EditLabelListItem(label.text)).toList();
+    return labels
+        .map((label) => EditLabelListItem(
+            key: ValueKey(label.text), initialText: label.text))
+        .toList();
   }
 
   @override
@@ -161,7 +163,9 @@ class _CreateLabelListItemState extends State<CreateLabelListItem> {
 class EditLabelListItem extends StatefulWidget {
   final String initialText;
 
-  EditLabelListItem(this.initialText);
+  final ValueKey<String> key;
+
+  EditLabelListItem({this.key, this.initialText});
 
   @override
   _EditLabelListItemState createState() => _EditLabelListItemState();
@@ -211,6 +215,7 @@ class _EditLabelListItemState extends State<EditLabelListItem> {
     );
 
     return Container(
+      key: widget.key,
       height: 56,
       padding: EdgeInsets.symmetric(horizontal: 4),
       alignment: Alignment.center,
