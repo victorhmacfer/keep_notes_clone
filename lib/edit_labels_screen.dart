@@ -31,7 +31,7 @@ class EditLabelsScreen extends StatelessWidget {
         color: appWhite,
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverToBoxAdapter(child: LabelSearchBar()),
+            SliverToBoxAdapter(child: CreateLabelListItem()),
             SliverToBoxAdapter(
               child: StreamBuilder<List<Label>>(
                   stream: noteTrackingBloc.labelListStream,
@@ -51,26 +51,26 @@ class EditLabelsScreen extends StatelessWidget {
   }
 }
 
-class LabelSearchBar extends StatefulWidget {
+class CreateLabelListItem extends StatefulWidget {
   @override
-  _LabelSearchBarState createState() => _LabelSearchBarState();
+  _CreateLabelListItemState createState() => _CreateLabelListItemState();
 }
 
-class _LabelSearchBarState extends State<LabelSearchBar> {
-  final searchFocusNode = FocusNode();
+class _CreateLabelListItemState extends State<CreateLabelListItem> {
+  final newLabelFocusNode = FocusNode();
 
   bool isFocused;
 
-  TextEditingController searchTextController;
+  TextEditingController newLabelTextController;
 
   @override
   void initState() {
     super.initState();
     isFocused = true;
-    searchTextController = TextEditingController();
-    searchFocusNode.addListener(() {
+    newLabelTextController = TextEditingController();
+    newLabelFocusNode.addListener(() {
       setState(() {
-        isFocused = searchFocusNode.hasFocus;
+        isFocused = newLabelFocusNode.hasFocus;
       });
     });
   }
@@ -82,15 +82,27 @@ class _LabelSearchBarState extends State<LabelSearchBar> {
     var fakeBorderColor = (isFocused) ? appDividerGrey : appWhite;
 
     var myPrefixIconChoice = (isFocused)
-        ? Icon(
-            Icons.clear,
+        ? IconButton(
+            icon: Icon(Icons.clear),
             color: appIconGrey,
-            size: 24,
+            iconSize: 24,
+            onPressed: () {
+              setState(() {
+                newLabelFocusNode.unfocus();
+                isFocused = false;
+              });
+            },
           )
-        : Icon(
-            Icons.add,
+        : IconButton(
+            icon: Icon(Icons.add),
             color: appIconGrey,
-            size: 28,
+            iconSize: 28,
+            onPressed: () {
+              setState(() {
+                newLabelFocusNode.requestFocus();
+                isFocused = true;
+              });
+            },
           );
 
     var paddedPrefixIcon = Container(
@@ -111,11 +123,11 @@ class _LabelSearchBarState extends State<LabelSearchBar> {
             vertical: BorderSide(color: fakeBorderColor, width: 1)),
       ),
       child: TextField(
-        controller: searchTextController,
+        controller: newLabelTextController,
         cursorColor: appIconGrey,
         cursorWidth: 1,
         style: drawerItemStyle,
-        focusNode: searchFocusNode,
+        focusNode: newLabelFocusNode,
         autofocus: true,
         decoration: InputDecoration(
             prefixIcon: paddedPrefixIcon,
@@ -128,10 +140,12 @@ class _LabelSearchBarState extends State<LabelSearchBar> {
                     icon: Icon(Icons.check),
                     color: appIconGrey,
                     onPressed: () {
-                      print(searchTextController.text);
-                      noteTrackingBloc
-                          .onCreateNewLabel(searchTextController.text);
-                      searchTextController.clear();
+                      var newLabelText = newLabelTextController.text;
+                      if (newLabelText.isNotEmpty) {
+                        noteTrackingBloc
+                            .onCreateNewLabel(newLabelTextController.text);
+                        newLabelTextController.clear();
+                      }
                     },
                   )
                 : Container(
