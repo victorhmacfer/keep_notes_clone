@@ -40,7 +40,9 @@ class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
             var title = noteCreationSharedState.titleController.text;
             var text = noteCreationSharedState.textController.text;
             var colorIndex = noteCreationSharedState.selectedColorIndex;
-            noteBloc.onCreateNewNote(title, text, colorIndex);
+            if (title.isNotEmpty || text.isNotEmpty) {
+              noteBloc.onCreateNewNote(title, text, colorIndex);
+            }
             noteCreationSharedState.closeLeftBottomSheet();
             noteCreationSharedState.closeRightBottomSheet();
             Navigator.pop(context);
