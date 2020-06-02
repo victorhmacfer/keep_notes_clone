@@ -40,8 +40,9 @@ class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
             var title = noteCreationSharedState.titleController.text;
             var text = noteCreationSharedState.textController.text;
             var colorIndex = noteCreationSharedState.selectedColorIndex;
+            var pinned = noteCreationSharedState.isPinned;
             if (title.isNotEmpty || text.isNotEmpty) {
-              noteBloc.onCreateNewNote(title, text, colorIndex);
+              noteBloc.onCreateNewNote(title, text, colorIndex, pinned);
             }
             noteCreationSharedState.closeLeftBottomSheet();
             noteCreationSharedState.closeRightBottomSheet();
@@ -51,8 +52,15 @@ class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
-              pngIcon: PngIcon(fileName: 'outline_archive_black_48.png'),
-              onTap: () {}),
+              pngIcon: (noteCreationSharedState.isPinned)
+                  ? PngIcon(fileName: 'baseline_push_pin_black_48.png')
+                  : PngIcon(fileName: 'outline_push_pin_black_48.png'),
+              onTap: () {
+                var pinOrUnpin = (noteCreationSharedState.isPinned)
+                    ? noteCreationSharedState.unpinNote
+                    : noteCreationSharedState.pinNote;
+                pinOrUnpin();
+              }),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),

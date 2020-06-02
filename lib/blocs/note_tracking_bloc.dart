@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:rxdart/subjects.dart';
@@ -12,13 +15,35 @@ class NoteTrackingBloc {
   final _labelsBS = BehaviorSubject<List<Label>>();
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
+
+  Stream<List<List<Note>>> get pinnedUnpinnedNoteListsStream =>
+      noteListStream.map(_splitIntoPinnedAndUnpinned);
+
   Stream<List<Label>> get labelListStream => _labelsBS.stream;
 
-  void onCreateNewNote(String title, String text, int colorIndex) {
-    var newNote = Note(title: title, text: text, colorIndex: colorIndex);
+  void onCreateNewNote(String title, String text, int colorIndex, bool pinned) {
+    var newNote =
+        Note(title: title, text: text, colorIndex: colorIndex, pinned: pinned);
 
     _notes.add(newNote);
     _notesBS.add(_notes);
+  }
+
+  List<List<Note>> _splitIntoPinnedAndUnpinned(List<Note> input) {
+    List<List<Note>> output = [];
+    List<Note> pinned = [];
+    List<Note> unpinned = [];
+
+    for (var note in input) {
+      if (note.pinned) {
+        pinned.add(note);
+      } else {
+        unpinned.add(note);
+      }
+    }
+    output.add(pinned);
+    output.add(unpinned);
+    return output;
   }
 
   void onCreateNewLabel(String text) {

@@ -35,6 +35,8 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+const double _bottomPadding = 56;
+
 class HomeBody extends StatelessWidget {
   Widget _noteCardBuilder(Note note) {
     return NoteCard(
@@ -44,11 +46,23 @@ class HomeBody extends StatelessWidget {
     );
   }
 
+  Widget _sectionTitle(String title) {
+    return Container(
+      color: appWhite,
+      height: 40,
+      width: double.infinity,
+      padding: EdgeInsets.only(left: 24),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: drawerLabelsEditStyle.copyWith(fontSize: 11, letterSpacing: 0.5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
-
-    var screenHeight = MediaQuery.of(context).size.height;
 
     return SafeArea(
       // ignoring the bottom safearea is necessary for "extendBody" to work
@@ -58,70 +72,86 @@ class HomeBody extends StatelessWidget {
           slivers: <Widget>[
             SearchAppBar(),
             SliverToBoxAdapter(
-              child: StreamBuilder(
-                  stream: noteBloc.noteListStream,
-                  builder: (context, AsyncSnapshot<List<Note>> snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data.isNotEmpty) {
+              child: StreamBuilder<List<List<Note>>>(
+                stream: noteBloc.pinnedUnpinnedNoteListsStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    var pinnedNotesList = snapshot.data[0];
+                    var unpinnedNotesList = snapshot.data[1];
+
+                    if (pinnedNotesList.isNotEmpty ||
+                        unpinnedNotesList.isNotEmpty) {
+                      
+                      if (pinnedNotesList.isEmpty) {
                         return Container(
-                          margin: EdgeInsets.only(bottom: 56),
+                          margin: EdgeInsets.only(bottom: _bottomPadding),
                           child: Column(
                             children:
-                                snapshot.data.map(_noteCardBuilder).toList(),
+                                snapshot.data[1].map(_noteCardBuilder).toList(),
                           ),
                         );
                       }
+
                       return Container(
-                        height: screenHeight * 0.8,
-                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(bottom: _bottomPadding),
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Image.asset(
-                              'assets/icons/keep-logo.png',
-                              height: 100,
+                            _sectionTitle('PINNED'),
+                            Column(
+                              children: pinnedNotesList
+                                  .map(_noteCardBuilder)
+                                  .toList(),
                             ),
                             SizedBox(
                               height: 24,
                             ),
-                            Text(
-                              'Notes you add appear here',
-                              style: cardSmallTextStyle,
+                            _sectionTitle('OTHERS'),
+                            Column(
+                              children: unpinnedNotesList
+                                  .map(_noteCardBuilder)
+                                  .toList(),
                             ),
                           ],
                         ),
                       );
                     }
-                    //FIXME:
-                    // I duplicated this here temporarily just to have this pretty screen
-                    // before adding the first note.
-                    // When I start to user the DB I'll remove this.
-                    return Container(
-                      height: screenHeight * 0.8,
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Image.asset(
-                            'assets/icons/keep-logo.png',
-                            height: 100,
-                          ),
-                          SizedBox(
-                            height: 24,
-                          ),
-                          Text(
-                            'Notes you add appear here',
-                            style: cardSmallTextStyle,
-                          ),
-                        ],
-                      ),
-                    );
+                    return NoNotesScreen();
+                  }
 
-                    // return CircularProgressIndicator(); //FIXME: put this to work later
-                  }),
+                  return NoNotesScreen();
+                },
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class NoNotesScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      height: screenHeight * 0.8,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Image.asset(
+            'assets/icons/keep-logo.png',
+            height: 100,
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          Text(
+            'Notes you add appear here',
+            style: cardSmallTextStyle,
+          ),
+        ],
       ),
     );
   }
