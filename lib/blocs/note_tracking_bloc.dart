@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
@@ -26,6 +25,10 @@ class NoteTrackingBloc {
         Note(title: title, text: text, colorIndex: colorIndex, pinned: pinned);
 
     _notes.add(newNote);
+    _notesBS.add(_notes);
+  }
+
+  void onNoteEdited() {
     _notesBS.add(_notes);
   }
 

@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/models/note.dart';
 
 import 'package:keep_notes_clone/styles.dart';
 import 'package:keep_notes_clone/colors.dart';
 
+import 'package:keep_notes_clone/create_note_screen.dart';
+
 class NoteCard extends StatelessWidget {
-  final String title;
+  final Note note;
 
-  final String text;
+  final String _title;
 
-  final NoteColor color;
+  final String _text;
+
+  final NoteColor _color;
 
   static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;
 
-  NoteCard({this.title = '', this.text = '', this.color = NoteColor.white});
+  // NoteCard({this.title = '', this.text = '', this.color = NoteColor.white});
+  NoteCard({@required this.note})
+      : _title = note.title,
+        _text = note.text,
+        _color = NoteColor.getNoteColorFromIndex(note.colorIndex);
 
-  Widget _title(String theTitle) {
+  Widget _titleWidget(String theTitle) {
     return ((theTitle != null) && (theTitle.isNotEmpty))
         ? Text(
             theTitle,
@@ -23,8 +32,8 @@ class NoteCard extends StatelessWidget {
         : Container();
   }
 
-  Widget _spacing() {
-    if ((title.isNotEmpty) && (text.isNotEmpty)) {
+  Widget _spacingWidget() {
+    if ((_title.isNotEmpty) && (_text.isNotEmpty)) {
       return SizedBox(
         height: 12,
       );
@@ -32,7 +41,7 @@ class NoteCard extends StatelessWidget {
     return Container();
   }
 
-  Widget _text(String theText) {
+  Widget _textWidget(String theText) {
     return ((theText != null) && (theText.isNotEmpty))
         ? Text(
             theText,
@@ -47,22 +56,32 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      padding: EdgeInsets.all(16),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: color.getColor(),
-        border: Border.all(color: appCardBorderGrey),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _title(title),
-          _spacing(),
-          _text(text),
-        ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateEditNoteScreen(note: note)
+            )
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: EdgeInsets.all(16),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: _color.getColor(),
+          border: Border.all(color: appCardBorderGrey),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _titleWidget(_title),
+            _spacingWidget(),
+            _textWidget(_text),
+          ],
+        ),
       ),
     );
   }

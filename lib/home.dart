@@ -39,11 +39,12 @@ const double _bottomPadding = 56;
 
 class HomeBody extends StatelessWidget {
   Widget _noteCardBuilder(Note note) {
-    return NoteCard(
-      title: note.title,
-      text: note.text,
-      color: NoteColor.getNoteColorFromIndex(note.colorIndex),
-    );
+    return NoteCard(note: note);
+    // return NoteCard(
+    //   title: note.title,
+    //   text: note.text,
+    //   color: NoteColor.getNoteColorFromIndex(note.colorIndex),
+    // );
   }
 
   Widget _sectionTitle(String title) {
@@ -99,7 +100,7 @@ class HomeBody extends StatelessWidget {
 
                     if (pinnedNotesList.isNotEmpty ||
                         unpinnedNotesList.isNotEmpty) {
-                          
+
                       if (pinnedNotesList.isEmpty) {
                         return Container(
                           margin: EdgeInsets.only(bottom: _bottomPadding),

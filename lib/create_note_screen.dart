@@ -8,27 +8,58 @@ import 'package:keep_notes_clone/notifiers/note_creation_shared_state.dart';
 import 'package:keep_notes_clone/styles.dart';
 import 'package:provider/provider.dart';
 
-class CreateNoteScreen extends StatelessWidget {
+import 'models/note.dart';
+
+class CreateEditNoteScreen extends StatelessWidget {
+  final Note note;
+
+  CreateEditNoteScreen({this.note});
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NoteCreationSharedState>(
-      create: (context) => NoteCreationSharedState(),
+    // return ChangeNotifierProvider<NoteCreateEditSharedState>(
+    //   create: (context) => NoteCreateEditSharedState(),
+    //   child: Scaffold(
+    //       appBar: CreateEditNoteAppBar(),
+    //       body: CreateEditNoteBody(),
+    //       bottomNavigationBar: MyStickyBottomAppBar()),
+    // );
+
+    if (note == null) {
+      return ChangeNotifierProvider<NoteCreateEditSharedState>(
+        create: (context) => NoteCreateEditSharedState(),
+        child: Scaffold(
+            appBar: CreateEditNoteAppBar(),
+            body: CreateEditNoteBody(),
+            bottomNavigationBar: MyStickyBottomAppBar()),
+      );
+    }
+
+    return ChangeNotifierProvider<NoteCreateEditSharedState>(
+      create: (context) => NoteCreateEditSharedState.fromNote(note),
       child: Scaffold(
-          appBar: CreateNoteAppBar(),
-          body: CreateNoteBody(),
+          appBar: CreateEditNoteAppBar(
+            note: note,
+          ),
+          body: CreateEditNoteBody(editing: true,),
           bottomNavigationBar: MyStickyBottomAppBar()),
     );
   }
 }
 
-class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CreateEditNoteAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  final Note note;
+
+  CreateEditNoteAppBar({this.note});
+
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     final noteCreationSharedState =
-        Provider.of<NoteCreationSharedState>(context);
+        Provider.of<NoteCreateEditSharedState>(context);
     final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return AppBar(
@@ -42,7 +73,15 @@ class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
             var colorIndex = noteCreationSharedState.selectedColorIndex;
             var pinned = noteCreationSharedState.isPinned;
             if (title.isNotEmpty || text.isNotEmpty) {
-              noteBloc.onCreateNewNote(title, text, colorIndex, pinned);
+              if (note == null) {
+                noteBloc.onCreateNewNote(title, text, colorIndex, pinned);
+              } else {
+                note.title = title;
+                note.text = text;
+                note.colorIndex = colorIndex;
+                note.pinned = pinned;
+                noteBloc.onNoteEdited();
+              }
             }
             noteCreationSharedState.closeLeftBottomSheet();
             noteCreationSharedState.closeRightBottomSheet();
@@ -79,11 +118,15 @@ class CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class CreateNoteBody extends StatelessWidget {
+class CreateEditNoteBody extends StatelessWidget {
+  final bool editing;
+
+  CreateEditNoteBody({this.editing = false});
+
   @override
   Widget build(BuildContext context) {
     final noteCreationSharedState =
-        Provider.of<NoteCreationSharedState>(context);
+        Provider.of<NoteCreateEditSharedState>(context);
 
     return Container(
       color: noteCreationSharedState.selectedColor.getColor(),
@@ -119,7 +162,7 @@ class CreateNoteBody extends StatelessWidget {
                     TextField(
                       controller: noteCreationSharedState.textController,
                       focusNode: noteCreationSharedState.textFocusNode,
-                      autofocus: true,
+                      autofocus: (editing) ? false : true,
                       onTap: () {
                         noteCreationSharedState.closeLeftBottomSheet();
                         noteCreationSharedState.closeRightBottomSheet();
@@ -212,7 +255,7 @@ class MyStickyBottomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final noteCreationSharedState =
-        Provider.of<NoteCreationSharedState>(context);
+        Provider.of<NoteCreateEditSharedState>(context);
 
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
@@ -277,7 +320,7 @@ class _ColorSelectionList extends StatelessWidget {
   Widget _colorSelectionCircle(
       {NoteColor noteColor,
       int index,
-      NoteCreationSharedState noteCreationSharedState}) {
+      NoteCreateEditSharedState noteCreationSharedState}) {
     return GestureDetector(
       onTap: () {
         noteCreationSharedState.selectedColorIndex = index;
@@ -299,7 +342,7 @@ class _ColorSelectionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final noteCreationSharedState =
-        Provider.of<NoteCreationSharedState>(context);
+        Provider.of<NoteCreateEditSharedState>(context);
 
     return Container(
       color: noteCreationSharedState.selectedColor.getColor(),
@@ -381,7 +424,7 @@ class _CreateNoteBottomSheetTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final noteCreationSharedState =
-        Provider.of<NoteCreationSharedState>(context);
+        Provider.of<NoteCreateEditSharedState>(context);
 
     return Container(
       alignment: Alignment.centerLeft,

@@ -6,8 +6,8 @@ class Note {
   int colorIndex;
 
   Note(
-      {this.title,
-      this.text,
+      {this.title = '',
+      this.text = '',
       this.colorIndex = 0,
       pinned = false,
       archived = false}) {

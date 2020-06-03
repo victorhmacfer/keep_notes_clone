@@ -16,7 +16,7 @@ class MyCustomFab extends StatelessWidget {
         backgroundColor: appWhite,
         child: Image.asset('assets/icons/google-plus-icon.png', width: 24, height: 24,),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (ctx) => CreateNoteScreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (ctx) => CreateEditNoteScreen()));
         },
       ),
     );
