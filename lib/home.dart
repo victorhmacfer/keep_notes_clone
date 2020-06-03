@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 
-import 'models/note.dart';
+import 'package:keep_notes_clone/models/note.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -38,14 +38,8 @@ class HomeScreen extends StatelessWidget {
 const double _bottomPadding = 56;
 
 class HomeBody extends StatelessWidget {
-  Widget _noteCardBuilder(Note note) {
-    return NoteCard(note: note);
-    // return NoteCard(
-    //   title: note.title,
-    //   text: note.text,
-    //   color: NoteColor.getNoteColorFromIndex(note.colorIndex),
-    // );
-  }
+
+  Widget _noteCardBuilder(Note note) => NoteCard(note: note);
 
   Widget _sectionTitle(String title) {
     return Container(
