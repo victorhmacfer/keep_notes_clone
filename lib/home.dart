@@ -60,6 +60,24 @@ class HomeBody extends StatelessWidget {
     );
   }
 
+  Widget _othersColumn(List<Note> unpinnedNotesList) {
+    if (unpinnedNotesList.isEmpty) {
+      return Container();
+    }
+
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 24,
+        ),
+        _sectionTitle('OTHERS'),
+        Column(
+          children: unpinnedNotesList.map(_noteCardBuilder).toList(),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
@@ -81,7 +99,7 @@ class HomeBody extends StatelessWidget {
 
                     if (pinnedNotesList.isNotEmpty ||
                         unpinnedNotesList.isNotEmpty) {
-                      
+                          
                       if (pinnedNotesList.isEmpty) {
                         return Container(
                           margin: EdgeInsets.only(bottom: _bottomPadding),
@@ -102,15 +120,7 @@ class HomeBody extends StatelessWidget {
                                   .map(_noteCardBuilder)
                                   .toList(),
                             ),
-                            SizedBox(
-                              height: 24,
-                            ),
-                            _sectionTitle('OTHERS'),
-                            Column(
-                              children: unpinnedNotesList
-                                  .map(_noteCardBuilder)
-                                  .toList(),
-                            ),
+                            _othersColumn(unpinnedNotesList),
                           ],
                         ),
                       );
