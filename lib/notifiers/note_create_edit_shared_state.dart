@@ -55,24 +55,24 @@ class NoteCreateEditSharedState with ChangeNotifier {
   bool get leftBottomSheetOpen => _leftBottomSheetOpen;
   bool get rightBottomSheetOpen => _rightBottomSheetOpen;
 
-  openLeftBottomSheet() {
+  void openLeftBottomSheet() {
     closeRightBottomSheet();
     _leftBottomSheetOpen = true;
   }
 
-  closeLeftBottomSheet() {
+  void closeLeftBottomSheet() {
     if (leftBottomSheetOpen) {
       _leftBottomSheetOpen = false;
       if (leftBottomSheetController != null) leftBottomSheetController.close();
     }
   }
 
-  openRightBottomSheet() {
+  void openRightBottomSheet() {
     closeLeftBottomSheet();
     _rightBottomSheetOpen = true;
   }
 
-  closeRightBottomSheet() {
+  void closeRightBottomSheet() {
     if (rightBottomSheetOpen) {
       _rightBottomSheetOpen = false;
       if (rightBottomSheetController != null)

@@ -206,7 +206,11 @@ class CreateEditNoteBody extends StatelessWidget {
 
 class MyStickyBottomAppBar extends StatelessWidget {
   Widget _leftBottomSheetBuilder(BuildContext context) {
+    final noteCreateEditSharedState =
+        Provider.of<NoteCreateEditSharedState>(context);
+
     return Container(
+      color: noteCreateEditSharedState.selectedColor.getColor(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -236,7 +240,11 @@ class MyStickyBottomAppBar extends StatelessWidget {
   }
 
   Widget _rightBottomSheetBuilder(BuildContext context) {
+    final noteCreateEditSharedState =
+        Provider.of<NoteCreateEditSharedState>(context);
+
     return Container(
+      color: noteCreateEditSharedState.selectedColor.getColor(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -286,8 +294,6 @@ class MyStickyBottomAppBar extends StatelessWidget {
                       fileName: 'outline_add_box_black_48.png',
                     ),
                     onTap: () {
-                      print(
-                          'first line of left tap.. open is ${noteCreateEditSharedState.leftBottomSheetOpen}');
                       if (noteCreateEditSharedState.leftBottomSheetOpen ==
                           false) {
                         noteCreateEditSharedState.titleFocusNode.unfocus();
@@ -299,16 +305,12 @@ class MyStickyBottomAppBar extends StatelessWidget {
                       } else {
                         noteCreateEditSharedState.closeLeftBottomSheet();
                       }
-                      print(
-                          'last line of left tap.. open is ${noteCreateEditSharedState.leftBottomSheetOpen}');
                     }),
                 PngIconButton(
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
                     ),
                     onTap: () {
-                      print(
-                          'first line of right tap.. open is ${noteCreateEditSharedState.rightBottomSheetOpen}');
                       if (noteCreateEditSharedState.rightBottomSheetOpen ==
                           false) {
                         noteCreateEditSharedState.titleFocusNode.unfocus();
@@ -320,8 +322,6 @@ class MyStickyBottomAppBar extends StatelessWidget {
                       } else {
                         noteCreateEditSharedState.closeRightBottomSheet();
                       }
-                      print(
-                          'last line of right tap.. open is ${noteCreateEditSharedState.rightBottomSheetOpen}');
                     })
               ],
             ),
