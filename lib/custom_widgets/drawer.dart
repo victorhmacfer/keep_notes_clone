@@ -11,6 +11,7 @@ import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/settings_screen.dart';
 
 import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/trash_screen.dart';
 import 'package:provider/provider.dart';
 
 final _selectedBorderRadius = BorderRadius.only(
@@ -247,7 +248,12 @@ class MyDrawer extends StatelessWidget {
             'Trash',
             iconFileName: 'outline_delete_black_48.png',
             drawerItemIndex: 3,
-            onPressed: () {},
+            onPressed: () {
+              if (drawerScreenSelection.selectedScreenIndex != 3) {
+                drawerScreenSelection.changeSelectedScreenToIndex(3);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TrashScreen()));
+              }
+            },
           ),
           MyCustomDrawerDivider(),
           SimpleDrawerItem(

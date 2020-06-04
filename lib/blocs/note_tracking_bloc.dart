@@ -15,14 +15,20 @@ class NoteTrackingBloc {
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
+  Stream<List<List<Note>>> get pinnedUnpinnedNoteListsStream =>
+      _notArchivedNotDeletedNoteListStream.map(_splitIntoPinnedAndUnpinned);
+
   Stream<List<Note>> get archivedNoteListStream =>
       noteListStream.map(_filterArchivedNotes);
+
+  Stream<List<Note>> get deletedNoteListStream =>
+      noteListStream.map(_filterDeletedNotes);
 
   Stream<List<Note>> get _unarchivedNoteListStream =>
       noteListStream.map(_filterUnarchivedNotes);
 
-  Stream<List<List<Note>>> get pinnedUnpinnedNoteListsStream =>
-      _unarchivedNoteListStream.map(_splitIntoPinnedAndUnpinned);
+  Stream<List<Note>> get _notArchivedNotDeletedNoteListStream =>
+      _unarchivedNoteListStream.map(_filterNotDeletedNotes);
 
   Stream<List<Label>> get labelListStream => _labelsBS.stream;
 
@@ -52,6 +58,10 @@ class NoteTrackingBloc {
     _notesBS.add(_notes);
   }
 
+  void onNoteDeleted() {
+    _notesBS.add(_notes);
+  }
+
   List<List<Note>> _splitIntoPinnedAndUnpinned(List<Note> input) {
     List<List<Note>> output = [];
     List<Note> pinned = [];
@@ -75,6 +85,14 @@ class NoteTrackingBloc {
 
   List<Note> _filterUnarchivedNotes(List<Note> input) {
     return input.where((note) => note.archived == false).toList();
+  }
+
+  List<Note> _filterDeletedNotes(List<Note> input) {
+    return input.where((note) => note.deleted).toList();
+  }
+
+  List<Note> _filterNotDeletedNotes(List<Note> input) {
+    return input.where((note) => note.deleted == false).toList();
   }
 
   void onCreateNewLabel(String text) {

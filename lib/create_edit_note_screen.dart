@@ -217,22 +217,27 @@ class MyStickyBottomAppBar extends StatelessWidget {
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_photo_camera_black_48.png'),
             text: 'Take photo',
+            onTap: () {},
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_photo_black_48.png'),
             text: 'Add image',
+            onTap: () {},
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_brush_black_48.png'),
             text: 'Drawing',
+            onTap: () {},
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_mic_none_black_48.png'),
             text: 'Recording',
+            onTap: () {},
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_check_box_black_48.png'),
             text: 'Checkboxes',
+            onTap: () {},
           ),
         ],
       ),
@@ -243,6 +248,8 @@ class MyStickyBottomAppBar extends StatelessWidget {
     final noteCreateEditSharedState =
         Provider.of<NoteCreateEditSharedState>(context);
 
+    final noteBloc = Provider.of<NoteTrackingBloc>(context);
+
     return Container(
       color: noteCreateEditSharedState.selectedColor.getColor(),
       child: Column(
@@ -251,22 +258,45 @@ class MyStickyBottomAppBar extends StatelessWidget {
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_delete_black_48.png'),
             text: 'Delete',
+            onTap: () {
+              var theNoteBeingEdited =
+                  noteCreateEditSharedState.noteBeingEdited;
+
+              // the note is being created now, doesnt exist in bloc yet
+              // cant be deleted
+              if (theNoteBeingEdited == null) {
+                noteCreateEditSharedState.closeLeftBottomSheet();
+                noteCreateEditSharedState.closeRightBottomSheet();
+                Navigator.pop(context);
+              } else {
+                // note is being edited.. can be deleted
+                theNoteBeingEdited.delete();
+                noteBloc.onNoteDeleted();
+                noteCreateEditSharedState.closeLeftBottomSheet();
+                noteCreateEditSharedState.closeRightBottomSheet();
+                Navigator.pop(context);
+              }
+            },
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_file_copy_black_48.png'),
             text: 'Make a copy',
+            onTap: () {},
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_share_black_48.png'),
             text: 'Send',
+            onTap: () {},
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_person_add_black_48.png'),
             text: 'Collaborator',
+            onTap: () {},
           ),
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_label_black_48.png'),
             text: 'Labels',
+            onTap: () {},
           ),
           _ColorSelectionList(),
         ],
@@ -447,30 +477,34 @@ class _CreateNoteBottomSheetTile extends StatelessWidget {
 
   final String text;
 
-  final NoteColor color;
+  final void Function() onTap;
 
-  _CreateNoteBottomSheetTile({this.pngIcon, this.text, this.color});
+  _CreateNoteBottomSheetTile(
+      {@required this.pngIcon, @required this.text, @required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final noteCreateEditSharedState =
         Provider.of<NoteCreateEditSharedState>(context);
 
-    return Container(
-      alignment: Alignment.centerLeft,
-      height: 48,
-      color: noteCreateEditSharedState.selectedColor.getColor(),
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 16),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          pngIcon,
-          SizedBox(
-            width: 24,
-          ),
-          Text(text, style: bottomSheetStyle)
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        alignment: Alignment.centerLeft,
+        height: 48,
+        color: noteCreateEditSharedState.selectedColor.getColor(),
+        width: double.infinity,
+        padding: EdgeInsets.only(left: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            pngIcon,
+            SizedBox(
+              width: 24,
+            ),
+            Text(text, style: bottomSheetStyle)
+          ],
+        ),
       ),
     );
   }

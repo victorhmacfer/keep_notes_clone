@@ -3,6 +3,7 @@ class Note {
   String text;
   bool _pinned;
   bool _archived;
+  bool _deleted;
   int colorIndex;
 
   Note(
@@ -13,10 +14,13 @@ class Note {
       archived = false}) {
     _pinned = pinned;
     _archived = archived;
+    _deleted = false;
   }
 
   bool get pinned => _pinned;
   bool get archived => _archived;
+
+  bool get deleted => _deleted;
 
   // pinning a note should unarchive it
   set pinned(bool newValue) {
@@ -28,5 +32,11 @@ class Note {
   set archived(bool newValue) {
     if ((newValue == true) && (_pinned)) _pinned = false;
     _archived = newValue;
+  }
+
+  void delete() {
+    _pinned = false;
+    _archived = false;
+    _deleted = true;
   }
 }

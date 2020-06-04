@@ -18,6 +18,8 @@ class NoteCreateEditSharedState with ChangeNotifier {
 
   bool _isPinned;
 
+  Note noteBeingEdited;
+
   NoteCreateEditSharedState()
       : _selectedColorIndex = 0,
         titleController = TextEditingController(),
@@ -28,7 +30,8 @@ class NoteCreateEditSharedState with ChangeNotifier {
       : _selectedColorIndex = note.colorIndex,
         titleController = TextEditingController(text: note.title),
         textController = TextEditingController(text: note.text),
-        _isPinned = note.pinned;
+        _isPinned = note.pinned,
+        noteBeingEdited = note;
 
   bool get isPinned => _isPinned;
 
