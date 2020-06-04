@@ -4,7 +4,7 @@ import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/styles.dart';
 import 'package:keep_notes_clone/colors.dart';
 
-import 'package:keep_notes_clone/create_note_screen.dart';
+import 'package:keep_notes_clone/create_edit_note_screen.dart';
 
 class NoteCard extends StatelessWidget {
   final Note note;

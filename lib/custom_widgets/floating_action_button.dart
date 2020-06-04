@@ -4,7 +4,7 @@ import 'package:keep_notes_clone/colors.dart';
 
 import 'dart:math' as math;
 
-import 'package:keep_notes_clone/create_note_screen.dart';
+import 'package:keep_notes_clone/create_edit_note_screen.dart';
 
 class MyCustomFab extends StatelessWidget {
   @override
