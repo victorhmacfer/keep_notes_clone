@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
+import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/styles.dart';
 import 'package:provider/provider.dart';
 
@@ -14,9 +15,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    return Provider<NoteTrackingBloc>(
-      create: (context) => NoteTrackingBloc(),
-      dispose: (context, theBloc) => theBloc.dispose(),
+    return MultiProvider(
+      providers: [
+        Provider<NoteTrackingBloc>(
+          create: (context) => NoteTrackingBloc(),
+          dispose: (context, theBloc) => theBloc.dispose(),
+        ),
+        ChangeNotifierProvider<DrawerScreenSelection>(
+          create: (context) => DrawerScreenSelection(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,

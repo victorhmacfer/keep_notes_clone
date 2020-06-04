@@ -15,20 +15,40 @@ class NoteTrackingBloc {
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
+  Stream<List<Note>> get archivedNoteListStream =>
+      noteListStream.map(_filterArchivedNotes);
+
+  Stream<List<Note>> get _unarchivedNoteListStream =>
+      noteListStream.map(_filterUnarchivedNotes);
+
   Stream<List<List<Note>>> get pinnedUnpinnedNoteListsStream =>
-      noteListStream.map(_splitIntoPinnedAndUnpinned);
+      _unarchivedNoteListStream.map(_splitIntoPinnedAndUnpinned);
 
   Stream<List<Label>> get labelListStream => _labelsBS.stream;
 
-  void onCreateNewNote(String title, String text, int colorIndex, bool pinned) {
-    var newNote =
-        Note(title: title, text: text, colorIndex: colorIndex, pinned: pinned);
+  void onCreateNewNote(
+      String title, String text, int colorIndex, bool pinned, bool archived) {
+    if (pinned) {
+      assert(archived == false,
+          'Note cannot be created as both pinned and archived');
+    }
+
+    var newNote = Note(
+        title: title,
+        text: text,
+        colorIndex: colorIndex,
+        pinned: pinned,
+        archived: archived);
 
     _notes.add(newNote);
     _notesBS.add(_notes);
   }
 
   void onNoteEdited() {
+    _notesBS.add(_notes);
+  }
+
+  void onNoteArchived() {
     _notesBS.add(_notes);
   }
 
@@ -47,6 +67,14 @@ class NoteTrackingBloc {
     output.add(pinned);
     output.add(unpinned);
     return output;
+  }
+
+  List<Note> _filterArchivedNotes(List<Note> input) {
+    return input.where((note) => note.archived).toList();
+  }
+
+  List<Note> _filterUnarchivedNotes(List<Note> input) {
+    return input.where((note) => note.archived == false).toList();
   }
 
   void onCreateNewLabel(String text) {

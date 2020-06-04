@@ -3,16 +3,10 @@ import 'package:keep_notes_clone/colors.dart';
 import 'package:keep_notes_clone/models/note.dart';
 
 class NoteCreateEditSharedState with ChangeNotifier {
-  // int _selectedColorIndex = 0;
-
-  // final titleController = TextEditingController();
-  // final textController = TextEditingController();
   int _selectedColorIndex;
   final TextEditingController titleController;
   final TextEditingController textController;
 
-  // final titleFocusNode = FocusNode();
-  // final textFocusNode = FocusNode();
   final FocusNode titleFocusNode = FocusNode();
   final FocusNode textFocusNode = FocusNode();
 
@@ -22,7 +16,6 @@ class NoteCreateEditSharedState with ChangeNotifier {
   bool _leftBottomSheetOpen = false;
   bool _rightBottomSheetOpen = false;
 
-  // bool _isPinned = false;
   bool _isPinned;
 
   NoteCreateEditSharedState()

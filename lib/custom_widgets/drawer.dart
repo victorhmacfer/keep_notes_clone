@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/archive_screen.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
 
 import 'package:keep_notes_clone/colors.dart';
 import 'package:keep_notes_clone/edit_labels_screen.dart';
+import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/settings_screen.dart';
 
 import 'package:keep_notes_clone/styles.dart';
@@ -26,12 +29,12 @@ class SelectableDrawerItem extends StatelessWidget {
 
   final String iconFileName;
 
-  final bool selected;
+  final void Function() onPressed;
 
   SelectableDrawerItem(this.text,
       {this.iconFileName = 'outline_label_black_48.png',
-      this.drawerItemIndex,
-      this.selected = false});
+      @required this.drawerItemIndex,
+      @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -43,26 +46,32 @@ class SelectableDrawerItem extends StatelessWidget {
           )
         : PngIcon(fileName: iconFileName);
 
-    return Container(
-      height: _drawerItemHeight,
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 24),
-      margin: (selected) ? _selectedMargin : EdgeInsets.zero,
-      decoration: BoxDecoration(
-          color: (selected) ? appDrawerItemSelected : appWhite,
-          borderRadius: (selected) ? _selectedBorderRadius : BorderRadius.zero),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          pngIcon,
-          SizedBox(
-            width: _iconToTextSpacing,
-          ),
-          Text(
-            text,
-            style: drawerItemStyle,
-          ),
-        ],
+    var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
+    var selected = drawerItemIndex == drawerScreenSelection.selectedScreenIndex;
+
+    return GestureDetector(
+      onTap: onPressed,
+          child: Container(
+        height: _drawerItemHeight,
+        width: double.infinity,
+        padding: EdgeInsets.only(left: 24),
+        margin: (selected) ? _selectedMargin : EdgeInsets.zero,
+        decoration: BoxDecoration(
+            color: (selected) ? appDrawerItemSelected : appWhite,
+            borderRadius: (selected) ? _selectedBorderRadius : BorderRadius.zero),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            pngIcon,
+            SizedBox(
+              width: _iconToTextSpacing,
+            ),
+            Text(
+              text,
+              style: drawerItemStyle,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -156,6 +165,7 @@ class MyDrawer extends StatelessWidget {
         iconFileName: 'outline_label_black_48.png',
         // accounting for the other 4 SELECTABLE drawer items that are not labels
         drawerItemIndex: i + 4,
+        onPressed: () {},
       );
       theList.add(selectableLabelItem);
     }
@@ -165,6 +175,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
 
     return Drawer(
       child: ListView(
@@ -174,12 +185,18 @@ class MyDrawer extends StatelessWidget {
             'Notes',
             iconFileName: 'keep-quadrado.png',
             drawerItemIndex: 0,
-            selected: true,
+            onPressed: () {
+              if (drawerScreenSelection.selectedScreenIndex != 0) {
+                drawerScreenSelection.changeSelectedScreenToIndex(0);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+              }
+            },
           ),
           SelectableDrawerItem(
             'Reminders',
             iconFileName: 'outline_notifications_black_48.png',
             drawerItemIndex: 1,
+            onPressed: () {},
           ),
           StreamBuilder<List<Label>>(
               stream: noteTrackingBloc.labelListStream,
@@ -219,11 +236,18 @@ class MyDrawer extends StatelessWidget {
             'Archive',
             iconFileName: 'outline_archive_black_48.png',
             drawerItemIndex: 2,
+            onPressed: () {
+              if (drawerScreenSelection.selectedScreenIndex != 2) {
+                drawerScreenSelection.changeSelectedScreenToIndex(2);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ArchiveScreen()));
+              }
+            },
           ),
           SelectableDrawerItem(
             'Trash',
             iconFileName: 'outline_delete_black_48.png',
             drawerItemIndex: 3,
+            onPressed: () {},
           ),
           MyCustomDrawerDivider(),
           SimpleDrawerItem(

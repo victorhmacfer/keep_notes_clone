@@ -9,6 +9,7 @@ import 'package:keep_notes_clone/colors.dart';
 import 'package:keep_notes_clone/custom_widgets/search_appbar.dart';
 
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
+import 'package:keep_notes_clone/no_notes_screen.dart';
 import 'package:keep_notes_clone/styles.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +39,6 @@ class HomeScreen extends StatelessWidget {
 const double _bottomPadding = 56;
 
 class HomeBody extends StatelessWidget {
-
   Widget _noteCardBuilder(Note note) => NoteCard(note: note);
 
   Widget _sectionTitle(String title) {
@@ -94,7 +94,6 @@ class HomeBody extends StatelessWidget {
 
                     if (pinnedNotesList.isNotEmpty ||
                         unpinnedNotesList.isNotEmpty) {
-
                       if (pinnedNotesList.isEmpty) {
                         return Container(
                           margin: EdgeInsets.only(bottom: _bottomPadding),
@@ -129,34 +128,6 @@ class HomeBody extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class NoNotesScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
-
-    return Container(
-      height: screenHeight * 0.8,
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Image.asset(
-            'assets/icons/keep-logo.png',
-            height: 100,
-          ),
-          SizedBox(
-            height: 24,
-          ),
-          Text(
-            'Notes you add appear here',
-            style: cardSmallTextStyle,
-          ),
-        ],
       ),
     );
   }

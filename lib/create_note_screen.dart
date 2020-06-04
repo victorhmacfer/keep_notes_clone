@@ -8,7 +8,7 @@ import 'package:keep_notes_clone/notifiers/note_create_edit_shared_state.dart';
 import 'package:keep_notes_clone/styles.dart';
 import 'package:provider/provider.dart';
 
-import 'models/note.dart';
+import 'package:keep_notes_clone/models/note.dart';
 
 class CreateEditNoteScreen extends StatelessWidget {
   final Note note;
@@ -17,7 +17,6 @@ class CreateEditNoteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     if (note == null) {
       return ChangeNotifierProvider<NoteCreateEditSharedState>(
         create: (context) => NoteCreateEditSharedState(),
@@ -34,7 +33,9 @@ class CreateEditNoteScreen extends StatelessWidget {
           appBar: CreateEditNoteAppBar(
             note: note,
           ),
-          body: CreateEditNoteBody(editing: true,),
+          body: CreateEditNoteBody(
+            editing: true,
+          ),
           bottomNavigationBar: MyStickyBottomAppBar()),
     );
   }
@@ -67,7 +68,8 @@ class CreateEditNoteAppBar extends StatelessWidget
             var pinned = noteCreateEditSharedState.isPinned;
             if (title.isNotEmpty || text.isNotEmpty) {
               if (note == null) {
-                noteBloc.onCreateNewNote(title, text, colorIndex, pinned);
+                noteBloc.onCreateNewNote(
+                    title, text, colorIndex, pinned, false);
               } else {
                 note.title = title;
                 note.text = text;
@@ -104,7 +106,26 @@ class CreateEditNoteAppBar extends StatelessWidget
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
               pngIcon: PngIcon(fileName: 'outline_archive_black_48.png'),
-              onTap: () {}),
+              onTap: () {
+                var title = noteCreateEditSharedState.titleController.text;
+                var text = noteCreateEditSharedState.textController.text;
+                var colorIndex = noteCreateEditSharedState.selectedColorIndex;
+                if (title.isNotEmpty || text.isNotEmpty) {
+                  if (note == null) {
+                    noteBloc.onCreateNewNote(
+                        title, text, colorIndex, false, true);
+                  } else {
+                    note.title = title;
+                    note.text = text;
+                    note.colorIndex = colorIndex;
+                    note.archived = true;
+                    noteBloc.onNoteEdited();
+                  }
+                }
+                noteCreateEditSharedState.closeLeftBottomSheet();
+                noteCreateEditSharedState.closeRightBottomSheet();
+                Navigator.pop(context);
+              }),
         ),
       ],
     );
