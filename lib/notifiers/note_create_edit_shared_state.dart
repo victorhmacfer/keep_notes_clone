@@ -55,6 +55,9 @@ class NoteCreateEditSharedState with ChangeNotifier {
   bool get leftBottomSheetOpen => _leftBottomSheetOpen;
   bool get rightBottomSheetOpen => _rightBottomSheetOpen;
 
+  bool shouldManuallyCloseLeftSheet;
+  bool shouldManuallyCloseRightSheet;
+
   void openLeftBottomSheet() {
     closeRightBottomSheet();
     _leftBottomSheetOpen = true;
@@ -63,7 +66,9 @@ class NoteCreateEditSharedState with ChangeNotifier {
   void closeLeftBottomSheet() {
     if (leftBottomSheetOpen) {
       _leftBottomSheetOpen = false;
-      if (leftBottomSheetController != null) leftBottomSheetController.close();
+      if (leftBottomSheetController != null && shouldManuallyCloseLeftSheet) {
+        leftBottomSheetController.close();
+      }
     }
   }
 
@@ -75,8 +80,9 @@ class NoteCreateEditSharedState with ChangeNotifier {
   void closeRightBottomSheet() {
     if (rightBottomSheetOpen) {
       _rightBottomSheetOpen = false;
-      if (rightBottomSheetController != null)
+      if (rightBottomSheetController != null && shouldManuallyCloseRightSheet) {
         rightBottomSheetController.close();
+      }
     }
   }
 }

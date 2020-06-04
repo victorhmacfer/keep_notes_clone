@@ -302,6 +302,14 @@ class MyStickyBottomAppBar extends StatelessWidget {
                         noteCreateEditSharedState.leftBottomSheetController =
                             Scaffold.of(context)
                                 .showBottomSheet(_leftBottomSheetBuilder);
+                        noteCreateEditSharedState.shouldManuallyCloseLeftSheet =
+                            true;
+                        noteCreateEditSharedState
+                            .leftBottomSheetController.closed
+                            .whenComplete(() {
+                          noteCreateEditSharedState
+                              .shouldManuallyCloseLeftSheet = false;
+                        });
                       } else {
                         noteCreateEditSharedState.closeLeftBottomSheet();
                       }
@@ -319,6 +327,14 @@ class MyStickyBottomAppBar extends StatelessWidget {
                         noteCreateEditSharedState.rightBottomSheetController =
                             Scaffold.of(context)
                                 .showBottomSheet(_rightBottomSheetBuilder);
+                        noteCreateEditSharedState
+                            .shouldManuallyCloseRightSheet = true;
+                        noteCreateEditSharedState
+                            .rightBottomSheetController.closed
+                            .whenComplete(() {
+                          noteCreateEditSharedState
+                              .shouldManuallyCloseRightSheet = false;
+                        });
                       } else {
                         noteCreateEditSharedState.closeRightBottomSheet();
                       }
