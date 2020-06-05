@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 
+// I created this for grabbing icons from google icons cuz not all of them
+// are available from material icons provided with flutter i.e., "Icons.foo"
 class PngIcon extends StatelessWidget {
   final String fileName; // name of file inside "assets/icons/"  directory
 
-  Color iconColor;
+  final Color iconColor;
   final double size;
 
   PngIcon({
     @required this.fileName,
     this.size = 24,
-    this.iconColor,
+    this.iconColor = appIconGrey,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (iconColor == null) iconColor = IconTheme.of(context).color;
-
     return Image.asset(
       'assets/icons/$fileName',
       color: iconColor,
@@ -38,6 +39,3 @@ class PngIconButton extends StatelessWidget {
     return GestureDetector(onTap: onTap, child: pngIcon);
   }
 }
-
-
-

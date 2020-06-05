@@ -10,9 +10,7 @@ class NoteCard extends StatelessWidget {
   final Note note;
 
   final String _title;
-
   final String _text;
-
   final NoteColor _color;
 
   static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;

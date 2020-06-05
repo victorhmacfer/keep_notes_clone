@@ -24,12 +24,10 @@ const double _drawerItemHeight = 48;
 const double _iconToTextSpacing = 16;
 
 class SelectableDrawerItem extends StatelessWidget {
+
   final String text;
-
-  final int drawerItemIndex;
-
   final String iconFileName;
-
+  final int drawerItemIndex;
   final void Function() onPressed;
 
   SelectableDrawerItem(this.text,
@@ -156,7 +154,15 @@ class MyCustomDrawerDivider extends StatelessWidget {
 }
 
 class MyDrawer extends StatelessWidget {
-  //TODO: explain(document) the indexing of the items in the drawer..
+  // this drawer item indexes (for the notifier to track the selected item) are:
+  // 'Notes' item         index 0
+  // 'Reminders' item     index 1
+  // some label           index 4
+  // another label        index 5
+  //      ...
+  //      ...
+  // 'Archive' item       index 2
+  // 'Trash' item         index 3
 
   List<Widget> _labelList(List<Label> labels) {
     List<Widget> theList = [];
