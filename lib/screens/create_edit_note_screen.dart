@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/screens/note_labels_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/custom_widgets/png.dart';
@@ -296,7 +297,9 @@ class MyStickyBottomAppBar extends StatelessWidget {
           _CreateNoteBottomSheetTile(
             pngIcon: PngIcon(fileName: 'outline_label_black_48.png'),
             text: 'Labels',
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NoteLabelsScreen()));
+            },
           ),
           _ColorSelectionList(),
         ],

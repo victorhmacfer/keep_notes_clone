@@ -13,6 +13,8 @@ class NoteTrackingBloc {
   final _notesBS = BehaviorSubject<List<Note>>();
   final _labelsBS = BehaviorSubject<List<Label>>();
 
+  Stream<List<Label>> get labelListStream => _labelsBS.stream;
+
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
   Stream<List<List<Note>>> get pinnedUnpinnedNoteListsStream =>
@@ -30,7 +32,7 @@ class NoteTrackingBloc {
   Stream<List<Note>> get _notArchivedNotDeletedNoteListStream =>
       _unarchivedNoteListStream.map(_filterNotDeletedNotes);
 
-  Stream<List<Label>> get labelListStream => _labelsBS.stream;
+  
 
   void onCreateNewNote(
       String title, String text, int colorIndex, bool pinned, bool archived) {
@@ -96,9 +98,8 @@ class NoteTrackingBloc {
   }
 
   void onCreateNewLabel(String text) {
-    // TODO: check for label existence
-
-    //FIXME: this is temporary..
+    
+    //FIXME: checking for label existence...this is temporary.
     if (_labels.map((lab) => lab.text).contains(text)) return;
 
     _labels.add(Label(text: text));
