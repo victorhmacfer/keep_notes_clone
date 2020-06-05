@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 void main() {

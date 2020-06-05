@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
-import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 
-import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
-import 'package:keep_notes_clone/custom_widgets/png_icon_button.dart';
+import 'package:keep_notes_clone/custom_widgets/png.dart';
+
 import 'package:keep_notes_clone/notifiers/note_create_edit_shared_state.dart';
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/models/note.dart';

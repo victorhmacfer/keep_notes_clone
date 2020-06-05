@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 
 class NoNotesScreen extends StatelessWidget {
   @override

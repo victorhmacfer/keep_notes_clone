@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/models/note.dart';
 
 class NoteCreateEditSharedState with ChangeNotifier {

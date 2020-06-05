@@ -25,3 +25,19 @@ class PngIcon extends StatelessWidget {
     );
   }
 }
+
+class PngIconButton extends StatelessWidget {
+  final PngIcon pngIcon;
+
+  final void Function() onTap;
+
+  PngIconButton({@required this.pngIcon, @required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(onTap: onTap, child: pngIcon);
+  }
+}
+
+
+

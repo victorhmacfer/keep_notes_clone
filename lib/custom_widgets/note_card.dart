@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/note.dart';
 
-import 'package:keep_notes_clone/styles.dart';
-import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 
-import 'package:keep_notes_clone/create_edit_note_screen.dart';
+import 'package:keep_notes_clone/screens/create_edit_note_screen.dart';
 
 class NoteCard extends StatelessWidget {
   final Note note;
@@ -60,9 +60,7 @@ class NoteCard extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CreateEditNoteScreen(note: note)
-            )
-        );
+                builder: (context) => CreateEditNoteScreen(note: note)));
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/archive_screen.dart';
+import 'package:keep_notes_clone/screens/archive_screen.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
-import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
+import 'package:keep_notes_clone/custom_widgets/png.dart';
 
-import 'package:keep_notes_clone/colors.dart';
-import 'package:keep_notes_clone/edit_labels_screen.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:keep_notes_clone/screens/edit_labels_screen.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
-import 'package:keep_notes_clone/settings_screen.dart';
+import 'package:keep_notes_clone/screens/settings_screen.dart';
 
-import 'package:keep_notes_clone/styles.dart';
-import 'package:keep_notes_clone/trash_screen.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/screens/trash_screen.dart';
 import 'package:provider/provider.dart';
 
 final _selectedBorderRadius = BorderRadius.only(
@@ -52,14 +52,15 @@ class SelectableDrawerItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: onPressed,
-          child: Container(
+      child: Container(
         height: _drawerItemHeight,
         width: double.infinity,
         padding: EdgeInsets.only(left: 24),
         margin: (selected) ? _selectedMargin : EdgeInsets.zero,
         decoration: BoxDecoration(
             color: (selected) ? appDrawerItemSelected : appWhite,
-            borderRadius: (selected) ? _selectedBorderRadius : BorderRadius.zero),
+            borderRadius:
+                (selected) ? _selectedBorderRadius : BorderRadius.zero),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -189,7 +190,8 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {
               if (drawerScreenSelection.selectedScreenIndex != 0) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
               }
             },
           ),
@@ -240,7 +242,8 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {
               if (drawerScreenSelection.selectedScreenIndex != 2) {
                 drawerScreenSelection.changeSelectedScreenToIndex(2);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ArchiveScreen()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => ArchiveScreen()));
               }
             },
           ),
@@ -251,7 +254,8 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {
               if (drawerScreenSelection.selectedScreenIndex != 3) {
                 drawerScreenSelection.changeSelectedScreenToIndex(3);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TrashScreen()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => TrashScreen()));
               }
             },
           ),

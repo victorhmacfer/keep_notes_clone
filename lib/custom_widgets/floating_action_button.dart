@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'dart:math' as math;
 
-import 'package:keep_notes_clone/create_edit_note_screen.dart';
+import 'package:keep_notes_clone/screens/create_edit_note_screen.dart';
 
 class MyCustomFab extends StatelessWidget {
   @override

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
-import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 
 class EditLabelsScreen extends StatelessWidget {
   List<Widget> _labelList(List<Label> labels) {

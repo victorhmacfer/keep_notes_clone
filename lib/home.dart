@@ -4,13 +4,13 @@ import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 
-import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/custom_widgets/search_appbar.dart';
 
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
-import 'package:keep_notes_clone/no_notes_screen.dart';
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/screens/no_notes_screen.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';

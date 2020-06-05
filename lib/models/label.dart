@@ -1,5 +1,3 @@
-
-
 class Label {
   String text;
 

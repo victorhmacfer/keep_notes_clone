@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
-import 'package:keep_notes_clone/colors.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
-import 'package:keep_notes_clone/custom_widgets/png_icon.dart';
-import 'package:keep_notes_clone/custom_widgets/png_icon_button.dart';
+import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/no_notes_screen.dart';
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/screens/no_notes_screen.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
-import 'custom_widgets/drawer.dart';
+import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 
-class TrashScreen extends StatelessWidget {
+class ArchiveScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: appWhite,
       drawer: MyDrawer(),
-      body: TrashBody(),
+      body: ArchiveBody(),
     );
   }
 }
 
 const double _bottomPadding = 56;
 
-class TrashBody extends StatelessWidget {
+class ArchiveBody extends StatelessWidget {
   Widget _noteCardBuilder(Note note) => NoteCard(note: note);
 
   @override
@@ -39,7 +38,7 @@ class TrashBody extends StatelessWidget {
             backgroundColor: appWhite,
             iconTheme: IconThemeData(color: appIconGrey),
             title: Text(
-              'Trash',
+              'Archive',
               style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
             ),
             actions: <Widget>[
@@ -49,12 +48,18 @@ class TrashBody extends StatelessWidget {
                     pngIcon: PngIcon(fileName: 'baseline_search_black_48.png'),
                     onTap: () {}),
               ),
-              
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: PngIconButton(
+                    pngIcon:
+                        PngIcon(fileName: 'outline_dashboard_black_48.png'),
+                    onTap: () {}),
+              ),
             ],
           ),
           SliverToBoxAdapter(
             child: StreamBuilder<List<Note>>(
-                stream: noteBloc.deletedNoteListStream,
+                stream: noteBloc.archivedNoteListStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data.isNotEmpty) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/colors.dart';
-import 'package:keep_notes_clone/styles.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 
 const double _leftPadding = 16;
 
