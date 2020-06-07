@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/models/note.dart';
 
-class NoteCreateEditSharedState with ChangeNotifier {
+class NoteEditingChangeNotifier with ChangeNotifier {
   int _selectedColorIndex;
   final TextEditingController titleController;
   final TextEditingController textController;
@@ -20,13 +20,7 @@ class NoteCreateEditSharedState with ChangeNotifier {
 
   Note noteBeingEdited;
 
-  NoteCreateEditSharedState()
-      : _selectedColorIndex = 0,
-        titleController = TextEditingController(),
-        textController = TextEditingController(),
-        _isPinned = false;
-
-  NoteCreateEditSharedState.fromNote(Note note)
+  NoteEditingChangeNotifier(Note note)
       : _selectedColorIndex = note.colorIndex,
         titleController = TextEditingController(text: note.title),
         textController = TextEditingController(text: note.text),

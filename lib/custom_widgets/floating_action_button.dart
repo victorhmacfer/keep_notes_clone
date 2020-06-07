@@ -4,7 +4,7 @@ import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'dart:math' as math;
 
-import 'package:keep_notes_clone/screens/create_edit_note_screen.dart';
+import 'package:keep_notes_clone/screens/create_note_screen.dart';
 
 class MyCustomFab extends StatelessWidget {
   @override
@@ -16,7 +16,7 @@ class MyCustomFab extends StatelessWidget {
         backgroundColor: appWhite,
         child: Image.asset('assets/icons/google-plus-icon.png', width: 24, height: 24,),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (ctx) => CreateEditNoteScreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (ctx) => CreateNoteScreen()));
         },
       ),
     );
