@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/models/label_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -13,15 +14,12 @@ class NoteTrackingBloc {
   final _notesBS = BehaviorSubject<List<Note>>();
   final _labelsBS = BehaviorSubject<List<Label>>();
 
-  BehaviorSubject<List<Label>> _labelSearchBS;
-
-  NoteTrackingBloc() {
-    _labelSearchBS = BehaviorSubject<List<Label>>.seeded(_labels);
-  }
+  final _labelSearchBS = BehaviorSubject<LabelSearchResult>();
 
   Stream<List<Label>> get allLabelsStream => _labelsBS.stream;
 
-  Stream<List<Label>> get labelSearchResultStream => _labelSearchBS.stream;
+  Stream<LabelSearchResult> get labelSearchResultStream =>
+      _labelSearchBS.stream;
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
@@ -116,20 +114,24 @@ class NoteTrackingBloc {
 
   void onSearchLabel(String substring) {
     if (substring.isEmpty) {
-      _labelSearchBS.add(_labels);
+      _labelSearchBS.add(LabelSearchResult(false, _labels));
     }
 
     List<Label> results = [];
+    var foundExact = false;
     for (var label in _labels) {
       if (label.text.contains(substring)) {
         results.add(label);
+        if (label.text == substring) {
+          foundExact = true;
+        }
       }
     }
-    _labelSearchBS.add(results);
+    _labelSearchBS.add(LabelSearchResult(foundExact, results));
   }
 
   void onResetLabelSearch() {
-    _labelSearchBS.add(_labels);
+    _labelSearchBS.add(LabelSearchResult(false, _labels));
   }
 
   void dispose() {

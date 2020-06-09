@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/models/label_search_result.dart';
 import 'package:keep_notes_clone/notifiers/note_creation.dart';
 import 'package:keep_notes_clone/notifiers/note_editing.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -9,8 +10,22 @@ import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 class NoteLabelingScreenForCreate extends StatelessWidget {
-  List<Widget> _labelList(List<Label> labels) {
-    return labels.map((label) => _NoteLabelListItemForCreate(label)).toList();
+  final labelSearchController = TextEditingController();
+
+  List<Widget> _labelList(bool showCreateButton, List<Label> labels) {
+    List<Widget> finalList = [];
+    if (showCreateButton) {
+      finalList.add(Container(
+        color: Colors.red[100],
+        height: 56,
+      ));
+    } else {
+      finalList.add(Container());
+    }
+    for (var lab in labels) {
+      finalList.add(_NoteLabelListItemForCreate(lab));
+    }
+    return finalList;
   }
 
   @override
@@ -21,6 +36,7 @@ class NoteLabelingScreenForCreate extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
+          controller: labelSearchController,
           cursorWidth: 1,
           onChanged: (text) {
             noteTrackingBloc.onSearchLabel(text);
@@ -34,12 +50,14 @@ class NoteLabelingScreenForCreate extends StatelessWidget {
       body: Container(
         constraints: BoxConstraints.expand(),
         color: appWhite,
-        child: StreamBuilder<List<Label>>(
+        child: StreamBuilder<LabelSearchResult>(
             stream: noteTrackingBloc.labelSearchResultStream,
             builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data.isNotEmpty) {
+              if (snapshot.hasData && snapshot.data.labels.isNotEmpty) {
+                var showCreateButton = !snapshot.data.foundExactMatch &&
+                    labelSearchController.text.isNotEmpty;
                 return ListView(
-                  children: _labelList(snapshot.data),
+                  children: _labelList(showCreateButton, snapshot.data.labels),
                 );
               }
               return Container();
@@ -50,8 +68,22 @@ class NoteLabelingScreenForCreate extends StatelessWidget {
 }
 
 class NoteLabelingScreenForEdit extends StatelessWidget {
-  List<Widget> _labelList(List<Label> labels) {
-    return labels.map((label) => _NoteLabelListItemForEdit(label)).toList();
+  final labelSearchController = TextEditingController();
+
+  List<Widget> _labelList(bool showCreateButton, List<Label> labels) {
+    List<Widget> finalList = [];
+    if (showCreateButton) {
+      finalList.add(Container(
+        color: Colors.red[100],
+        height: 56,
+      ));
+    } else {
+      finalList.add(Container());
+    }
+    for (var lab in labels) {
+      finalList.add(_NoteLabelListItemForEdit(lab));
+    }
+    return finalList;
   }
 
   @override
@@ -62,6 +94,7 @@ class NoteLabelingScreenForEdit extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
+          controller: labelSearchController,
           cursorWidth: 1,
           onChanged: (text) {
             noteTrackingBloc.onSearchLabel(text);
@@ -75,12 +108,14 @@ class NoteLabelingScreenForEdit extends StatelessWidget {
       body: Container(
         constraints: BoxConstraints.expand(),
         color: appWhite,
-        child: StreamBuilder<List<Label>>(
+        child: StreamBuilder<LabelSearchResult>(
             stream: noteTrackingBloc.labelSearchResultStream,
             builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data.isNotEmpty) {
+              if (snapshot.hasData && snapshot.data.labels.isNotEmpty) {
+                var showCreateButton = !snapshot.data.foundExactMatch &&
+                    labelSearchController.text.isNotEmpty;
                 return ListView(
-                  children: _labelList(snapshot.data),
+                  children: _labelList(showCreateButton, snapshot.data.labels),
                 );
               }
               return Container();
@@ -135,7 +170,6 @@ class _NoteLabelListItemForCreate extends StatelessWidget {
     );
   }
 }
-
 
 class _NoteLabelListItemForEdit extends StatelessWidget {
   final Label label;
