@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/models/note.dart';
 
@@ -20,11 +21,14 @@ class NoteEditingChangeNotifier with ChangeNotifier {
 
   Note noteBeingEdited;
 
+  List<Label> futureLabels;
+
   NoteEditingChangeNotifier(Note note)
       : _selectedColorIndex = note.colorIndex,
         titleController = TextEditingController(text: note.title),
         textController = TextEditingController(text: note.text),
         _isPinned = note.pinned,
+        futureLabels = List.from(note.labels),
         noteBeingEdited = note;
 
   bool get isPinned => _isPinned;
@@ -36,6 +40,16 @@ class NoteEditingChangeNotifier with ChangeNotifier {
 
   void unpinNote() {
     _isPinned = false;
+    notifyListeners();
+  }
+
+  void checkLabel(Label label) {
+    futureLabels.add(label);
+    notifyListeners();
+  }
+
+  void uncheckLabel(Label label) {
+    futureLabels.remove(label);
     notifyListeners();
   }
 

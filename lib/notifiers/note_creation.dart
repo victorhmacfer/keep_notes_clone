@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 class NoteCreationChangeNotifier with ChangeNotifier {
-  int _selectedColorIndex;
-  final TextEditingController titleController;
-  final TextEditingController textController;
+  int _selectedColorIndex = 0;
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
 
   final FocusNode titleFocusNode = FocusNode();
   final FocusNode textFocusNode = FocusNode();
@@ -15,13 +16,22 @@ class NoteCreationChangeNotifier with ChangeNotifier {
   bool _leftBottomSheetOpen = false;
   bool _rightBottomSheetOpen = false;
 
-  bool _isPinned;
+  bool _isPinned = false;
 
-  NoteCreationChangeNotifier()
-      : _selectedColorIndex = 0,
-        titleController = TextEditingController(),
-        textController = TextEditingController(),
-        _isPinned = false;
+  List<Label> _futureLabels = [];
+
+  List<Label> get futureLabels => List.unmodifiable(_futureLabels);
+
+  void checkLabel(Label label) {
+    _futureLabels.add(label);
+    notifyListeners();
+  }
+
+  void uncheckLabel(Label label) {
+    _futureLabels.remove(label);
+    notifyListeners();
+  }
+
 
   bool get isPinned => _isPinned;
 

@@ -35,7 +35,7 @@ class NoteTrackingBloc {
   
 
   void onCreateNewNote(
-      String title, String text, int colorIndex, bool pinned, bool archived) {
+      String title, String text, int colorIndex, bool pinned, bool archived, {List<Label> labels}) {
     if (pinned) {
       assert(archived == false,
           'Note cannot be created as both pinned and archived');
@@ -46,7 +46,8 @@ class NoteTrackingBloc {
         text: text,
         colorIndex: colorIndex,
         pinned: pinned,
-        archived: archived);
+        archived: archived,
+        labels: labels);
 
     _notes.add(newNote);
     _notesBS.add(_notes);

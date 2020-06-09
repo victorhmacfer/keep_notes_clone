@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
-import 'package:keep_notes_clone/screens/note_labels_screen.dart';
+import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/custom_widgets/png.dart';
@@ -43,8 +44,10 @@ class _CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
             var text = notifier.textController.text;
             var colorIndex = notifier.selectedColorIndex;
             var pinned = notifier.isPinned;
+            var labels = notifier.futureLabels;
             if (title.isNotEmpty || text.isNotEmpty) {
-              noteBloc.onCreateNewNote(title, text, colorIndex, pinned, false);
+              noteBloc.onCreateNewNote(title, text, colorIndex, pinned, false,
+                  labels: labels);
             }
             notifier.closeLeftBottomSheet();
             notifier.closeRightBottomSheet();
@@ -92,9 +95,45 @@ class _CreateNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class _CreateNoteBody extends StatelessWidget {
+  Widget _labelChip(Label theLabel) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: appCardBorderGrey, width: 1),
+      ),
+      child: Text(
+        theLabel.text,
+        style: drawerItemStyle.copyWith(fontSize: 13),
+      ),
+    );
+  }
+
+  List<Widget> _labelWidgets(List<Label> theLabels) {
+    return theLabels.map((label) => _labelChip(label)).toList();
+  }
+
+  Widget _noteLabels(List<Label> theLabels) {
+    if (theLabels.isEmpty) {
+      return Container();
+    }
+    return Container(
+      // color: Colors.purple[200],
+      width: double.infinity,
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 8,
+        direction: Axis.horizontal,
+        children: _labelWidgets(theLabels),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteCreationChangeNotifier>(context);
+
+    var noteLabels = notifier.futureLabels;
 
     return Container(
       color: notifier.selectedColor.getColor(),
@@ -149,6 +188,7 @@ class _CreateNoteBody extends StatelessWidget {
                         hintText: 'Note',
                       ),
                     ),
+                    _noteLabels(noteLabels),
                   ],
                 )),
           )
@@ -233,8 +273,14 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             pngIcon: PngIcon(fileName: 'outline_label_black_48.png'),
             text: 'Labels',
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => NoteLabelsScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider<
+                              NoteCreationChangeNotifier>.value(
+                            value: notifier,
+                            child: NoteLabelingScreenForCreate(),
+                          )));
             },
           ),
           _ColorSelectionList(),
