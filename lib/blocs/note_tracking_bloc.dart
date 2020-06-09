@@ -13,7 +13,15 @@ class NoteTrackingBloc {
   final _notesBS = BehaviorSubject<List<Note>>();
   final _labelsBS = BehaviorSubject<List<Label>>();
 
-  Stream<List<Label>> get labelListStream => _labelsBS.stream;
+  BehaviorSubject<List<Label>> _labelSearchBS;
+
+  NoteTrackingBloc() {
+    _labelSearchBS = BehaviorSubject<List<Label>>.seeded(_labels);
+  }
+
+  Stream<List<Label>> get allLabelsStream => _labelsBS.stream;
+
+  Stream<List<Label>> get labelSearchResultStream => _labelSearchBS.stream;
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
@@ -32,10 +40,9 @@ class NoteTrackingBloc {
   Stream<List<Note>> get _notArchivedNotDeletedNoteListStream =>
       _unarchivedNoteListStream.map(_filterNotDeletedNotes);
 
-  
-
   void onCreateNewNote(
-      String title, String text, int colorIndex, bool pinned, bool archived, {List<Label> labels}) {
+      String title, String text, int colorIndex, bool pinned, bool archived,
+      {List<Label> labels}) {
     if (pinned) {
       assert(archived == false,
           'Note cannot be created as both pinned and archived');
@@ -99,7 +106,6 @@ class NoteTrackingBloc {
   }
 
   void onCreateNewLabel(String text) {
-    
     //FIXME: checking for label existence...this is temporary.
     if (_labels.map((lab) => lab.text).contains(text)) return;
 
@@ -108,8 +114,27 @@ class NoteTrackingBloc {
     _labelsBS.add(_labels);
   }
 
+  void onSearchLabel(String substring) {
+    if (substring.isEmpty) {
+      _labelSearchBS.add(_labels);
+    }
+
+    List<Label> results = [];
+    for (var label in _labels) {
+      if (label.text.contains(substring)) {
+        results.add(label);
+      }
+    }
+    _labelSearchBS.add(results);
+  }
+
+  void onResetLabelSearch() {
+    _labelSearchBS.add(_labels);
+  }
+
   void dispose() {
     _notesBS.close();
     _labelsBS.close();
+    _labelSearchBS.close();
   }
 }

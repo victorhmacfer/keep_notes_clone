@@ -16,11 +16,15 @@ class NoteLabelingScreenForCreate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    noteTrackingBloc.onResetLabelSearch();
 
     return Scaffold(
       appBar: AppBar(
         title: TextField(
           cursorWidth: 1,
+          onChanged: (text) {
+            noteTrackingBloc.onSearchLabel(text);
+          },
           cursorColor: appIconGrey,
           decoration: InputDecoration.collapsed(hintText: 'Enter label name'),
         ),
@@ -31,7 +35,7 @@ class NoteLabelingScreenForCreate extends StatelessWidget {
         constraints: BoxConstraints.expand(),
         color: appWhite,
         child: StreamBuilder<List<Label>>(
-            stream: noteTrackingBloc.labelListStream,
+            stream: noteTrackingBloc.labelSearchResultStream,
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data.isNotEmpty) {
                 return ListView(
@@ -53,11 +57,15 @@ class NoteLabelingScreenForEdit extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    noteTrackingBloc.onResetLabelSearch();
 
     return Scaffold(
       appBar: AppBar(
         title: TextField(
           cursorWidth: 1,
+          onChanged: (text) {
+            noteTrackingBloc.onSearchLabel(text);
+          },
           cursorColor: appIconGrey,
           decoration: InputDecoration.collapsed(hintText: 'Enter label name'),
         ),
@@ -68,7 +76,7 @@ class NoteLabelingScreenForEdit extends StatelessWidget {
         constraints: BoxConstraints.expand(),
         color: appWhite,
         child: StreamBuilder<List<Label>>(
-            stream: noteTrackingBloc.labelListStream,
+            stream: noteTrackingBloc.labelSearchResultStream,
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data.isNotEmpty) {
                 return ListView(

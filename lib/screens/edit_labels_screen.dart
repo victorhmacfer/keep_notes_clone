@@ -36,7 +36,7 @@ class EditLabelsScreen extends StatelessWidget {
             SliverToBoxAdapter(child: CreateLabelListItem()),
             SliverToBoxAdapter(
               child: StreamBuilder<List<Label>>(
-                  stream: noteTrackingBloc.labelListStream,
+                  stream: noteTrackingBloc.allLabelsStream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data.isNotEmpty) {
                       return Column(

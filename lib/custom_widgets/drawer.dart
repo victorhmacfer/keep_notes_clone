@@ -208,7 +208,7 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {},
           ),
           StreamBuilder<List<Label>>(
-              stream: noteTrackingBloc.labelListStream,
+              stream: noteTrackingBloc.allLabelsStream,
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data.isNotEmpty) {
                   return Column(
