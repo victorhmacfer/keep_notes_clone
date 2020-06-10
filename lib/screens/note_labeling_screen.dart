@@ -9,21 +9,99 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
+class _CreateLabelButtonForCreate extends StatelessWidget {
+  final String labelText;
+
+  final void Function() onTap;
+
+  _CreateLabelButtonForCreate(this.labelText, {this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        color: appWhite,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        height: 56,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.add,
+              color: appSettingsBlue,
+            ),
+            SizedBox(
+              width: 32,
+            ),
+            Expanded(
+                child: Text(
+              'Create "$labelText"',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: drawerItemStyle.copyWith(fontSize: 15, letterSpacing: 0),
+            ))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CreateLabelButtonForEdit extends StatelessWidget {
+  final String labelText;
+
+  final void Function() onTap;
+
+  _CreateLabelButtonForEdit(this.labelText, {this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        color: appWhite,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        height: 56,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.add,
+              color: appSettingsBlue,
+            ),
+            SizedBox(
+              width: 32,
+            ),
+            Expanded(
+                child: Text(
+              'Create "$labelText"',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: drawerItemStyle.copyWith(fontSize: 15, letterSpacing: 0),
+            ))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class NoteLabelingScreenForCreate extends StatelessWidget {
   final labelSearchController = TextEditingController();
 
-  List<Widget> _labelList(bool showCreateButton, List<Label> labels) {
+  List<Widget> _labelList(
+      bool showCreateButton, String labelSearchKeyword, List<Label> labels) {
     List<Widget> finalList = [];
     if (showCreateButton) {
-      finalList.add(Container(
-        color: Colors.red[100],
-        height: 56,
-      ));
+      finalList.add(_CreateLabelButtonForCreate(labelSearchKeyword));
     } else {
       finalList.add(Container());
     }
-    for (var lab in labels) {
-      finalList.add(_NoteLabelListItemForCreate(lab));
+    if (labels.isNotEmpty) {
+      for (var lab in labels) {
+        finalList.add(_NoteLabelListItemForCreate(lab));
+      }
     }
     return finalList;
   }
@@ -53,11 +131,12 @@ class NoteLabelingScreenForCreate extends StatelessWidget {
         child: StreamBuilder<LabelSearchResult>(
             stream: noteTrackingBloc.labelSearchResultStream,
             builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data.labels.isNotEmpty) {
+              if (snapshot.hasData) {
                 var showCreateButton = !snapshot.data.foundExactMatch &&
                     labelSearchController.text.isNotEmpty;
                 return ListView(
-                  children: _labelList(showCreateButton, snapshot.data.labels),
+                  children: _labelList(showCreateButton,
+                      labelSearchController.text, snapshot.data.labels),
                 );
               }
               return Container();
@@ -70,18 +149,18 @@ class NoteLabelingScreenForCreate extends StatelessWidget {
 class NoteLabelingScreenForEdit extends StatelessWidget {
   final labelSearchController = TextEditingController();
 
-  List<Widget> _labelList(bool showCreateButton, List<Label> labels) {
+  List<Widget> _labelList(
+      bool showCreateButton, String labelSearchKeyword, List<Label> labels) {
     List<Widget> finalList = [];
     if (showCreateButton) {
-      finalList.add(Container(
-        color: Colors.red[100],
-        height: 56,
-      ));
+      finalList.add(_CreateLabelButtonForEdit(labelSearchKeyword));
     } else {
       finalList.add(Container());
     }
-    for (var lab in labels) {
-      finalList.add(_NoteLabelListItemForEdit(lab));
+    if (labels.isNotEmpty) {
+      for (var lab in labels) {
+        finalList.add(_NoteLabelListItemForEdit(lab));
+      }
     }
     return finalList;
   }
@@ -111,11 +190,12 @@ class NoteLabelingScreenForEdit extends StatelessWidget {
         child: StreamBuilder<LabelSearchResult>(
             stream: noteTrackingBloc.labelSearchResultStream,
             builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data.labels.isNotEmpty) {
+              if (snapshot.hasData) {
                 var showCreateButton = !snapshot.data.foundExactMatch &&
                     labelSearchController.text.isNotEmpty;
                 return ListView(
-                  children: _labelList(showCreateButton, snapshot.data.labels),
+                  children: _labelList(showCreateButton,
+                      labelSearchController.text, snapshot.data.labels),
                 );
               }
               return Container();
