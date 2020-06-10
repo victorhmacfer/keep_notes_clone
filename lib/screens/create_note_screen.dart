@@ -100,7 +100,7 @@ class _CreateNoteBody extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: appCardBorderGrey, width: 1),
+        border: Border.all(color: appGreyForColoredBg, width: 1),
       ),
       child: Text(
         theLabel.text,
@@ -118,7 +118,6 @@ class _CreateNoteBody extends StatelessWidget {
       return Container();
     }
     return Container(
-      // color: Colors.purple[200],
       width: double.infinity,
       child: Wrap(
         spacing: 4,
