@@ -164,6 +164,7 @@ class _CreateNoteBody extends StatelessWidget {
                           letterSpacing: -0.5),
                       decoration: InputDecoration.collapsed(
                         hintText: 'Title',
+                        hintStyle: TextStyle(color: appGreyForColoredBg, fontSize: 22),
                       ),
                     ),
                     TextField(
@@ -186,6 +187,7 @@ class _CreateNoteBody extends StatelessWidget {
                           letterSpacing: -0.5),
                       decoration: InputDecoration.collapsed(
                         hintText: 'Note',
+                        hintStyle: TextStyle(color: appGreyForColoredBg, fontSize: 15),
                       ),
                     ),
                     _noteLabels(noteLabels),
@@ -362,13 +364,13 @@ class _ColorSelectionList extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             color: noteColor.getColor(),
-            border: Border.all(width: 0.5, color: Colors.grey[400]),
+            border: Border.all(width: 0.5, color: appGreyForColoredBg),
             borderRadius: BorderRadius.circular(20)),
         width: 32,
         margin: EdgeInsets.symmetric(horizontal: 7),
         child: Visibility(
             visible: notifier.selectedColorIndex == index,
-            child: Icon(Icons.check)),
+            child: Icon(Icons.check, color: appGreyForColoredBg,)),
       ),
     );
   }

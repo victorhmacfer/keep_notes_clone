@@ -18,6 +18,8 @@ const appDrawerItemSelected = Color.fromARGB(255, 253, 239, 194);
 
 const appBlack = Color.fromARGB(255, 0, 0, 0);
 
+const appGreyForColoredBg = Color.fromRGBO(0, 0, 0, 0.3);
+
 const appSettingsBlue = Color.fromARGB(255, 26, 113, 228);
 
 final appDividerGrey = Colors.grey[300];
