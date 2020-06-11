@@ -3,7 +3,7 @@ import 'package:keep_notes_clone/custom_widgets/png.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
-class MyBottomAppBar extends StatelessWidget {
+class MyNotchedBottomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;

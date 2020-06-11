@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
+import 'package:keep_notes_clone/models/pinned_status_note_splitter.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
@@ -29,49 +30,17 @@ class HomeScreen extends StatelessWidget {
       extendBody: true, // making the bottom bar notch transparent
       floatingActionButton: MyCustomFab(),
       floatingActionButtonLocation: MyCustomFabLocation(),
-      bottomNavigationBar: MyBottomAppBar(),
+      bottomNavigationBar: MyNotchedBottomAppBar(),
       drawer: MyDrawer(),
-      body: HomeBody(),
+      body: _HomeBody(),
     );
   }
 }
 
-const double _bottomPadding = 56;
+Widget _noteCardBuilder(Note note) => NoteCard(note: note);
 
-class HomeBody extends StatelessWidget {
-  Widget _noteCardBuilder(Note note) => NoteCard(note: note);
-
-  Widget _sectionTitle(String title) {
-    return Container(
-      color: appWhite,
-      height: 40,
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 24),
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: drawerLabelsEditStyle.copyWith(fontSize: 11, letterSpacing: 0.5),
-      ),
-    );
-  }
-
-  Widget _othersColumn(List<Note> unpinnedNotesList) {
-    if (unpinnedNotesList.isEmpty) {
-      return Container();
-    }
-
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 24,
-        ),
-        _sectionTitle('OTHERS'),
-        Column(
-          children: unpinnedNotesList.map(_noteCardBuilder).toList(),
-        ),
-      ],
-    );
-  }
+class _HomeBody extends StatelessWidget {
+  static const double _bottomPadding = 56;
 
   @override
   Widget build(BuildContext context) {
@@ -85,21 +54,20 @@ class HomeBody extends StatelessWidget {
           slivers: <Widget>[
             SearchAppBar(),
             SliverToBoxAdapter(
-              child: StreamBuilder<List<List<Note>>>(
+              child: StreamBuilder<PinnedStatusNoteSplitter>(
                 stream: noteBloc.pinnedUnpinnedNoteListsStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    var pinnedNotesList = snapshot.data[0];
-                    var unpinnedNotesList = snapshot.data[1];
+                    var pinnedNotes = snapshot.data.pinned;
+                    var unpinnedNotes = snapshot.data.unpinned;
 
-                    if (pinnedNotesList.isNotEmpty ||
-                        unpinnedNotesList.isNotEmpty) {
-                      if (pinnedNotesList.isEmpty) {
+                    if (pinnedNotes.isNotEmpty || unpinnedNotes.isNotEmpty) {
+                      if (pinnedNotes.isEmpty) {
                         return Container(
                           margin: EdgeInsets.only(bottom: _bottomPadding),
                           child: Column(
                             children:
-                                snapshot.data[1].map(_noteCardBuilder).toList(),
+                                unpinnedNotes.map(_noteCardBuilder).toList(),
                           ),
                         );
                       }
@@ -108,13 +76,12 @@ class HomeBody extends StatelessWidget {
                         margin: EdgeInsets.only(bottom: _bottomPadding),
                         child: Column(
                           children: <Widget>[
-                            _sectionTitle('PINNED'),
+                            _SectionTitle('PINNED'),
                             Column(
-                              children: pinnedNotesList
-                                  .map(_noteCardBuilder)
-                                  .toList(),
+                              children:
+                                  pinnedNotes.map(_noteCardBuilder).toList(),
                             ),
-                            _othersColumn(unpinnedNotesList),
+                            _OthersColumn(unpinnedNotes),
                           ],
                         ),
                       );
@@ -129,6 +96,52 @@ class HomeBody extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String title;
+
+  const _SectionTitle(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: appWhite,
+      height: 40,
+      width: double.infinity,
+      padding: EdgeInsets.only(left: 24),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: drawerLabelsEditStyle.copyWith(fontSize: 11, letterSpacing: 0.5),
+      ),
+    );
+  }
+}
+
+class _OthersColumn extends StatelessWidget {
+  final List<Note> unpinnedNotesList;
+
+  _OthersColumn(this.unpinnedNotesList);
+
+  @override
+  Widget build(BuildContext context) {
+    if (unpinnedNotesList.isEmpty) {
+      return Container();
+    }
+
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 24,
+        ),
+        _SectionTitle('OTHERS'),
+        Column(
+          children: unpinnedNotesList.map(_noteCardBuilder).toList(),
+        ),
+      ],
     );
   }
 }

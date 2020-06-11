@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/label_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/models/pinned_status_note_splitter.dart';
 import 'package:rxdart/subjects.dart';
 
 class NoteTrackingBloc {
@@ -23,8 +24,8 @@ class NoteTrackingBloc {
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
-  Stream<List<List<Note>>> get pinnedUnpinnedNoteListsStream =>
-      _notArchivedNotDeletedNoteListStream.map(_splitIntoPinnedAndUnpinned);
+  Stream<PinnedStatusNoteSplitter> get pinnedUnpinnedNoteListsStream =>
+      _notArchivedNotDeletedNoteListStream.map((notes) => PinnedStatusNoteSplitter(notes));
 
   Stream<List<Note>> get archivedNoteListStream =>
       noteListStream.map(_filterArchivedNotes);
