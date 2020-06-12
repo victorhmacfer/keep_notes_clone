@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
-import 'package:keep_notes_clone/screens/edit_note_screen.dart';
+import 'package:keep_notes_clone/screens/deleted_note_setup_screen.dart';
 
 class NoteCard extends StatelessWidget {
   final Note note;
@@ -55,10 +56,17 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EditNoteScreen(note: note)));
+        if (note.deleted) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DeletedNoteSetupScreen(note: note)));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => NoteSetupScreen(note: note)));
+        }
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),

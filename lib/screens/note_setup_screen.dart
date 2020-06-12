@@ -1,47 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/custom_widgets/bottomsheet_tile.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 
-import 'package:keep_notes_clone/notifiers/note_editing.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
-import 'package:keep_notes_clone/models/note.dart';
-
-class EditNoteScreen extends StatelessWidget {
+class NoteSetupScreen extends StatelessWidget {
   final Note note;
 
-  EditNoteScreen({@required this.note});
+  NoteSetupScreen({this.note});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NoteEditingChangeNotifier>(
-      create: (context) => NoteEditingChangeNotifier(note),
+    NoteSetupScreenController controller = (note == null)
+        ? NoteSetupScreenController()
+        : NoteSetupScreenController.fromNote(note: note);
+
+    _NoteSetupAppBar theAppBar =
+        (note == null) ? _NoteSetupAppBar() : _NoteSetupAppBar(note: note);
+
+    return ChangeNotifierProvider<NoteSetupScreenController>.value(
+      value: controller,
       child: Scaffold(
-          appBar: _EditNoteAppBar(
-            note: note,
-          ),
-          body: _EditNoteBody(),
-          bottomNavigationBar: MyStickyBottomAppBar()),
+          appBar: theAppBar,
+          body: _NoteSetupBody(),
+          bottomNavigationBar: _MyStickyBottomAppBar()),
     );
   }
 }
 
-class _EditNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
+class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Note note;
 
-  _EditNoteAppBar({@required this.note});
+  _NoteSetupAppBar({this.note});
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final notifier = Provider.of<NoteEditingChangeNotifier>(context);
+    final notifier = Provider.of<NoteSetupScreenController>(context);
     final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return AppBar(
@@ -56,12 +61,17 @@ class _EditNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
             var pinned = notifier.isPinned;
             var labels = notifier.futureLabels;
             if (title.isNotEmpty || text.isNotEmpty) {
-              note.title = title;
-              note.text = text;
-              note.colorIndex = colorIndex;
-              note.pinned = pinned;
-              note.labels = labels;
-              noteBloc.onNoteEdited();
+              if (note == null) {
+                noteBloc.onCreateNewNote(title, text, colorIndex, pinned, false,
+                    labels: labels);
+              } else {
+                note.title = title;
+                note.text = text;
+                note.colorIndex = colorIndex;
+                note.pinned = pinned;
+                note.labels = labels;
+                noteBloc.onNoteEdited();
+              }
             }
             notifier.closeLeftBottomSheet();
             notifier.closeRightBottomSheet();
@@ -94,12 +104,19 @@ class _EditNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
                 var title = notifier.titleController.text;
                 var text = notifier.textController.text;
                 var colorIndex = notifier.selectedColorIndex;
+                var labels = notifier.futureLabels;
                 if (title.isNotEmpty || text.isNotEmpty) {
-                  note.title = title;
-                  note.text = text;
-                  note.colorIndex = colorIndex;
-                  note.archived = true;
-                  noteBloc.onNoteEdited();
+                  if (note == null) {
+                    noteBloc.onCreateNewNote(
+                        title, text, colorIndex, false, true, labels: labels);
+                  } else {
+                    note.title = title;
+                    note.text = text;
+                    note.colorIndex = colorIndex;
+                    note.archived = true;
+                    note.labels = labels;
+                    noteBloc.onNoteEdited();
+                  }
                 }
                 notifier.closeLeftBottomSheet();
                 notifier.closeRightBottomSheet();
@@ -111,7 +128,8 @@ class _EditNoteAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class _EditNoteBody extends StatelessWidget {
+class _NoteSetupBody extends StatelessWidget {
+  
   Widget _labelChip(Label theLabel) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
@@ -147,7 +165,7 @@ class _EditNoteBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifier = Provider.of<NoteEditingChangeNotifier>(context);
+    final notifier = Provider.of<NoteSetupScreenController>(context);
 
     var noteLabels = notifier.futureLabels;
 
@@ -180,13 +198,14 @@ class _EditNoteBody extends StatelessWidget {
                           letterSpacing: -0.5),
                       decoration: InputDecoration.collapsed(
                         hintText: 'Title',
-                        hintStyle: TextStyle(color: appGreyForColoredBg, fontSize: 23),
+                        hintStyle:
+                            TextStyle(color: appGreyForColoredBg, fontSize: 23),
                       ),
                     ),
                     TextField(
                       controller: notifier.textController,
                       focusNode: notifier.textFocusNode,
-                      autofocus: false,
+                      autofocus: notifier.notEditing,
                       onTap: () {
                         notifier.closeLeftBottomSheet();
                         notifier.closeRightBottomSheet();
@@ -203,7 +222,8 @@ class _EditNoteBody extends StatelessWidget {
                           letterSpacing: -0.5),
                       decoration: InputDecoration.collapsed(
                         hintText: 'Note',
-                        hintStyle: TextStyle(color: appGreyForColoredBg, fontSize: 15),
+                        hintStyle:
+                            TextStyle(color: appGreyForColoredBg, fontSize: 15),
                       ),
                     ),
                     _noteLabels(noteLabels),
@@ -216,36 +236,41 @@ class _EditNoteBody extends StatelessWidget {
   }
 }
 
-class MyStickyBottomAppBar extends StatelessWidget {
+class _MyStickyBottomAppBar extends StatelessWidget {
   Widget _leftBottomSheetBuilder(BuildContext context) {
-    final notifier = Provider.of<NoteEditingChangeNotifier>(context);
+    final notifier = Provider.of<NoteSetupScreenController>(context);
 
     return Container(
       color: notifier.selectedColor.getColor(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_photo_camera_black_48.png'),
             text: 'Take photo',
             onTap: () {},
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_photo_black_48.png'),
             text: 'Add image',
             onTap: () {},
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_brush_black_48.png'),
             text: 'Drawing',
             onTap: () {},
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_mic_none_black_48.png'),
             text: 'Recording',
             onTap: () {},
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_check_box_black_48.png'),
             text: 'Checkboxes',
             onTap: () {},
@@ -256,8 +281,7 @@ class MyStickyBottomAppBar extends StatelessWidget {
   }
 
   Widget _rightBottomSheetBuilder(BuildContext context) {
-    final notifier = Provider.of<NoteEditingChangeNotifier>(context);
-
+    final notifier = Provider.of<NoteSetupScreenController>(context);
     final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return Container(
@@ -265,34 +289,42 @@ class MyStickyBottomAppBar extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_delete_black_48.png'),
             text: 'Delete',
             onTap: () {
-              var theNoteBeingEdited = notifier.noteBeingEdited;
-              theNoteBeingEdited.delete();
-              noteBloc.onNoteDeleted();
+              var noteForDeletion = notifier.noteToBeDeleted;
+              if (noteForDeletion != null) {
+                noteForDeletion.delete();
+                noteBloc.onNoteDeleted();
+              }
+
               notifier.closeLeftBottomSheet();
               notifier.closeRightBottomSheet();
               Navigator.pop(context);
             },
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_file_copy_black_48.png'),
             text: 'Make a copy',
             onTap: () {},
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_share_black_48.png'),
             text: 'Send',
             onTap: () {},
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_person_add_black_48.png'),
             text: 'Collaborator',
             onTap: () {},
           ),
-          _CreateNoteBottomSheetTile(
+          BottomSheetTile(
+            noteSetupController: notifier,
             pngIcon: PngIcon(fileName: 'outline_label_black_48.png'),
             text: 'Labels',
             onTap: () {
@@ -300,9 +332,9 @@ class MyStickyBottomAppBar extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ChangeNotifierProvider<
-                              NoteEditingChangeNotifier>.value(
+                              NoteSetupScreenController>.value(
                             value: notifier,
-                            child: NoteLabelingScreenForEdit(),
+                            child: NoteLabelingScreen(),
                           )));
             },
           ),
@@ -314,7 +346,7 @@ class MyStickyBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifier = Provider.of<NoteEditingChangeNotifier>(context);
+    final notifier = Provider.of<NoteSetupScreenController>(context);
 
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
@@ -376,8 +408,52 @@ class MyStickyBottomAppBar extends StatelessWidget {
 }
 
 class _ColorSelectionList extends StatelessWidget {
-  Widget _colorSelectionCircle(
-      {NoteColor noteColor, int index, NoteEditingChangeNotifier notifier}) {
+  @override
+  Widget build(BuildContext context) {
+    final notifier = Provider.of<NoteSetupScreenController>(context);
+
+    return Container(
+      color: notifier.selectedColor.getColor(),
+      height: 52,
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          SizedBox(
+            width: 8,
+          ),
+          _ColorSelectionCircle(index: 0, noteColor: NoteColor.white),
+          _ColorSelectionCircle(index: 1, noteColor: NoteColor.red),
+          _ColorSelectionCircle(index: 2, noteColor: NoteColor.orange),
+          _ColorSelectionCircle(index: 3, noteColor: NoteColor.yellow),
+          _ColorSelectionCircle(index: 4, noteColor: NoteColor.green),
+          _ColorSelectionCircle(index: 5, noteColor: NoteColor.lightBlue),
+          _ColorSelectionCircle(index: 6, noteColor: NoteColor.mediumBlue),
+          _ColorSelectionCircle(index: 7, noteColor: NoteColor.darkBlue),
+          _ColorSelectionCircle(index: 8, noteColor: NoteColor.purple),
+          _ColorSelectionCircle(index: 9, noteColor: NoteColor.pink),
+          _ColorSelectionCircle(index: 10, noteColor: NoteColor.brown),
+          _ColorSelectionCircle(index: 11, noteColor: NoteColor.grey),
+          SizedBox(
+            width: 6,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _ColorSelectionCircle extends StatelessWidget {
+  final NoteColor noteColor;
+  final int index;
+
+  _ColorSelectionCircle({this.noteColor, this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    final notifier = Provider.of<NoteSetupScreenController>(context);
+
     return GestureDetector(
       onTap: () {
         notifier.selectedColorIndex = index;
@@ -391,91 +467,10 @@ class _ColorSelectionList extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 7),
         child: Visibility(
             visible: notifier.selectedColorIndex == index,
-            child: Icon(Icons.check, color: appGreyForColoredBg,)),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final notifier = Provider.of<NoteEditingChangeNotifier>(context);
-
-    return Container(
-      color: notifier.selectedColor.getColor(),
-      height: 52,
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          SizedBox(
-            width: 8,
-          ),
-          _colorSelectionCircle(
-              index: 0, noteColor: NoteColor.white, notifier: notifier),
-          _colorSelectionCircle(
-              index: 1, noteColor: NoteColor.red, notifier: notifier),
-          _colorSelectionCircle(
-              index: 2, noteColor: NoteColor.orange, notifier: notifier),
-          _colorSelectionCircle(
-              index: 3, noteColor: NoteColor.yellow, notifier: notifier),
-          _colorSelectionCircle(
-              index: 4, noteColor: NoteColor.green, notifier: notifier),
-          _colorSelectionCircle(
-              index: 5, noteColor: NoteColor.lightBlue, notifier: notifier),
-          _colorSelectionCircle(
-              index: 6, noteColor: NoteColor.mediumBlue, notifier: notifier),
-          _colorSelectionCircle(
-              index: 7, noteColor: NoteColor.darkBlue, notifier: notifier),
-          _colorSelectionCircle(
-              index: 8, noteColor: NoteColor.purple, notifier: notifier),
-          _colorSelectionCircle(
-              index: 9, noteColor: NoteColor.pink, notifier: notifier),
-          _colorSelectionCircle(
-              index: 10, noteColor: NoteColor.brown, notifier: notifier),
-          _colorSelectionCircle(
-              index: 11, noteColor: NoteColor.grey, notifier: notifier),
-          SizedBox(
-            width: 6,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _CreateNoteBottomSheetTile extends StatelessWidget {
-  final PngIcon pngIcon;
-
-  final String text;
-
-  final void Function() onTap;
-
-  _CreateNoteBottomSheetTile(
-      {@required this.pngIcon, @required this.text, @required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final notifier = Provider.of<NoteEditingChangeNotifier>(context);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.centerLeft,
-        height: 48,
-        color: notifier.selectedColor.getColor(),
-        width: double.infinity,
-        padding: EdgeInsets.only(left: 16),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            pngIcon,
-            SizedBox(
-              width: 24,
-            ),
-            Text(text, style: bottomSheetStyle)
-          ],
-        ),
+            child: Icon(
+              Icons.check,
+              color: appGreyForColoredBg,
+            )),
       ),
     );
   }

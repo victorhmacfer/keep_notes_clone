@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'dart:math' as math;
-
-import 'package:keep_notes_clone/screens/create_note_screen.dart';
 
 class MyCustomFab extends StatelessWidget {
   @override
@@ -14,9 +13,14 @@ class MyCustomFab extends StatelessWidget {
       width: 58,
       child: FloatingActionButton(
         backgroundColor: appWhite,
-        child: Image.asset('assets/icons/google-plus-icon.png', width: 24, height: 24,),
+        child: Image.asset(
+          'assets/icons/google-plus-icon.png',
+          width: 24,
+          height: 24,
+        ),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (ctx) => CreateNoteScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (ctx) => NoteSetupScreen()));
         },
       ),
     );
