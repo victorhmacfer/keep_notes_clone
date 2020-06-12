@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
-import 'package:keep_notes_clone/models/pinned_status_note_splitter.dart';
+import 'package:keep_notes_clone/models/pinned_status_note_classifier.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
@@ -54,7 +54,7 @@ class _HomeBody extends StatelessWidget {
           slivers: <Widget>[
             SearchAppBar(),
             SliverToBoxAdapter(
-              child: StreamBuilder<PinnedStatusNoteSplitter>(
+              child: StreamBuilder<PinnedStatusNoteClassifier>(
                 stream: noteBloc.pinnedUnpinnedNoteListsStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {

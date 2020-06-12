@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/label_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/models/pinned_status_note_splitter.dart';
+import 'package:keep_notes_clone/models/pinned_status_note_classifier.dart';
 import 'package:rxdart/subjects.dart';
 
 class NoteTrackingBloc {
@@ -24,8 +24,8 @@ class NoteTrackingBloc {
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
-  Stream<PinnedStatusNoteSplitter> get pinnedUnpinnedNoteListsStream =>
-      _notArchivedNotDeletedNoteListStream.map((notes) => PinnedStatusNoteSplitter(notes));
+  Stream<PinnedStatusNoteClassifier> get pinnedUnpinnedNoteListsStream =>
+      _notArchivedNotDeletedNoteListStream.map((notes) => PinnedStatusNoteClassifier(notes));
 
   Stream<List<Note>> get archivedNoteListStream =>
       noteListStream.map(_filterArchivedNotes);
@@ -40,8 +40,8 @@ class NoteTrackingBloc {
       _unarchivedNoteListStream.map(_filterNotDeletedNotes);
 
   void onCreateNewNote(
-      String title, String text, int colorIndex, bool pinned, bool archived,
-      {List<Label> labels}) {
+      {String title, String text, int colorIndex, bool pinned, bool archived,
+      List<Label> labels}) {
     if (pinned) {
       assert(archived == false,
           'Note cannot be created as both pinned and archived');
@@ -69,23 +69,6 @@ class NoteTrackingBloc {
 
   void onNoteDeleted() {
     _notesBS.add(_notes);
-  }
-
-  List<List<Note>> _splitIntoPinnedAndUnpinned(List<Note> input) {
-    List<List<Note>> output = [];
-    List<Note> pinned = [];
-    List<Note> unpinned = [];
-
-    for (var note in input) {
-      if (note.pinned) {
-        pinned.add(note);
-      } else {
-        unpinned.add(note);
-      }
-    }
-    output.add(pinned);
-    output.add(unpinned);
-    return output;
   }
 
   List<Note> _filterArchivedNotes(List<Note> input) {

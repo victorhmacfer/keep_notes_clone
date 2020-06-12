@@ -62,7 +62,12 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
             var labels = notifier.futureLabels;
             if (title.isNotEmpty || text.isNotEmpty) {
               if (note == null) {
-                noteBloc.onCreateNewNote(title, text, colorIndex, pinned, false,
+                noteBloc.onCreateNewNote(
+                    title: title,
+                    text: text,
+                    colorIndex: colorIndex,
+                    pinned: pinned,
+                    archived: false,
                     labels: labels);
               } else {
                 note.title = title;
@@ -108,7 +113,12 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 if (title.isNotEmpty || text.isNotEmpty) {
                   if (note == null) {
                     noteBloc.onCreateNewNote(
-                        title, text, colorIndex, false, true, labels: labels);
+                        title: title,
+                        text: text,
+                        colorIndex: colorIndex,
+                        pinned: false,
+                        archived: true,
+                        labels: labels);
                   } else {
                     note.title = title;
                     note.text = text;
@@ -129,7 +139,6 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class _NoteSetupBody extends StatelessWidget {
-  
   Widget _labelChip(Label theLabel) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
