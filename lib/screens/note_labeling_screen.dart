@@ -63,37 +63,54 @@ class _NoteLabelListItem extends StatelessWidget {
 
     var labelIsChecked = notifier.futureLabels.contains(label);
 
-    return Container(
-      padding: EdgeInsets.only(left: 16, right: 8),
-      height: 56,
-      color: appWhite,
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                PngIcon(fileName: 'outline_label_black_48.png'),
-                SizedBox(
-                  width: 32,
+    var screenWidth = MediaQuery.of(context).size.width;
+
+    return GestureDetector(
+      onTap: () {
+        if (labelIsChecked) {
+          notifier.uncheckLabel(label);
+        } else {
+          notifier.checkLabel(label);
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.only(left: 16, right: 8),
+        height: 56,
+        color: appWhite,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(
+                width: screenWidth * 0.8,
+                child: Row(
+                  children: <Widget>[
+                    PngIcon(fileName: 'outline_label_black_48.png'),
+                    SizedBox(
+                      width: screenWidth * 0.078,
+                    ),
+                    Expanded(
+                      child: Text(
+                        label.text,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: drawerItemStyle.copyWith(
+                            fontSize: 15, letterSpacing: 0),
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  label.text,
-                  style:
-                      drawerItemStyle.copyWith(fontSize: 15, letterSpacing: 0),
-                ),
-              ],
-            ),
-            Checkbox(
-                value: labelIsChecked,
-                onChanged: (newValue) {
-                  if (newValue == true) {
-                    notifier.checkLabel(label);
-                  } else {
-                    notifier.uncheckLabel(label);
-                  }
-                }),
-          ]),
+              ),
+              Checkbox(
+                  value: labelIsChecked,
+                  onChanged: (newValue) {
+                    if (newValue == true) {
+                      notifier.checkLabel(label);
+                    } else {
+                      notifier.uncheckLabel(label);
+                    }
+                  }),
+            ]),
+      ),
     );
   }
 }

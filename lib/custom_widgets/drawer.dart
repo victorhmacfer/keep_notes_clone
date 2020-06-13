@@ -197,9 +197,13 @@ class _SelectableDrawerItem extends StatelessWidget {
             SizedBox(
               width: _iconToTextSpacing,
             ),
-            Text(
-              text,
-              style: drawerItemStyle,
+            Expanded(
+              child: Text(
+                text,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: drawerItemStyle,
+              ),
             ),
           ],
         ),
