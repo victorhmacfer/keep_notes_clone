@@ -75,7 +75,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 note.colorIndex = colorIndex;
                 note.pinned = pinned;
                 note.labels = labels;
-                noteBloc.onNoteEdited();
+                noteBloc.onNoteChanged();
               }
             }
             notifier.closeLeftBottomSheet();
@@ -125,7 +125,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     note.colorIndex = colorIndex;
                     note.archived = true;
                     note.labels = labels;
-                    noteBloc.onNoteEdited();
+                    noteBloc.onNoteChanged();
                   }
                 }
                 notifier.closeLeftBottomSheet();
@@ -306,7 +306,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
               var noteForDeletion = notifier.noteToBeDeleted;
               if (noteForDeletion != null) {
                 noteForDeletion.delete();
-                noteBloc.onNoteDeleted();
+                noteBloc.onNoteChanged();
               }
 
               notifier.closeLeftBottomSheet();

@@ -1,6 +1,6 @@
 import 'package:keep_notes_clone/models/note.dart';
 
-class PinnedStatusNoteClassifier {
+class PinnedUnpinnedNotes {
   final List<Note> notes;
 
   final List<Note> _pinned;
@@ -11,7 +11,7 @@ class PinnedStatusNoteClassifier {
 
   List<Note> get unpinned => List.unmodifiable(_unpinned);
 
-  PinnedStatusNoteClassifier(this.notes)
+  PinnedUnpinnedNotes(this.notes)
       : _pinned = [],
         _unpinned = [] {
     for (var note in notes) {

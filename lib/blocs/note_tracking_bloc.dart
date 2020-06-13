@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/label_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/models/pinned_status_note_classifier.dart';
+import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
 import 'package:rxdart/subjects.dart';
 
 class NoteTrackingBloc {
-  // FIXME: later it will be initialized from the DB.
+  // FIXME: to be initialized from DB.
   List<Note> _notes = [];
 
   List<Label> _labels = [];
@@ -24,8 +24,8 @@ class NoteTrackingBloc {
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
-  Stream<PinnedStatusNoteClassifier> get pinnedUnpinnedNoteListsStream =>
-      _notArchivedNotDeletedNoteListStream.map((notes) => PinnedStatusNoteClassifier(notes));
+  Stream<PinnedUnpinnedNotes> get pinnedUnpinnedNoteListsStream =>
+      _notArchivedNotDeletedNoteListStream.map((notes) => PinnedUnpinnedNotes(notes));
 
   Stream<List<Note>> get archivedNoteListStream =>
       noteListStream.map(_filterArchivedNotes);
@@ -59,15 +59,8 @@ class NoteTrackingBloc {
     _notesBS.add(_notes);
   }
 
-  void onNoteEdited() {
-    _notesBS.add(_notes);
-  }
 
-  void onNoteArchived() {
-    _notesBS.add(_notes);
-  }
-
-  void onNoteDeleted() {
+  void onNoteChanged() {
     _notesBS.add(_notes);
   }
 
