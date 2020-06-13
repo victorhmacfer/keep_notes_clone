@@ -23,14 +23,145 @@ const double _drawerItemHeight = 48;
 
 const double _iconToTextSpacing = 16;
 
-class SelectableDrawerItem extends StatelessWidget {
+class MyDrawer extends StatelessWidget {
+  // this drawer item indexes (for the notifier to track the selected item) are:
+  // 'Notes' item         index 0
+  // 'Reminders' item     index 1
+  // some label           index 4
+  // another label        index 5
+  //      ...
+  //      ...
+  // 'Archive' item       index 2
+  // 'Trash' item         index 3
 
+  List<Widget> _labelList(List<Label> labels) {
+    List<Widget> theList = [];
+
+    for (int i = 0; i < labels.length; i++) {
+      var selectableLabelItem = _SelectableDrawerItem(
+        labels[i].text,
+        iconFileName: 'outline_label_black_48.png',
+        // accounting for the other 4 SELECTABLE drawer items that are not labels
+        drawerItemIndex: i + 4,
+        onPressed: () {},
+      );
+      theList.add(selectableLabelItem);
+    }
+    return theList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
+
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          _MyCustomDrawerHeader(),
+          _SelectableDrawerItem(
+            'Notes',
+            iconFileName: 'keep-quadrado.png',
+            drawerItemIndex: 0,
+            onPressed: () {
+              if (drawerScreenSelection.selectedScreenIndex != 0) {
+                drawerScreenSelection.changeSelectedScreenToIndex(0);
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              }
+            },
+          ),
+          _SelectableDrawerItem(
+            'Reminders',
+            iconFileName: 'outline_notifications_black_48.png',
+            drawerItemIndex: 1,
+            onPressed: () {},
+          ),
+          StreamBuilder<List<Label>>(
+              stream: noteTrackingBloc.allLabelsStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                  return Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        height: 40,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text('LABELS', style: drawerLabelsEditStyle),
+                            Text('EDIT', style: drawerLabelsEditStyle),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: _labelList(snapshot.data),
+                      ),
+                    ],
+                  );
+                }
+                return _MyCustomDrawerDivider();
+              }),
+          _SimpleDrawerItem(
+            text: 'Create new label',
+            iconFileName: 'outline_add_black_48.png',
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditLabelsScreen()));
+            },
+          ),
+          _MyCustomDrawerDivider(),
+          _SelectableDrawerItem(
+            'Archive',
+            iconFileName: 'outline_archive_black_48.png',
+            drawerItemIndex: 2,
+            onPressed: () {
+              if (drawerScreenSelection.selectedScreenIndex != 2) {
+                drawerScreenSelection.changeSelectedScreenToIndex(2);
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => ArchiveScreen()));
+              }
+            },
+          ),
+          _SelectableDrawerItem(
+            'Trash',
+            iconFileName: 'outline_delete_black_48.png',
+            drawerItemIndex: 3,
+            onPressed: () {
+              if (drawerScreenSelection.selectedScreenIndex != 3) {
+                drawerScreenSelection.changeSelectedScreenToIndex(3);
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => TrashScreen()));
+              }
+            },
+          ),
+          _MyCustomDrawerDivider(),
+          _SimpleDrawerItem(
+            text: 'Settings',
+            iconFileName: 'outline_settings_black_48.png',
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SettingsScreen()));
+            },
+          ),
+          _SimpleDrawerItem(
+            text: 'Help & feedback',
+            iconFileName: 'outline_help_outline_black_48.png',
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SelectableDrawerItem extends StatelessWidget {
   final String text;
   final String iconFileName;
   final int drawerItemIndex;
   final void Function() onPressed;
 
-  SelectableDrawerItem(this.text,
+  _SelectableDrawerItem(this.text,
       {this.iconFileName = 'outline_label_black_48.png',
       @required this.drawerItemIndex,
       @required this.onPressed});
@@ -77,13 +208,13 @@ class SelectableDrawerItem extends StatelessWidget {
   }
 }
 
-class SimpleDrawerItem extends StatelessWidget {
+class _SimpleDrawerItem extends StatelessWidget {
   final String text;
 
   final String iconFileName;
   final void Function() onPressed;
 
-  SimpleDrawerItem(
+  _SimpleDrawerItem(
       {@required this.text,
       @required this.iconFileName,
       @required this.onPressed});
@@ -114,7 +245,7 @@ class SimpleDrawerItem extends StatelessWidget {
   }
 }
 
-class MyCustomDrawerHeader extends StatelessWidget {
+class _MyCustomDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -142,145 +273,13 @@ class MyCustomDrawerHeader extends StatelessWidget {
   }
 }
 
-class MyCustomDrawerDivider extends StatelessWidget {
+class _MyCustomDrawerDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 1,
       color: appDividerGrey,
       margin: EdgeInsets.symmetric(vertical: 8),
-    );
-  }
-}
-
-class MyDrawer extends StatelessWidget {
-  // this drawer item indexes (for the notifier to track the selected item) are:
-  // 'Notes' item         index 0
-  // 'Reminders' item     index 1
-  // some label           index 4
-  // another label        index 5
-  //      ...
-  //      ...
-  // 'Archive' item       index 2
-  // 'Trash' item         index 3
-
-  List<Widget> _labelList(List<Label> labels) {
-    List<Widget> theList = [];
-
-    for (int i = 0; i < labels.length; i++) {
-      var selectableLabelItem = SelectableDrawerItem(
-        labels[i].text,
-        iconFileName: 'outline_label_black_48.png',
-        // accounting for the other 4 SELECTABLE drawer items that are not labels
-        drawerItemIndex: i + 4,
-        onPressed: () {},
-      );
-      theList.add(selectableLabelItem);
-    }
-    return theList;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
-    var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
-
-    return Drawer(
-      child: ListView(
-        children: <Widget>[
-          MyCustomDrawerHeader(),
-          SelectableDrawerItem(
-            'Notes',
-            iconFileName: 'keep-quadrado.png',
-            drawerItemIndex: 0,
-            onPressed: () {
-              if (drawerScreenSelection.selectedScreenIndex != 0) {
-                drawerScreenSelection.changeSelectedScreenToIndex(0);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
-              }
-            },
-          ),
-          SelectableDrawerItem(
-            'Reminders',
-            iconFileName: 'outline_notifications_black_48.png',
-            drawerItemIndex: 1,
-            onPressed: () {},
-          ),
-          StreamBuilder<List<Label>>(
-              stream: noteTrackingBloc.allLabelsStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data.isNotEmpty) {
-                  return Column(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text('LABELS', style: drawerLabelsEditStyle),
-                            Text('EDIT', style: drawerLabelsEditStyle),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: _labelList(snapshot.data),
-                      ),
-                    ],
-                  );
-                }
-                return MyCustomDrawerDivider();
-              }),
-          SimpleDrawerItem(
-            text: 'Create new label',
-            iconFileName: 'outline_add_black_48.png',
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EditLabelsScreen()));
-            },
-          ),
-          MyCustomDrawerDivider(),
-          SelectableDrawerItem(
-            'Archive',
-            iconFileName: 'outline_archive_black_48.png',
-            drawerItemIndex: 2,
-            onPressed: () {
-              if (drawerScreenSelection.selectedScreenIndex != 2) {
-                drawerScreenSelection.changeSelectedScreenToIndex(2);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => ArchiveScreen()));
-              }
-            },
-          ),
-          SelectableDrawerItem(
-            'Trash',
-            iconFileName: 'outline_delete_black_48.png',
-            drawerItemIndex: 3,
-            onPressed: () {
-              if (drawerScreenSelection.selectedScreenIndex != 3) {
-                drawerScreenSelection.changeSelectedScreenToIndex(3);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => TrashScreen()));
-              }
-            },
-          ),
-          MyCustomDrawerDivider(),
-          SimpleDrawerItem(
-            text: 'Settings',
-            iconFileName: 'outline_settings_black_48.png',
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SettingsScreen()));
-            },
-          ),
-          SimpleDrawerItem(
-            text: 'Help & feedback',
-            iconFileName: 'outline_help_outline_black_48.png',
-            onPressed: () {},
-          ),
-        ],
-      ),
     );
   }
 }

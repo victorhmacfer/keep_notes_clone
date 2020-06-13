@@ -17,14 +17,14 @@ class TrashScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: appWhite,
       drawer: MyDrawer(),
-      body: TrashBody(),
+      body: _TrashBody(),
     );
   }
 }
 
 const double _bottomPadding = 56;
 
-class TrashBody extends StatelessWidget {
+class _TrashBody extends StatelessWidget {
   Widget _noteCardBuilder(Note note) => NoteCard(note: note);
 
   @override

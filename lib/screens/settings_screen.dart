@@ -32,14 +32,14 @@ class SettingsScreen extends StatelessWidget {
             _MyDivider(),
             _ItemWithSwitch('Display rich link previews'),
             _MyDivider(),
-            AppThemePickerItem(),
+            _AppThemePickerItem(),
             _MyDivider(),
             _SectionTitle('REMINDER DEFAULTS'),
-            TimePickerItem('Morning'),
+            _TimePickerItem('Morning'),
             _MyDivider(),
-            TimePickerItem('Afternoon'),
+            _TimePickerItem('Afternoon'),
             _MyDivider(),
-            TimePickerItem('Evening'),
+            _TimePickerItem('Evening'),
             SizedBox(
               height: 6,
             ),
@@ -110,16 +110,16 @@ class _MyDivider extends StatelessWidget {
   }
 }
 
-class TimePickerItem extends StatefulWidget {
+class _TimePickerItem extends StatefulWidget {
   final String title;
 
-  TimePickerItem(this.title);
+  _TimePickerItem(this.title);
 
   @override
   _TimePickerItemState createState() => _TimePickerItemState();
 }
 
-class _TimePickerItemState extends State<TimePickerItem> {
+class _TimePickerItemState extends State<_TimePickerItem> {
   TimeOfDay chosenTime = TimeOfDay.now();
 
   @override
@@ -158,24 +158,24 @@ class _TimePickerItemState extends State<TimePickerItem> {
   }
 }
 
-enum ChosenTheme { light, dark, systemDefault }
+enum _ChosenTheme { light, dark, systemDefault }
 
-class AppThemePickerItem extends StatefulWidget {
+class _AppThemePickerItem extends StatefulWidget {
   @override
   _AppThemePickerItemState createState() => _AppThemePickerItemState();
 }
 
-class _AppThemePickerItemState extends State<AppThemePickerItem> {
-  ChosenTheme chosenTheme = ChosenTheme.systemDefault;
+class _AppThemePickerItemState extends State<_AppThemePickerItem> {
+  _ChosenTheme chosenTheme = _ChosenTheme.systemDefault;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        var theme = await showDialog<ChosenTheme>(
+        var theme = await showDialog<_ChosenTheme>(
             context: context,
             barrierDismissible: false,
-            builder: (context) => ThemePickerDialog());
+            builder: (context) => _ThemePickerDialog());
 
         setState(() {
           chosenTheme = theme;
@@ -204,17 +204,17 @@ class _AppThemePickerItemState extends State<AppThemePickerItem> {
   }
 }
 
-class ThemePickerDialog extends StatefulWidget {
+class _ThemePickerDialog extends StatefulWidget {
   @override
   _ThemePickerDialogState createState() => _ThemePickerDialogState();
 
-  final ChosenTheme previousTheme;
+  final _ChosenTheme previousTheme;
 
-  ThemePickerDialog({this.previousTheme});
+  _ThemePickerDialog({this.previousTheme});
 }
 
-class _ThemePickerDialogState extends State<ThemePickerDialog> {
-  ChosenTheme chosenTheme;
+class _ThemePickerDialogState extends State<_ThemePickerDialog> {
+  _ChosenTheme chosenTheme;
 
   @override
   void initState() {
@@ -227,30 +227,30 @@ class _ThemePickerDialogState extends State<ThemePickerDialog> {
     return SimpleDialog(
       title: Text('Choose theme'),
       children: <Widget>[
-        RadioListTile<ChosenTheme>(
+        RadioListTile<_ChosenTheme>(
             title: Text('Light'),
-            value: ChosenTheme.light,
+            value: _ChosenTheme.light,
             groupValue: chosenTheme,
-            selected: ChosenTheme.light == chosenTheme,
+            selected: _ChosenTheme.light == chosenTheme,
             onChanged: (newValue) {
               setState(() {
                 chosenTheme = newValue;
               });
             }),
-        RadioListTile<ChosenTheme>(
+        RadioListTile<_ChosenTheme>(
             title: Text('Dark'),
-            value: ChosenTheme.dark,
+            value: _ChosenTheme.dark,
             groupValue: chosenTheme,
-            selected: ChosenTheme.dark == chosenTheme,
+            selected: _ChosenTheme.dark == chosenTheme,
             onChanged: (newValue) {
               setState(() {
                 chosenTheme = newValue;
               });
             }),
-        RadioListTile<ChosenTheme>(
+        RadioListTile<_ChosenTheme>(
             title: Text('System default'),
-            value: ChosenTheme.systemDefault,
-            selected: ChosenTheme.systemDefault == chosenTheme,
+            value: _ChosenTheme.systemDefault,
+            selected: _ChosenTheme.systemDefault == chosenTheme,
             groupValue: chosenTheme,
             onChanged: (newValue) {
               setState(() {

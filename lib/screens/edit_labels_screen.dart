@@ -9,7 +9,7 @@ import 'package:keep_notes_clone/utils/colors.dart';
 class EditLabelsScreen extends StatelessWidget {
   List<Widget> _labelList(List<Label> labels) {
     return labels
-        .map((label) => EditLabelListItem(
+        .map((label) => _EditLabelListItem(
             key: ValueKey(label.text), initialText: label.text))
         .toList();
   }
@@ -33,7 +33,7 @@ class EditLabelsScreen extends StatelessWidget {
         color: appWhite,
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverToBoxAdapter(child: CreateLabelListItem()),
+            SliverToBoxAdapter(child: _CreateLabelListItem()),
             SliverToBoxAdapter(
               child: StreamBuilder<List<Label>>(
                   stream: noteTrackingBloc.allLabelsStream,
@@ -53,12 +53,12 @@ class EditLabelsScreen extends StatelessWidget {
   }
 }
 
-class CreateLabelListItem extends StatefulWidget {
+class _CreateLabelListItem extends StatefulWidget {
   @override
   _CreateLabelListItemState createState() => _CreateLabelListItemState();
 }
 
-class _CreateLabelListItemState extends State<CreateLabelListItem> {
+class _CreateLabelListItemState extends State<_CreateLabelListItem> {
   final newLabelFocusNode = FocusNode();
 
   bool isFocused;
@@ -160,18 +160,18 @@ class _CreateLabelListItemState extends State<CreateLabelListItem> {
   }
 }
 
-class EditLabelListItem extends StatefulWidget {
+class _EditLabelListItem extends StatefulWidget {
   final String initialText;
 
   final ValueKey<String> key;
 
-  EditLabelListItem({this.key, this.initialText});
+  _EditLabelListItem({this.key, this.initialText});
 
   @override
   _EditLabelListItemState createState() => _EditLabelListItemState();
 }
 
-class _EditLabelListItemState extends State<EditLabelListItem> {
+class _EditLabelListItemState extends State<_EditLabelListItem> {
   final itemFocusNode = FocusNode();
 
   bool isFocused;

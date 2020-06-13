@@ -20,14 +20,12 @@ class Note {
     _pinned = pinned;
     _archived = archived;
     _deleted = false;
-    
   }
 
   bool get pinned => _pinned;
   bool get archived => _archived;
 
   bool get deleted => _deleted;
-
 
   // pinning a note should unarchive it
   set pinned(bool newValue) {

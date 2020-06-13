@@ -16,14 +16,14 @@ class ArchiveScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: appWhite,
       drawer: MyDrawer(),
-      body: ArchiveBody(),
+      body: _ArchiveBody(),
     );
   }
 }
 
 const double _bottomPadding = 56;
 
-class ArchiveBody extends StatelessWidget {
+class _ArchiveBody extends StatelessWidget {
   Widget _noteCardBuilder(Note note) => NoteCard(note: note);
 
   @override
