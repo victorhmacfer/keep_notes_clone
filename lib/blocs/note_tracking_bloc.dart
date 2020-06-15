@@ -25,7 +25,8 @@ class NoteTrackingBloc {
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
   Stream<PinnedUnpinnedNotes> get pinnedUnpinnedNoteListsStream =>
-      _notArchivedNotDeletedNoteListStream.map((notes) => PinnedUnpinnedNotes(notes));
+      _notArchivedNotDeletedNoteListStream
+          .map((notes) => PinnedUnpinnedNotes(notes));
 
   Stream<List<Note>> get archivedNoteListStream =>
       noteListStream.map(_filterArchivedNotes);
@@ -40,7 +41,11 @@ class NoteTrackingBloc {
       _unarchivedNoteListStream.map(_filterNotDeletedNotes);
 
   void onCreateNewNote(
-      {String title, String text, int colorIndex, bool pinned, bool archived,
+      {String title,
+      String text,
+      int colorIndex,
+      bool pinned,
+      bool archived,
       List<Label> labels}) {
     if (pinned) {
       assert(archived == false,
@@ -58,7 +63,6 @@ class NoteTrackingBloc {
     _notes.add(newNote);
     _notesBS.add(_notes);
   }
-
 
   void onNoteChanged() {
     _notesBS.add(_notes);
@@ -80,13 +84,29 @@ class NoteTrackingBloc {
     return input.where((note) => note.deleted == false).toList();
   }
 
+  void _sortLabelsAlphabetically() {
+    _labels.sort((a, b) => a.text.compareTo(b.text));
+  }
+
   void onCreateNewLabel(String text) {
     //FIXME: checking for label existence...this is temporary.
     if (_labels.map((lab) => lab.text).contains(text)) return;
 
     _labels.add(Label(text: text));
-    _labels.sort((a, b) => a.text.compareTo(b.text));
+    _sortLabelsAlphabetically();
     _labelsBS.add(_labels);
+  }
+
+  Label onCreateLabelInsideNote(String text) {
+    // no need to check for existence because this is only called
+    // by create label button, which only exists if label text does not exist.
+    // FIXME: but this is a dependency on implementation..
+
+    var createdLabel = Label(text: text);
+    _labels.add(createdLabel);
+    _sortLabelsAlphabetically();
+    _labelsBS.add(_labels);
+    return createdLabel;
   }
 
   void onSearchLabel(String substring) {

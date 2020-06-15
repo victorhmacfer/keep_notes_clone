@@ -8,9 +8,12 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
-class NoteLabelingScreen extends StatelessWidget {
-  final labelSearchController = TextEditingController();
+// FIXME: made these global for now.. better than creating notifier for exposing
+// just that.
+final _labelSearchController = TextEditingController();
+final _labelSearchFocusNode = FocusNode();
 
+class NoteLabelingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
@@ -19,7 +22,8 @@ class NoteLabelingScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          controller: labelSearchController,
+          controller: _labelSearchController,
+          focusNode: _labelSearchFocusNode,
           cursorWidth: 1,
           onChanged: (text) {
             noteTrackingBloc.onSearchLabel(text);
@@ -38,11 +42,11 @@ class NoteLabelingScreen extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var showCreateButton = !snapshot.data.foundExactMatch &&
-                    labelSearchController.text.isNotEmpty;
+                    _labelSearchController.text.isNotEmpty;
 
                 return _LabelListView(
                     showCreateButton: showCreateButton,
-                    searchKeyword: labelSearchController.text,
+                    searchKeyword: _labelSearchController.text,
                     labels: snapshot.data.labels);
               }
               return Container();
@@ -124,8 +128,17 @@ class _CreateLabelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var notifier = Provider.of<NoteSetupScreenController>(context);
+
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        var createdLabel = noteTrackingBloc.onCreateLabelInsideNote(labelText);
+        notifier.checkLabel(createdLabel);
+        noteTrackingBloc.onResetLabelSearch();
+        _labelSearchController.clear();
+        _labelSearchFocusNode.unfocus();
+      },
       child: Container(
         color: appWhite,
         padding: EdgeInsets.symmetric(horizontal: 16),
