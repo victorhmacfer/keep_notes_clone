@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
-import 'package:keep_notes_clone/custom_widgets/bottomsheet_tile.dart';
-import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/note.dart';
+import 'package:provider/provider.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
-import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
-import 'package:keep_notes_clone/utils/colors.dart';
 
+import 'package:keep_notes_clone/custom_widgets/bottomsheet_tile.dart';
+import 'package:keep_notes_clone/custom_widgets/label_chip.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 
-import 'package:keep_notes_clone/utils/styles.dart';
-import 'package:provider/provider.dart';
+import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/models/note.dart';
+
+import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
+
+import 'package:keep_notes_clone/utils/colors.dart';
 
 class NoteSetupScreen extends StatelessWidget {
   final Note note;
@@ -139,22 +141,8 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class _NoteSetupBody extends StatelessWidget {
-  Widget _labelChip(Label theLabel) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: appGreyForColoredBg, width: 1),
-      ),
-      child: Text(
-        theLabel.text,
-        style: drawerItemStyle.copyWith(fontSize: 13),
-      ),
-    );
-  }
-
   List<Widget> _labelWidgets(List<Label> theLabels) {
-    return theLabels.map((label) => _labelChip(label)).toList();
+    return theLabels.map((lab) => NoteSetupLabelChip(label: lab)).toList();
   }
 
   Widget _noteLabels(List<Label> theLabels) {

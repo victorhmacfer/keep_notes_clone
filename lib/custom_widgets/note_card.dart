@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/custom_widgets/label_chip.dart';
+import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
@@ -83,7 +85,62 @@ class NoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
+            _LabelsContainer(labels: note.labels),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LabelsContainer extends StatelessWidget {
+  final List<Label> labels;
+
+  _LabelsContainer({@required this.labels});
+
+  List<Widget> _labelChips() {
+    const maxTotalCharacters = 32;
+    const maxDisplayedLabels = 2;
+
+    List<Widget> finalList = [];
+
+    int accumulatedCharacters = 0;
+    bool addedPlusLabel = false;
+    for (int i = 0; i < labels.length; i++) {
+      var text = labels[i].text;
+      int textLength = text.length;
+
+      bool isWithinCharLimit =
+          (accumulatedCharacters + textLength) <= maxTotalCharacters;
+      bool canInsertCurrentLabel =
+          isWithinCharLimit && (i < maxDisplayedLabels);
+
+      if (canInsertCurrentLabel) {
+        finalList.add(NoteCardLabelChip(index: i, labelText: text));
+        accumulatedCharacters += textLength;
+      } else if (addedPlusLabel == false) {
+        finalList.add(
+            NoteCardLabelChip(index: i, labelText: '+${labels.length - i}'));
+        addedPlusLabel = true;
+      } else {
+        finalList.add(Container());
+      }
+    }
+    return finalList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: SizedBox(
+        width: screenWidth * 0.8,
+        child: Container(
+          child: Row(
+            children: _labelChips(),
+          ),
         ),
       ),
     );
