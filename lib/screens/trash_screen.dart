@@ -36,6 +36,7 @@ class _TrashBody extends StatelessWidget {
       child: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
+            floating: true,
             backgroundColor: appWhite,
             iconTheme: IconThemeData(color: appIconGrey),
             title: Text(
