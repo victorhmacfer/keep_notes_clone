@@ -51,6 +51,8 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
     final notifier = Provider.of<NoteSetupScreenController>(context);
     final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
+    bool isArchived = (note == null) ? false : note.archived;
+
     return AppBar(
       backgroundColor: notifier.selectedColor.getColor(),
       iconTheme: IconThemeData(color: appIconGrey),
@@ -106,7 +108,9 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
-              pngIcon: PngIcon(fileName: 'outline_archive_black_48.png'),
+              pngIcon: (isArchived)
+                  ? PngIcon(fileName: 'outline_unarchive_black_48.png')
+                  : PngIcon(fileName: 'outline_archive_black_48.png'),
               onTap: () {
                 var title = notifier.titleController.text;
                 var text = notifier.textController.text;
@@ -125,7 +129,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     note.title = title;
                     note.text = text;
                     note.colorIndex = colorIndex;
-                    note.archived = true;
+                    note.archived = !note.archived;
                     note.labels = labels;
                     noteBloc.onNoteChanged();
                   }
