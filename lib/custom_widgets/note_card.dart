@@ -116,11 +116,10 @@ class _LabelsContainer extends StatelessWidget {
           isWithinCharLimit && (i < maxDisplayedLabels);
 
       if (canInsertCurrentLabel) {
-        finalList.add(NoteCardLabelChip(index: i, labelText: text));
+        finalList.add(NoteCardLabelChip(text));
         accumulatedCharacters += textLength;
       } else if (addedPlusLabel == false) {
-        finalList.add(
-            NoteCardLabelChip(index: i, labelText: '+${labels.length - i}'));
+        finalList.add(NoteCardLabelChip('+${labels.length - i}'));
         addedPlusLabel = true;
       } else {
         finalList.add(Container());
@@ -136,9 +135,11 @@ class _LabelsContainer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: SizedBox(
-        width: screenWidth * 0.8,
+        width: screenWidth * 0.85,
         child: Container(
-          child: Row(
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 4,
             children: _labelChips(),
           ),
         ),

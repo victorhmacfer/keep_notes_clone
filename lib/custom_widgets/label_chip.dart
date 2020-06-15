@@ -26,17 +26,13 @@ class NoteSetupLabelChip extends StatelessWidget {
 
 class NoteCardLabelChip extends StatelessWidget {
   final String labelText;
-  final int index;
 
-  NoteCardLabelChip({@required this.index, @required this.labelText});
+  NoteCardLabelChip(this.labelText);
 
   @override
   Widget build(BuildContext context) {
-    double leftMargin = (index != 0) ? 2 : 0;
-
     return Container(
       padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      margin: EdgeInsets.only(left: leftMargin, right: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: appGreyForColoredBg, width: 1),
