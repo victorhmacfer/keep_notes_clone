@@ -138,14 +138,14 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
         children: <Widget>[
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_file_copy_black_48.png'),
-            text: 'Make a copy',
+            pngIcon: PngIcon(fileName: 'baseline_restore_black_48.png'),
+            text: 'Restore',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_share_black_48.png'),
-            text: 'Send',
+            pngIcon: PngIcon(fileName: 'baseline_delete_forever_black_48.png'),
+            text: 'Delete forever',
             onTap: () {},
           ),
         ],
