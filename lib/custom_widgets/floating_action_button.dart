@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -6,6 +7,10 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'dart:math' as math;
 
 class MyCustomFab extends StatelessWidget {
+  final Label label;
+
+  MyCustomFab({this.label});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -19,8 +24,15 @@ class MyCustomFab extends StatelessWidget {
           height: 24,
         ),
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (ctx) => NoteSetupScreen()));
+          if (label != null) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => NoteSetupScreen(label: label)));
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (ctx) => NoteSetupScreen()));
+          }
         },
       ),
     );

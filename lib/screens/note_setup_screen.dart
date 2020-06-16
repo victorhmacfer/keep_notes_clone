@@ -17,16 +17,26 @@ import 'package:keep_notes_clone/utils/colors.dart';
 class NoteSetupScreen extends StatelessWidget {
   final Note note;
 
-  NoteSetupScreen({this.note});
+  final Label label;
+
+  NoteSetupScreen({this.note, this.label});
 
   @override
   Widget build(BuildContext context) {
-    NoteSetupScreenController controller = (note == null)
-        ? NoteSetupScreenController()
-        : NoteSetupScreenController.fromNote(note: note);
-
-    _NoteSetupAppBar theAppBar =
-        (note == null) ? _NoteSetupAppBar() : _NoteSetupAppBar(note: note);
+    NoteSetupScreenController controller;
+    _NoteSetupAppBar theAppBar;
+    if (note == null) {
+      if (label != null) {
+        controller = NoteSetupScreenController.withLabel(label);
+        theAppBar = _NoteSetupAppBar(label: label);
+      } else {
+        controller = NoteSetupScreenController();
+        theAppBar = _NoteSetupAppBar();
+      }
+    } else {
+      controller = NoteSetupScreenController.fromNote(note);
+      theAppBar = _NoteSetupAppBar(note: note);
+    }
 
     return ChangeNotifierProvider<NoteSetupScreenController>.value(
       value: controller,
@@ -41,7 +51,9 @@ class NoteSetupScreen extends StatelessWidget {
 class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Note note;
 
-  _NoteSetupAppBar({this.note});
+  final Label label;
+
+  _NoteSetupAppBar({this.note, this.label});
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -73,6 +85,10 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     pinned: pinned,
                     archived: false,
                     labels: labels);
+
+                if (label != null) {
+                  noteBloc.labelFilteringSink.add(label);
+                }
               } else {
                 note.title = title;
                 note.text = text;

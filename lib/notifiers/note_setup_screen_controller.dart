@@ -28,7 +28,15 @@ class NoteSetupScreenController with ChangeNotifier {
         _editing = false,
         _futureLabels = [];
 
-  NoteSetupScreenController.fromNote({@required Note note})
+  NoteSetupScreenController.withLabel(Label label)
+      : titleController = TextEditingController(),
+        textController = TextEditingController(),
+        _selectedColorIndex = 0,
+        _isPinned = false,
+        _editing = false,
+        _futureLabels = [label];
+
+  NoteSetupScreenController.fromNote(Note note)
       : titleController = TextEditingController(text: note.title),
         textController = TextEditingController(text: note.text),
         _selectedColorIndex = note.colorIndex,

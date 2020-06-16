@@ -18,7 +18,7 @@ class DeletedNoteSetupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<NoteSetupScreenController>(
-      create: (context) => NoteSetupScreenController.fromNote(note: note),
+      create: (context) => NoteSetupScreenController.fromNote(note),
       child: Scaffold(
           appBar: _DeletedNoteSetupAppBar(note: note),
           body: _DeletedNoteSetupBody(),
