@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/label_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
@@ -16,6 +17,17 @@ class NoteTrackingBloc {
   final _labelsBS = BehaviorSubject<List<Label>>();
 
   final _labelSearchBS = BehaviorSubject<LabelSearchResult>();
+
+  final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
+
+  final _labelForFilteringNotesBS = BehaviorSubject<Label>();
+
+  NoteTrackingBloc() {
+    _labelForFilteringNotesBS.stream
+        .listen(_filterNotesForLabelAndDropIntoStream);
+  }
+
+  StreamSink<Label> get labelFilteringSink => _labelForFilteringNotesBS.sink;
 
   Stream<List<Label>> get allLabelsStream => _labelsBS.stream;
 
@@ -34,11 +46,9 @@ class NoteTrackingBloc {
   Stream<List<Note>> get deletedNoteListStream =>
       noteListStream.map(_filterDeletedNotes);
 
-  Stream<List<Note>> get _unarchivedNoteListStream =>
-      noteListStream.map(_filterUnarchivedNotes);
-
-  Stream<List<Note>> get _notArchivedNotDeletedNoteListStream =>
-      _unarchivedNoteListStream.map(_filterNotDeletedNotes);
+  Stream<LabelFilteredNotesContainer> get labelFilteredNotesContainerStream =>
+      _labelFilteredNotDeletedNotesStream
+          .map((notes) => LabelFilteredNotesContainer(notes));
 
   void onCreateNewNote(
       {String title,
@@ -66,26 +76,11 @@ class NoteTrackingBloc {
 
   void onNoteChanged() {
     _notesBS.add(_notes);
-  }
 
-  List<Note> _filterArchivedNotes(List<Note> input) {
-    return input.where((note) => note.archived).toList();
-  }
-
-  List<Note> _filterUnarchivedNotes(List<Note> input) {
-    return input.where((note) => note.archived == false).toList();
-  }
-
-  List<Note> _filterDeletedNotes(List<Note> input) {
-    return input.where((note) => note.deleted).toList();
-  }
-
-  List<Note> _filterNotDeletedNotes(List<Note> input) {
-    return input.where((note) => note.deleted == false).toList();
-  }
-
-  void _sortLabelsAlphabetically() {
-    _labels.sort((a, b) => a.text.compareTo(b.text));
+    if (_labelForFilteringNotesBS.hasValue) {
+      var lastLabelFiltered = _labelForFilteringNotesBS.value;
+      _filterNotesForLabelAndDropIntoStream(lastLabelFiltered);
+    }
   }
 
   void onCreateNewLabel(String text) {
@@ -131,9 +126,47 @@ class NoteTrackingBloc {
     _labelSearchBS.add(LabelSearchResult(false, _labels));
   }
 
+  void _filterNotesForLabelAndDropIntoStream(Label theLabel) {
+    var filteredNotes =
+        _notes.where((n) => n.labels.contains(theLabel)).toList();
+
+    _labelFilteredNotesBS.add(filteredNotes);
+  }
+
+  List<Note> _filterArchivedNotes(List<Note> input) {
+    return input.where((note) => note.archived).toList();
+  }
+
+  List<Note> _filterUnarchivedNotes(List<Note> input) {
+    return input.where((note) => note.archived == false).toList();
+  }
+
+  List<Note> _filterDeletedNotes(List<Note> input) {
+    return input.where((note) => note.deleted).toList();
+  }
+
+  List<Note> _filterNotDeletedNotes(List<Note> input) {
+    return input.where((note) => note.deleted == false).toList();
+  }
+
+  void _sortLabelsAlphabetically() {
+    _labels.sort((a, b) => a.text.compareTo(b.text));
+  }
+
+  Stream<List<Note>> get _unarchivedNoteListStream =>
+      noteListStream.map(_filterUnarchivedNotes);
+
+  Stream<List<Note>> get _notArchivedNotDeletedNoteListStream =>
+      _unarchivedNoteListStream.map(_filterNotDeletedNotes);
+
+  Stream<List<Note>> get _labelFilteredNotDeletedNotesStream =>
+      _labelFilteredNotesBS.stream.map(_filterNotDeletedNotes);
+
   void dispose() {
     _notesBS.close();
     _labelsBS.close();
     _labelSearchBS.close();
+    _labelFilteredNotesBS.close();
+    _labelForFilteringNotesBS.close();
   }
 }

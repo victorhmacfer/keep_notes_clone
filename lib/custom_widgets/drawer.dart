@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/screens/archive_screen.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/screens/label_filtered_notes_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/screens/edit_labels_screen.dart';
@@ -34,7 +35,9 @@ class MyDrawer extends StatelessWidget {
   // 'Archive' item       index 2
   // 'Trash' item         index 3
 
-  List<Widget> _labelList(List<Label> labels) {
+  List<Widget> _labelList(List<Label> labels,
+      DrawerScreenSelection drawerScreenSelection, BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
     List<Widget> theList = [];
 
     for (int i = 0; i < labels.length; i++) {
@@ -43,7 +46,17 @@ class MyDrawer extends StatelessWidget {
         iconFileName: 'outline_label_black_48.png',
         // accounting for the other 4 SELECTABLE drawer items that are not labels
         drawerItemIndex: i + 4,
-        onPressed: () {},
+        onPressed: () {
+          if (drawerScreenSelection.selectedScreenIndex != i + 4) {
+            drawerScreenSelection.changeSelectedScreenToIndex(i + 4);
+            noteBloc.labelFilteringSink.add(labels[i]);
+
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => LabelFilteredNotesScreen(labels[i])));
+          }
+        },
       );
       theList.add(selectableLabelItem);
     }
@@ -95,7 +108,8 @@ class MyDrawer extends StatelessWidget {
                         ),
                       ),
                       Column(
-                        children: _labelList(snapshot.data),
+                        children: _labelList(
+                            snapshot.data, drawerScreenSelection, context),
                       ),
                     ],
                   );
