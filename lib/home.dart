@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
+import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
@@ -11,7 +12,6 @@ import 'package:keep_notes_clone/custom_widgets/search_appbar.dart';
 
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 import 'package:keep_notes_clone/screens/no_notes_screen.dart';
-import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
@@ -76,7 +76,7 @@ class _HomeBody extends StatelessWidget {
                         margin: EdgeInsets.only(bottom: _bottomPadding),
                         child: Column(
                           children: <Widget>[
-                            _SectionTitle('PINNED'),
+                            CardTypeSectionTitle('PINNED'),
                             Column(
                               children:
                                   pinnedNotes.map(_noteCardBuilder).toList(),
@@ -100,26 +100,7 @@ class _HomeBody extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  final String title;
 
-  const _SectionTitle(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: appWhite,
-      height: 40,
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 24),
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: drawerLabelsEditStyle.copyWith(fontSize: 11, letterSpacing: 0.5),
-      ),
-    );
-  }
-}
 
 class _OthersColumn extends StatelessWidget {
   final List<Note> unpinnedNotesList;
@@ -137,7 +118,7 @@ class _OthersColumn extends StatelessWidget {
         SizedBox(
           height: 24,
         ),
-        _SectionTitle('OTHERS'),
+        CardTypeSectionTitle('OTHERS'),
         Column(
           children: unpinnedNotesList.map(_noteCardBuilder).toList(),
         ),

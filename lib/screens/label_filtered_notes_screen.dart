@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
+import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
@@ -126,27 +127,6 @@ class _Body extends StatelessWidget {
   }
 }
 
-// TODO: remove this duplication ?
-class _SectionTitle extends StatelessWidget {
-  final String title;
-
-  const _SectionTitle(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: appWhite,
-      height: 40,
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 24),
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: drawerLabelsEditStyle.copyWith(fontSize: 11, letterSpacing: 0.5),
-      ),
-    );
-  }
-}
 
 class _OptionalColumn extends StatelessWidget {
   final List<Note> notes;
@@ -162,7 +142,7 @@ class _OptionalColumn extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        _SectionTitle(title),
+        CardTypeSectionTitle(title),
         Column(
           children: notes.map(_noteCardBuilder).toList(),
         ),
