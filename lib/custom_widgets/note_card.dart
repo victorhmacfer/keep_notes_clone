@@ -85,7 +85,7 @@ class NoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
-            _LabelsContainer(labels: note.labels),
+            (note.labels.isNotEmpty) ? _LabelsContainer(labels: note.labels) : Container(),
           ],
         ),
       ),
