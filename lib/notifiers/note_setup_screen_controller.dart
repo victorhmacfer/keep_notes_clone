@@ -20,11 +20,16 @@ class NoteSetupScreenController with ChangeNotifier {
 
   final bool _editing;
 
+  DateTime noteLastEdited;
+
+  bool _noteIsDirty = false;
+
   NoteSetupScreenController()
       : titleController = TextEditingController(),
         textController = TextEditingController(),
         _selectedColorIndex = 0,
         _isPinned = false,
+        noteLastEdited = DateTime.now(),
         _editing = false,
         _futureLabels = [];
 
@@ -33,6 +38,7 @@ class NoteSetupScreenController with ChangeNotifier {
         textController = TextEditingController(),
         _selectedColorIndex = 0,
         _isPinned = false,
+        noteLastEdited = DateTime.now(),
         _editing = false,
         _futureLabels = [label];
 
@@ -41,6 +47,7 @@ class NoteSetupScreenController with ChangeNotifier {
         textController = TextEditingController(text: note.text),
         _selectedColorIndex = note.colorIndex,
         _isPinned = note.pinned,
+        noteLastEdited = note.lastEdited,
         _editing = true,
         _futureLabels = List.from(note.labels),
         _noteToBeDeleted = note;
@@ -57,6 +64,13 @@ class NoteSetupScreenController with ChangeNotifier {
 
   set selectedColorIndex(int newValue) {
     _selectedColorIndex = newValue;
+    notifyListeners();
+  }
+
+  bool get noteIsDirty => _noteIsDirty;
+
+  void markNoteAsDirty() {
+    _noteIsDirty = true;
     notifyListeners();
   }
 

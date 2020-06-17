@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/label_search_result.dart';
@@ -55,6 +56,7 @@ class NoteTrackingBloc {
       String text,
       int colorIndex,
       bool pinned,
+      @required DateTime lastEdited,
       bool archived,
       List<Label> labels}) {
     if (pinned) {
@@ -67,6 +69,7 @@ class NoteTrackingBloc {
         text: text,
         colorIndex: colorIndex,
         pinned: pinned,
+        lastEdited: lastEdited,
         archived: archived,
         labels: labels);
 

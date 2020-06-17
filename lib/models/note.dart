@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
 
 class Note {
@@ -7,6 +8,7 @@ class Note {
   bool _archived;
   bool _deleted;
   int colorIndex;
+  DateTime lastEdited;
 
   List<Label> labels = [];
 
@@ -15,6 +17,7 @@ class Note {
       this.text = '',
       this.colorIndex = 0,
       this.labels,
+      @required this.lastEdited,
       pinned = false,
       archived = false}) {
     _pinned = pinned;

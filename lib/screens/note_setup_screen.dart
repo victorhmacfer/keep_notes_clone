@@ -83,6 +83,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     text: text,
                     colorIndex: colorIndex,
                     pinned: pinned,
+                    lastEdited: DateTime.now(),
                     archived: false,
                     labels: labels);
 
@@ -94,6 +95,9 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 note.text = text;
                 note.colorIndex = colorIndex;
                 note.pinned = pinned;
+                if (notifier.noteIsDirty) {
+                      note.lastEdited = DateTime.now();
+                    }
                 note.labels = labels;
                 noteBloc.onNoteChanged();
               }
@@ -140,12 +144,16 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                         colorIndex: colorIndex,
                         pinned: false,
                         archived: true,
+                        lastEdited: DateTime.now(),
                         labels: labels);
                   } else {
                     note.title = title;
                     note.text = text;
                     note.colorIndex = colorIndex;
                     note.archived = !note.archived;
+                    if (notifier.noteIsDirty) {
+                      note.lastEdited = DateTime.now();
+                    }
                     note.labels = labels;
                     noteBloc.onNoteChanged();
                   }
@@ -203,6 +211,10 @@ class _NoteSetupBody extends StatelessWidget {
                         notifier.closeLeftBottomSheet();
                         notifier.closeRightBottomSheet();
                       },
+                      onChanged: (text) {
+                        notifier.markNoteAsDirty();
+                      },
+                      
                       keyboardType: TextInputType.text,
                       minLines: 1,
                       maxLines: 10,
@@ -226,6 +238,9 @@ class _NoteSetupBody extends StatelessWidget {
                       onTap: () {
                         notifier.closeLeftBottomSheet();
                         notifier.closeRightBottomSheet();
+                      },
+                      onChanged: (text) {
+                        notifier.markNoteAsDirty();
                       },
                       keyboardType: TextInputType.multiline,
                       minLines: 1,
@@ -365,6 +380,8 @@ class _MyStickyBottomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
+    var lastEditedText = notifier.noteLastEdited.toString();
+
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
         child: BottomAppBar(
@@ -396,6 +413,8 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                         notifier.closeLeftBottomSheet();
                       }
                     }),
+                    Text(lastEditedText),
+
                 PngIconButton(
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
