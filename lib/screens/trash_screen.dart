@@ -32,10 +32,12 @@ class _TrashBody extends StatelessWidget {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return SafeArea(
+      top: false,
         child: Container(
       child: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
+            brightness: Brightness.light,
             floating: true,
             backgroundColor: appWhite,
             iconTheme: IconThemeData(color: appIconGrey),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -67,6 +68,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
     bool isArchived = (note == null) ? false : note.archived;
 
     return AppBar(
+      brightness: Brightness.light,
       backgroundColor: notifier.selectedColor.getColor(),
       iconTheme: IconThemeData(color: appIconGreyForColoredBg),
       leading: IconButton(

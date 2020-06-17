@@ -15,7 +15,7 @@ class SearchAppBar extends StatelessWidget {
 }
 
 class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
-  static const double APP_BAR_HEIGHT = 68;
+  static const double APP_BAR_HEIGHT = 92;
 
   @override
   double get maxExtent => APP_BAR_HEIGHT;
@@ -30,33 +30,65 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: AppBar(
-        iconTheme: IconThemeData(color: appIconGrey),
-        elevation: 2,
-        title: Text('Search your notes', style: searchAppBarStyle),
-        titleSpacing: 0,
-        actions: <Widget>[
-          PngIconButton(
-              pngIcon: PngIcon(
-                fileName: 'outline_dashboard_black_48.png',
+    return Container(
+      padding: EdgeInsets.only(bottom: 8, left: 16, right: 16),
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        height: 50,
+        width: double.infinity,
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: appWhite,
+              boxShadow: [
+                BoxShadow(blurRadius: 1, color: Color.fromRGBO(0, 0, 0, 0.3)),
+              ],
+              borderRadius: BorderRadius.circular(8)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.menu,
+                      color: appIconGrey,
+                    ),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  ),
+                  SizedBox(width: 4,),
+                  Text('Search your notes', style: searchAppBarStyle),
+                ],
               ),
-              onTap: () {}),
-          Padding(
-            padding: const EdgeInsets.only(right: 12, left: 20),
-            child: CircleAvatar(
-              radius: 16,
-              child: Text(
-                'V',
-                style: TextStyle(fontSize: 14),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  PngIconButton(
+                      pngIcon: PngIcon(
+                        fileName: 'outline_dashboard_black_48.png',
+                      ),
+                      onTap: () {}),
+                      
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12, left: 20),
+                    child: CircleAvatar(
+                      radius: 16,
+                      child: Text(
+                        'V',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          )
-        ],
-        backgroundColor: appWhite,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            ],
+          ),
+        ),
       ),
+
     );
   }
 }

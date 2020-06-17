@@ -41,6 +41,7 @@ class _DeletedNoteSetupAppBar extends StatelessWidget
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
     return AppBar(
+      brightness: Brightness.light,
       backgroundColor: notifier.selectedColor.getColor(),
       iconTheme: IconThemeData(color: appIconGrey),
       leading: IconButton(

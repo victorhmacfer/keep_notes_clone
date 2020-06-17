@@ -20,6 +20,7 @@ class EditLabelsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         elevation: 0,
         title: Text(
           'Edit labels',

@@ -21,6 +21,7 @@ class NoteLabelingScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         title: TextField(
           controller: _labelSearchController,
           focusNode: _labelSearchFocusNode,

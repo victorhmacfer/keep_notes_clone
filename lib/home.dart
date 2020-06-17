@@ -48,6 +48,7 @@ class _HomeBody extends StatelessWidget {
 
     return SafeArea(
       // ignoring the bottom safearea is necessary for "extendBody" to work
+      top: false,
       bottom: false,
       child: Container(
         child: CustomScrollView(
@@ -99,8 +100,6 @@ class _HomeBody extends StatelessWidget {
     );
   }
 }
-
-
 
 class _OthersColumn extends StatelessWidget {
   final List<Note> unpinnedNotesList;
