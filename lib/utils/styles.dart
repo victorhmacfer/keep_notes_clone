@@ -9,14 +9,14 @@ var cardTitleStyle = TextStyle(
     letterSpacing: -0.5);
 
 var cardSmallTextStyle = TextStyle(
-    color: appCardTextGrey,
+    color: appCardTextGreyForColoredBg,
     fontSize: 13,
     fontFamily: 'Montserrat',
     fontWeight: FontWeight.w500,
     letterSpacing: -0.5);
 
 var cardBigTextStyle = TextStyle(
-    color: appCardTextGrey,
+    color: appCardTextGreyForColoredBg,
     fontSize: 15,
     fontFamily: 'Montserrat',
     fontWeight: FontWeight.w500,
@@ -38,7 +38,7 @@ var drawerItemStyle = TextStyle(
 var drawerLabelsEditStyle =
     TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: appIconGrey);
 
-var bottomSheetStyle = TextStyle(fontSize: 16, color: appVeryDarkGrey);
+var bottomSheetStyle = TextStyle(fontSize: 16, color: appVeryDarkGreyForColoredBg);
 
 final appLightThemeData = ThemeData(
     visualDensity: VisualDensity.adaptivePlatformDensity,

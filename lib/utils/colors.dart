@@ -4,9 +4,9 @@ const appWhite = Color.fromARGB(255, 255, 255, 255);
 
 const appTranslucentWhite = Color.fromARGB(244, 255, 255, 255);
 
-const appIconGrey = Color.fromARGB(255, 95, 98, 103);
+const appIconGrey = Color.fromARGB(255, 102, 102, 102);
 
-const appVeryDarkGrey = Color.fromARGB(255, 64, 64, 64);
+const appVeryDarkGrey = Color.fromARGB(255, 48, 48, 48);
 
 const appCardTextGrey = Color.fromARGB(255, 88, 88, 88);
 
@@ -19,6 +19,15 @@ const appDrawerItemSelected = Color.fromARGB(255, 253, 239, 194);
 const appBlack = Color.fromARGB(255, 0, 0, 0);
 
 const appGreyForColoredBg = Color.fromRGBO(0, 0, 0, 0.3);
+
+const appVeryDarkGreyForColoredBg =
+    Color.fromRGBO(0, 0, 0, 0.81); // (48-255)/(0-255)
+
+const appIconGreyForColoredBg =
+    Color.fromRGBO(0, 0, 0, 0.6); // (102-255)/(0-255)
+
+const appCardTextGreyForColoredBg =
+    Color.fromRGBO(0, 0, 0, 0.655); // (88-255)/(0-255)
 
 const appSettingsBlue = Color.fromARGB(255, 26, 113, 228);
 

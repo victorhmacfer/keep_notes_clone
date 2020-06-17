@@ -13,6 +13,7 @@ import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:keep_notes_clone/utils/last_edited_translation.dart';
 
 class NoteSetupScreen extends StatelessWidget {
   final Note note;
@@ -67,7 +68,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       backgroundColor: notifier.selectedColor.getColor(),
-      iconTheme: IconThemeData(color: appIconGrey),
+      iconTheme: IconThemeData(color: appIconGreyForColoredBg),
       leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -96,8 +97,8 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 note.colorIndex = colorIndex;
                 note.pinned = pinned;
                 if (notifier.noteIsDirty) {
-                      note.lastEdited = DateTime.now();
-                    }
+                  note.lastEdited = DateTime.now();
+                }
                 note.labels = labels;
                 noteBloc.onNoteChanged();
               }
@@ -111,8 +112,14 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
               pngIcon: (notifier.isPinned)
-                  ? PngIcon(fileName: 'baseline_push_pin_black_48.png')
-                  : PngIcon(fileName: 'outline_push_pin_black_48.png'),
+                  ? PngIcon(
+                      fileName: 'baseline_push_pin_black_48.png',
+                      iconColor: appIconGreyForColoredBg,
+                    )
+                  : PngIcon(
+                      fileName: 'outline_push_pin_black_48.png',
+                      iconColor: appIconGreyForColoredBg,
+                    ),
               onTap: () {
                 var pinOrUnpin =
                     (notifier.isPinned) ? notifier.unpinNote : notifier.pinNote;
@@ -122,15 +129,24 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
-              pngIcon: PngIcon(fileName: 'outline_add_alert_black_48.png'),
+              pngIcon: PngIcon(
+                fileName: 'outline_add_alert_black_48.png',
+                iconColor: appIconGreyForColoredBg,
+              ),
               onTap: () {}),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
               pngIcon: (isArchived)
-                  ? PngIcon(fileName: 'outline_unarchive_black_48.png')
-                  : PngIcon(fileName: 'outline_archive_black_48.png'),
+                  ? PngIcon(
+                      fileName: 'outline_unarchive_black_48.png',
+                      iconColor: appIconGreyForColoredBg,
+                    )
+                  : PngIcon(
+                      fileName: 'outline_archive_black_48.png',
+                      iconColor: appIconGreyForColoredBg,
+                    ),
               onTap: () {
                 var title = notifier.titleController.text;
                 var text = notifier.textController.text;
@@ -214,7 +230,6 @@ class _NoteSetupBody extends StatelessWidget {
                       onChanged: (text) {
                         notifier.markNoteAsDirty();
                       },
-                      
                       keyboardType: TextInputType.text,
                       minLines: 1,
                       maxLines: 10,
@@ -279,31 +294,46 @@ class _MyStickyBottomAppBar extends StatelessWidget {
         children: <Widget>[
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_photo_camera_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_photo_camera_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Take photo',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_photo_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_photo_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Add image',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_brush_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_brush_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Drawing',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_mic_none_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_mic_none_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Recording',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_check_box_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_check_box_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Checkboxes',
             onTap: () {},
           ),
@@ -323,7 +353,10 @@ class _MyStickyBottomAppBar extends StatelessWidget {
         children: <Widget>[
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_delete_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_delete_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Delete',
             onTap: () {
               var noteForDeletion = notifier.noteToBeDeleted;
@@ -339,25 +372,37 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_file_copy_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_file_copy_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Make a copy',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_share_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_share_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Send',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_person_add_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_person_add_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Collaborator',
             onTap: () {},
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'outline_label_black_48.png'),
+            pngIcon: PngIcon(
+              fileName: 'outline_label_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Labels',
             onTap: () {
               Navigator.push(
@@ -380,7 +425,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    var lastEditedText = notifier.noteLastEdited.toString();
+    var lastEditedText = translateLastEdited(notifier.noteLastEdited);
 
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
@@ -395,6 +440,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                 PngIconButton(
                     pngIcon: PngIcon(
                       fileName: 'outline_add_box_black_48.png',
+                      iconColor: appIconGreyForColoredBg,
                     ),
                     onTap: () {
                       if (notifier.leftBottomSheetOpen == false) {
@@ -413,11 +459,14 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                         notifier.closeLeftBottomSheet();
                       }
                     }),
-                    Text(lastEditedText),
-
+                Text(
+                  lastEditedText,
+                  style: TextStyle(color: appVeryDarkGreyForColoredBg),
+                ),
                 PngIconButton(
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
+                      iconColor: appIconGreyForColoredBg,
                     ),
                     onTap: () {
                       if (notifier.rightBottomSheetOpen == false) {
