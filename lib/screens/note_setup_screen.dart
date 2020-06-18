@@ -196,6 +196,7 @@ class _NoteSetupBody extends StatelessWidget {
       return Container();
     }
     return Container(
+      margin: EdgeInsets.only(top: 16),
       width: double.infinity,
       child: Wrap(
         spacing: 4,
@@ -219,7 +220,7 @@ class _NoteSetupBody extends StatelessWidget {
           SliverToBoxAdapter(
             child: Container(
                 padding:
-                    EdgeInsets.only(top: 24, bottom: 40, left: 20, right: 20),
+                    EdgeInsets.only(top: 24, bottom: 72, left: 20, right: 20),
                 child: Column(
                   children: <Widget>[
                     TextField(
@@ -252,6 +253,7 @@ class _NoteSetupBody extends StatelessWidget {
                       controller: notifier.textController,
                       focusNode: notifier.textFocusNode,
                       autofocus: notifier.notEditing,
+                      scrollPadding: const EdgeInsets.all(56),
                       onTap: () {
                         notifier.closeLeftBottomSheet();
                         notifier.closeRightBottomSheet();
@@ -407,6 +409,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             ),
             text: 'Labels',
             onTap: () {
+              notifier.closeRightBottomSheet();
               Navigator.push(
                   context,
                   MaterialPageRoute(
