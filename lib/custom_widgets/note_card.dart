@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/custom_widgets/label_chip.dart';
+import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';

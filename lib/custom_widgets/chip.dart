@@ -3,6 +3,11 @@ import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
+var _noteSetupChipDecoration = BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: appGreyForColoredBg, width: 1),
+      );
+
 class NoteSetupLabelChip extends StatelessWidget {
   final Label label;
 
@@ -11,11 +16,8 @@ class NoteSetupLabelChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: appGreyForColoredBg, width: 1),
-      ),
+      padding: EdgeInsets.symmetric(vertical: 7, horizontal: 14),
+      decoration: _noteSetupChipDecoration,
       child: Text(
         label.text,
         style: drawerItemStyle.copyWith(fontSize: 13),
@@ -41,6 +43,33 @@ class NoteCardLabelChip extends StatelessWidget {
         labelText,
         style: drawerItemStyle.copyWith(fontSize: 12),
       ),
+    );
+  }
+}
+
+
+class NoteSetupReminderChip extends StatelessWidget {
+
+  final DateTime reminderTime;
+
+  NoteSetupReminderChip(this.reminderTime);
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(8, 6, 14, 6),
+      decoration: _noteSetupChipDecoration,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(Icons.alarm, size: 18, color: appIconGreyForColoredBg,),
+          SizedBox(width: 8,),
+          Text(reminderTime.toString(), style: drawerItemStyle.copyWith(fontSize: 12),),
+        ],
+      ),
+
+      
     );
   }
 }

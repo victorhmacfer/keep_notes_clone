@@ -56,6 +56,7 @@ class NoteTrackingBloc {
       String text,
       int colorIndex,
       bool pinned,
+      DateTime reminderTime,
       @required DateTime lastEdited,
       bool archived,
       List<Label> labels}) {
@@ -69,6 +70,7 @@ class NoteTrackingBloc {
         text: text,
         colorIndex: colorIndex,
         pinned: pinned,
+        reminderTime: reminderTime,
         lastEdited: lastEdited,
         archived: archived,
         labels: labels);

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 
 import 'package:keep_notes_clone/custom_widgets/bottomsheet_tile.dart';
-import 'package:keep_notes_clone/custom_widgets/label_chip.dart';
+import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 
 import 'package:keep_notes_clone/models/label.dart';
@@ -79,16 +79,31 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
             var colorIndex = notifier.selectedColorIndex;
             var pinned = notifier.isPinned;
             var labels = notifier.futureLabels;
-            if (title.isNotEmpty || text.isNotEmpty) {
+            var savedReminderTime = notifier.savedReminderTime;
+            if (title.isNotEmpty ||
+                text.isNotEmpty ||
+                (savedReminderTime != null)) {
               if (note == null) {
-                noteBloc.onCreateNewNote(
-                    title: title,
-                    text: text,
-                    colorIndex: colorIndex,
-                    pinned: pinned,
-                    lastEdited: DateTime.now(),
-                    archived: false,
-                    labels: labels);
+                if (savedReminderTime != null) {
+                  noteBloc.onCreateNewNote(
+                      title: title,
+                      text: text,
+                      colorIndex: colorIndex,
+                      reminderTime: savedReminderTime,
+                      pinned: pinned,
+                      lastEdited: DateTime.now(),
+                      archived: false,
+                      labels: labels);
+                } else {
+                  noteBloc.onCreateNewNote(
+                      title: title,
+                      text: text,
+                      colorIndex: colorIndex,
+                      pinned: pinned,
+                      lastEdited: DateTime.now(),
+                      archived: false,
+                      labels: labels);
+                }
 
                 if (label != null) {
                   noteBloc.labelFilteringSink.add(label);
@@ -162,16 +177,32 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 var text = notifier.textController.text;
                 var colorIndex = notifier.selectedColorIndex;
                 var labels = notifier.futureLabels;
-                if (title.isNotEmpty || text.isNotEmpty) {
+                var savedReminderTime = notifier.savedReminderTime;
+                print(savedReminderTime);
+                if (title.isNotEmpty ||
+                    text.isNotEmpty ||
+                    (savedReminderTime != null)) {
                   if (note == null) {
-                    noteBloc.onCreateNewNote(
-                        title: title,
-                        text: text,
-                        colorIndex: colorIndex,
-                        pinned: false,
-                        archived: true,
-                        lastEdited: DateTime.now(),
-                        labels: labels);
+                    if (savedReminderTime != null) {
+                      noteBloc.onCreateNewNote(
+                          title: title,
+                          text: text,
+                          colorIndex: colorIndex,
+                          reminderTime: savedReminderTime,
+                          pinned: false,
+                          archived: true,
+                          lastEdited: DateTime.now(),
+                          labels: labels);
+                    } else {
+                      noteBloc.onCreateNewNote(
+                          title: title,
+                          text: text,
+                          colorIndex: colorIndex,
+                          pinned: false,
+                          archived: true,
+                          lastEdited: DateTime.now(),
+                          labels: labels);
+                    }
                   } else {
                     note.title = title;
                     note.text = text;
@@ -199,10 +230,16 @@ class _NoteSetupBody extends StatelessWidget {
     return theLabels.map((lab) => NoteSetupLabelChip(label: lab)).toList();
   }
 
-  Widget _noteLabels(List<Label> theLabels) {
-    if (theLabels.isEmpty) {
+  Widget _noteChips(DateTime reminderTime, List<Label> theLabels) {
+    if (theLabels.isEmpty && (reminderTime == null)) {
       return Container();
     }
+    List<Widget> chipList = [];
+
+    if (reminderTime != null) chipList.add(NoteSetupReminderChip(reminderTime));
+
+    chipList.addAll(_labelWidgets(theLabels));
+
     return Container(
       margin: EdgeInsets.only(top: 16),
       width: double.infinity,
@@ -210,7 +247,7 @@ class _NoteSetupBody extends StatelessWidget {
         spacing: 4,
         runSpacing: 8,
         direction: Axis.horizontal,
-        children: _labelWidgets(theLabels),
+        children: chipList,
       ),
     );
   }
@@ -285,7 +322,7 @@ class _NoteSetupBody extends StatelessWidget {
                             TextStyle(color: appGreyForColoredBg, fontSize: 15),
                       ),
                     ),
-                    _noteLabels(noteLabels),
+                    _noteChips(notifier.savedReminderTime, noteLabels),
                   ],
                 )),
           )
@@ -676,7 +713,7 @@ class _ReminderSetupDialog extends StatelessWidget {
                     color: NoteColor.orange.getColor(),
                     child: Text('Save'),
                     onPressed: () {
-                      //TODO: implement this
+                      notifier.saveReminderTime();
                       Navigator.pop(context);
                     },
                   ),
