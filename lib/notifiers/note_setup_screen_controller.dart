@@ -24,6 +24,8 @@ class NoteSetupScreenController with ChangeNotifier {
 
   bool _noteIsDirty = false;
 
+  DateTime _futureReminderDateTime;
+
   NoteSetupScreenController()
       : titleController = TextEditingController(),
         textController = TextEditingController(),
@@ -50,9 +52,35 @@ class NoteSetupScreenController with ChangeNotifier {
         noteLastEdited = note.lastEdited,
         _editing = true,
         _futureLabels = List.from(note.labels),
-        _noteToBeDeleted = note;
+        _noteToBeDeleted = note {
+    _futureReminderDateTime = note.reminderTime; // CAN BE NULL !!
+  }
 
   int get selectedColorIndex => _selectedColorIndex;
+
+  DateTime get futureReminderTime => _futureReminderDateTime;
+
+  set futureReminderTime(DateTime newTime) {
+    _futureReminderDateTime = DateTime(
+        _futureReminderDateTime.year ?? 9999,
+        _futureReminderDateTime.month ?? 12,
+        _futureReminderDateTime.day ?? 12,
+        newTime.hour,
+        newTime.minute);
+    notifyListeners();
+  }
+
+  set futureReminderDay(DateTime newReminderDate) {
+    var currentHour = _futureReminderDateTime?.hour ?? 12;
+    var currentMinute = _futureReminderDateTime?.minute ?? 12;
+    _futureReminderDateTime = DateTime(newReminderDate.year,
+        newReminderDate.month, newReminderDate.day, currentHour, currentMinute);
+    notifyListeners();
+  }
+
+  void resetReminderTimeToNow() {
+    _futureReminderDateTime = DateTime.now();
+  }
 
   Note get noteToBeDeleted => _noteToBeDeleted;
 

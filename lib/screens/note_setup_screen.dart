@@ -14,7 +14,7 @@ import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
-import 'package:keep_notes_clone/utils/last_edited_translation.dart';
+import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 class NoteSetupScreen extends StatelessWidget {
   final Note note;
@@ -135,7 +135,15 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 fileName: 'outline_add_alert_black_48.png',
                 iconColor: appIconGreyForColoredBg,
               ),
-              onTap: () {}),
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) =>
+                        ChangeNotifierProvider<NoteSetupScreenController>.value(
+                          value: notifier,
+                          child: _ReminderSetupDialog(),
+                        ));
+              }),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -562,6 +570,132 @@ class _ColorSelectionCircle extends StatelessWidget {
               color: appGreyForColoredBg,
             )),
       ),
+    );
+  }
+}
+
+class _ReminderSetupDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+
+    final notifier = Provider.of<NoteSetupScreenController>(context);
+
+    DateTime reminderTime = notifier.futureReminderTime ?? DateTime.now();
+    String reminderDayText = translateReminderDay(reminderTime);
+    String reminderTimeText = translateReminderTime(reminderTime);
+
+    var now = DateTime.now();
+
+    var twoYearsInTheFuture = now.add(Duration(days: 366 * 2));
+
+    return Center(
+        child: Material(
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        width: screenWidth * 0.93,
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+        // color: Colors.purple[100],
+        child: Container(
+          // color: Colors.green[100],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                'Add reminder',
+                style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  var chosenDate = await showDatePicker(
+                      context: context,
+                      initialDate: now,
+                      firstDate: now,
+                      lastDate: twoYearsInTheFuture);
+                  if (chosenDate != null) {
+                    notifier.futureReminderDay = chosenDate;
+                  }
+                },
+                child: Container(
+                  color: appWhite,
+                  padding: EdgeInsets.only(top: 24, bottom: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(reminderDayText),
+                      Icon(Icons.calendar_today)
+                    ],
+                  ),
+                ),
+              ),
+              _Divider(),
+              GestureDetector(
+                onTap: () async {
+                  var chosenTime = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                  if (chosenTime != null) {
+                    var hour = chosenTime.hour;
+                    var minute = chosenTime.minute;
+                    notifier.futureReminderTime =
+                        DateTime(9999, 12, 12, hour, minute);
+                  }
+                },
+                child: Container(
+                  color: appWhite,
+                  padding: EdgeInsets.only(top: 24, bottom: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(reminderTimeText),
+                      Icon(Icons.schedule)
+                    ],
+                  ),
+                ),
+              ),
+              _Divider(),
+              SizedBox(
+                height: 32,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  FlatButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      notifier.resetReminderTimeToNow();
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    color: NoteColor.orange.getColor(),
+                    child: Text('Save'),
+                    onPressed: () {
+                      //TODO: implement this
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
+}
+
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      color: appDividerGrey,
     );
   }
 }

@@ -9,6 +9,7 @@ class Note {
   bool _deleted;
   int colorIndex;
   DateTime lastEdited;
+  DateTime reminderTime;
 
   List<Label> labels = [];
 
@@ -18,6 +19,7 @@ class Note {
       this.colorIndex = 0,
       this.labels,
       @required this.lastEdited,
+      this.reminderTime,
       pinned = false,
       archived = false}) {
     _pinned = pinned;
