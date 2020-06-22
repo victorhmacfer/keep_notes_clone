@@ -24,7 +24,7 @@ class NoteSetupScreenController with ChangeNotifier {
 
   bool _noteIsDirty = false;
 
-  DateTime _futureReminderDateTime;
+  DateTime _futureReminderDateTime = DateTime.now();
 
   DateTime _savedReminderDateTime;
 
@@ -55,8 +55,13 @@ class NoteSetupScreenController with ChangeNotifier {
         _editing = true,
         _futureLabels = List.from(note.labels),
         _noteToBeDeleted = note {
-    _futureReminderDateTime = note.reminderTime; // CAN BE NULL !!
-    if (note.reminderTime != null) _savedReminderDateTime = note.reminderTime;
+
+          if (note.reminderTime != null) {
+            _futureReminderDateTime = note.reminderTime;
+            _savedReminderDateTime = note.reminderTime;
+          } 
+     
+    
   }
 
   int get selectedColorIndex => _selectedColorIndex;
@@ -83,12 +88,17 @@ class NoteSetupScreenController with ChangeNotifier {
     notifyListeners();
   }
 
-  void resetReminderTimeToNow() {
-    _futureReminderDateTime = DateTime.now();
+  void resetReminderTimeToSavedOrNow() {
+    _futureReminderDateTime = _savedReminderDateTime ?? DateTime.now();
   }
 
   void saveReminderTime() {
     _savedReminderDateTime = _futureReminderDateTime;
+    notifyListeners();
+  }
+
+  void removeSavedReminder() {
+    _savedReminderDateTime = null;
     notifyListeners();
   }
 

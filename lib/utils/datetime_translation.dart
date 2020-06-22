@@ -67,3 +67,28 @@ String translateReminderTime(DateTime dateTime) {
 
   return '$hourZeroOrNothing${dateTime.hour}:$minuteZeroOrNothing${dateTime.minute}';
 }
+
+String chipReminderText(DateTime dateTime) {
+  var today = DateTime.now();
+  var tomorrow = today.add(Duration(days: 1));
+  String hourZeroOrNothing = (dateTime.hour < 10) ? '0' : '';
+  String minuteZeroOrNothing = (dateTime.minute < 10) ? '0' : '';
+
+  String prefix;
+
+  if ((dateTime.day == today.day) &&
+      (dateTime.month == today.month) &&
+      (dateTime.year == today.year)) {
+    prefix = 'Today';
+  } else if ((dateTime.day == tomorrow.day) &&
+      (dateTime.month == tomorrow.month) &&
+      (dateTime.year == tomorrow.year)) {
+    prefix = 'Tomorrow';
+  } else {
+    String dayZeroOrNothing = (dateTime.day < 10) ? '0' : '';
+    prefix =
+        '${_monthAbbreviations[dateTime.month]} $dayZeroOrNothing${dateTime.day}';
+  }
+
+  return '$prefix, $hourZeroOrNothing${dateTime.hour}:$minuteZeroOrNothing${dateTime.minute}';
+}

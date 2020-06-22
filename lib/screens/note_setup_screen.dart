@@ -113,6 +113,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 note.text = text;
                 note.colorIndex = colorIndex;
                 note.pinned = pinned;
+                note.reminderTime = savedReminderTime;
                 if (notifier.noteIsDirty) {
                   note.lastEdited = DateTime.now();
                 }
@@ -178,7 +179,6 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 var colorIndex = notifier.selectedColorIndex;
                 var labels = notifier.futureLabels;
                 var savedReminderTime = notifier.savedReminderTime;
-                print(savedReminderTime);
                 if (title.isNotEmpty ||
                     text.isNotEmpty ||
                     (savedReminderTime != null)) {
@@ -208,6 +208,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     note.text = text;
                     note.colorIndex = colorIndex;
                     note.archived = !note.archived;
+                    note.reminderTime = savedReminderTime;
                     if (notifier.noteIsDirty) {
                       note.lastEdited = DateTime.now();
                     }
@@ -618,13 +619,28 @@ class _ReminderSetupDialog extends StatelessWidget {
 
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    DateTime reminderTime = notifier.futureReminderTime ?? DateTime.now();
-    String reminderDayText = translateReminderDay(reminderTime);
-    String reminderTimeText = translateReminderTime(reminderTime);
+    String reminderDayText = translateReminderDay(notifier.futureReminderTime);
+    String reminderTimeText =
+        translateReminderTime(notifier.futureReminderTime);
 
     var now = DateTime.now();
-
     var twoYearsInTheFuture = now.add(Duration(days: 366 * 2));
+
+    bool hasSavedReminder = notifier.savedReminderTime != null;
+
+    Widget _deleteButton(bool hasSaved) {
+      if (hasSaved) {
+        return FlatButton(
+          child: Text('Delete'),
+          onPressed: () {
+            notifier.removeSavedReminder();
+            Navigator.pop(context);
+          },
+        );
+      }
+
+      return Container();
+    }
 
     return Center(
         child: Material(
@@ -650,7 +666,7 @@ class _ReminderSetupDialog extends StatelessWidget {
                 onTap: () async {
                   var chosenDate = await showDatePicker(
                       context: context,
-                      initialDate: now,
+                      initialDate: notifier.futureReminderTime,
                       firstDate: now,
                       lastDate: twoYearsInTheFuture);
                   if (chosenDate != null) {
@@ -674,7 +690,8 @@ class _ReminderSetupDialog extends StatelessWidget {
                 onTap: () async {
                   var chosenTime = await showTimePicker(
                     context: context,
-                    initialTime: TimeOfDay.now(),
+                    initialTime:
+                        TimeOfDay.fromDateTime(notifier.futureReminderTime),
                   );
                   if (chosenTime != null) {
                     var hour = chosenTime.hour;
@@ -702,10 +719,11 @@ class _ReminderSetupDialog extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
+                  _deleteButton(hasSavedReminder),
                   FlatButton(
                     child: Text('Cancel'),
                     onPressed: () {
-                      notifier.resetReminderTimeToNow();
+                      notifier.resetReminderTimeToSavedOrNow();
                       Navigator.pop(context);
                     },
                   ),

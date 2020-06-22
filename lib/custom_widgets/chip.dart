@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 var _noteSetupChipDecoration = BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: appGreyForColoredBg, width: 1),
-      );
+  borderRadius: BorderRadius.circular(32),
+  border: Border.all(color: appGreyForColoredBg, width: 1),
+);
 
 class NoteSetupLabelChip extends StatelessWidget {
   final Label label;
@@ -47,13 +48,10 @@ class NoteCardLabelChip extends StatelessWidget {
   }
 }
 
-
 class NoteSetupReminderChip extends StatelessWidget {
-
   final DateTime reminderTime;
 
   NoteSetupReminderChip(this.reminderTime);
-
 
   @override
   Widget build(BuildContext context) {
@@ -63,13 +61,20 @@ class NoteSetupReminderChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(Icons.alarm, size: 18, color: appIconGreyForColoredBg,),
-          SizedBox(width: 8,),
-          Text(reminderTime.toString(), style: drawerItemStyle.copyWith(fontSize: 12),),
+          Icon(
+            Icons.alarm,
+            size: 18,
+            color: appIconGreyForColoredBg,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Text(
+            chipReminderText(reminderTime),
+            style: drawerItemStyle.copyWith(fontSize: 12),
+          ),
         ],
       ),
-
-      
     );
   }
 }
