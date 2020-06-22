@@ -85,7 +85,12 @@ class NoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
-            (note.labels.isNotEmpty) ? _LabelsContainer(labels: note.labels) : Container(),
+            (note.labels.isNotEmpty || (note.reminderTime != null))
+                ? _ChipsContainer(
+                    labels: note.labels,
+                    reminderTime: note.reminderTime,
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -93,16 +98,20 @@ class NoteCard extends StatelessWidget {
   }
 }
 
-class _LabelsContainer extends StatelessWidget {
+class _ChipsContainer extends StatelessWidget {
   final List<Label> labels;
+  final DateTime reminderTime;
 
-  _LabelsContainer({@required this.labels});
+  _ChipsContainer({this.labels, this.reminderTime});
 
-  List<Widget> _labelChips() {
-    const maxTotalCharacters = 32;
+  List<Widget> _chips() {
+    int maxTotalCharacters = (reminderTime != null) ? 24 : 32;
     const maxDisplayedLabels = 2;
 
     List<Widget> finalList = [];
+
+    if (reminderTime != null) finalList.add(NoteCardReminderChip(reminderTime));
+
 
     int accumulatedCharacters = 0;
     bool addedPlusLabel = false;
@@ -128,6 +137,8 @@ class _LabelsContainer extends StatelessWidget {
     return finalList;
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -140,7 +151,7 @@ class _LabelsContainer extends StatelessWidget {
           child: Wrap(
             spacing: 4,
             runSpacing: 4,
-            children: _labelChips(),
+            children: _chips(),
           ),
         ),
       ),
