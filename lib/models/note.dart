@@ -48,5 +48,6 @@ class Note {
     _pinned = false;
     _archived = false;
     _deleted = true;
+    reminderTime = null;
   }
 }
