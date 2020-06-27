@@ -42,7 +42,7 @@ class MyDrawer extends StatelessWidget {
 
     for (int i = 0; i < labels.length; i++) {
       var selectableLabelItem = _SelectableDrawerItem(
-        labels[i].text,
+        labels[i].name,
         iconFileName: 'outline_label_black_48.png',
         // accounting for the other 4 SELECTABLE drawer items that are not labels
         drawerItemIndex: i + 4,
@@ -54,7 +54,9 @@ class MyDrawer extends StatelessWidget {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => LabelFilteredNotesScreen(labels[i])));
+                    builder: (context) => Provider<NoteTrackingBloc>.value(
+                        value: noteBloc,
+                        child: LabelFilteredNotesScreen(labels[i]))));
           }
         },
       );
@@ -79,8 +81,12 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {
               if (drawerScreenSelection.selectedScreenIndex != 0) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
+
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Provider<NoteTrackingBloc>.value(
+                            value: noteTrackingBloc, child: HomeScreen())));
               }
             },
           ),
@@ -120,8 +126,11 @@ class MyDrawer extends StatelessWidget {
             text: 'Create new label',
             iconFileName: 'outline_add_black_48.png',
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EditLabelsScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Provider<NoteTrackingBloc>.value(
+                          value: noteTrackingBloc, child: EditLabelsScreen())));
             },
           ),
           _MyCustomDrawerDivider(),
@@ -132,8 +141,12 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {
               if (drawerScreenSelection.selectedScreenIndex != 2) {
                 drawerScreenSelection.changeSelectedScreenToIndex(2);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => ArchiveScreen()));
+
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Provider<NoteTrackingBloc>.value(
+                            value: noteTrackingBloc, child: ArchiveScreen())));
               }
             },
           ),
@@ -144,8 +157,12 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {
               if (drawerScreenSelection.selectedScreenIndex != 3) {
                 drawerScreenSelection.changeSelectedScreenToIndex(3);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => TrashScreen()));
+
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Provider<NoteTrackingBloc>.value(
+                            value: noteTrackingBloc, child: TrashScreen())));
               }
             },
           ),

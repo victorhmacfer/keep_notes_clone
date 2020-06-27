@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "616901035977",
+    "firebase_url": "https://keep-clone-4244c.firebaseio.com",
+    "project_id": "keep-clone-4244c",
+    "storage_bucket": "keep-clone-4244c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616901035977:android:8ea27a6772fd659ab68a18",
+        "android_client_info": {
+          "package_name": "com.example.keep_notes_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "616901035977-slu75e9uffqsnbe5nuh53c49v5ftvurt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVqzqju6xI9kbwapHfT-qierWR1HbUVWs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "616901035977-slu75e9uffqsnbe5nuh53c49v5ftvurt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

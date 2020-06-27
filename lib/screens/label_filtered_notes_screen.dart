@@ -56,7 +56,7 @@ class _Body extends StatelessWidget {
                 backgroundColor: appWhite,
                 iconTheme: IconThemeData(color: appIconGrey),
                 title: Text(
-                  label.text,
+                  label.name,
                   style:
                       drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
                 ),

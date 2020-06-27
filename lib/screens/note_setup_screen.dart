@@ -36,6 +36,7 @@ class NoteSetupScreen extends StatelessWidget {
         theAppBar = _NoteSetupAppBar();
       }
     } else {
+      print('cheguei aqui.');
       controller = NoteSetupScreenController.fromNote(note);
       theAppBar = _NoteSetupAppBar(note: note);
     }
@@ -118,7 +119,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                   note.lastEdited = DateTime.now();
                 }
                 note.labels = labels;
-                noteBloc.onNoteChanged();
+                noteBloc.onNoteChanged(note);
               }
             }
             notifier.closeLeftBottomSheet();
@@ -213,7 +214,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                       note.lastEdited = DateTime.now();
                     }
                     note.labels = labels;
-                    noteBloc.onNoteChanged();
+                    noteBloc.onNoteChanged(note);
                   }
                 }
                 notifier.closeLeftBottomSheet();
@@ -412,7 +413,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
               var noteForDeletion = notifier.noteToBeDeleted;
               if (noteForDeletion != null) {
                 noteForDeletion.delete();
-                noteBloc.onNoteChanged();
+                noteBloc.onNoteChanged(noteForDeletion);
               }
 
               notifier.closeLeftBottomSheet();
@@ -456,12 +457,18 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             text: 'Labels',
             onTap: () {
               notifier.closeRightBottomSheet();
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider<
-                              NoteSetupScreenController>.value(
-                            value: notifier,
+                      builder: (context) => MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider<
+                                  NoteSetupScreenController>.value(
+                                value: notifier,
+                              ),
+                              Provider<NoteTrackingBloc>.value(value: noteBloc),
+                            ],
                             child: NoteLabelingScreen(),
                           )));
             },

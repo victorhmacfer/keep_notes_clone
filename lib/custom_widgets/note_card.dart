@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
@@ -8,6 +9,7 @@ import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/screens/deleted_note_setup_screen.dart';
+import 'package:provider/provider.dart';
 
 class NoteCard extends StatelessWidget {
   final Note note;
@@ -56,18 +58,24 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+
     return GestureDetector(
       onTap: () {
         if (note.deleted) {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => DeletedNoteSetupScreen(note: note)));
+                  builder: (context) => Provider<NoteTrackingBloc>.value(
+                      value: noteTrackingBloc,
+                      child: DeletedNoteSetupScreen(note: note))));
         } else {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => NoteSetupScreen(note: note)));
+                  builder: (context) => Provider<NoteTrackingBloc>.value(
+                      value: noteTrackingBloc,
+                      child: NoteSetupScreen(note: note))));
         }
       },
       child: Container(
@@ -85,7 +93,9 @@ class NoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
-            (note.labels.isNotEmpty || (note.reminderTime != null))
+            // (note.labels.isNotEmpty || (note.reminderTime != null))
+            //FIXME: should be line above not below !!!
+            ((note.labels?.isNotEmpty ?? false) || (note.reminderTime != null))
                 ? _ChipsContainer(
                     labels: note.labels,
                     reminderTime: note.reminderTime,
@@ -112,11 +122,10 @@ class _ChipsContainer extends StatelessWidget {
 
     if (reminderTime != null) finalList.add(NoteCardReminderChip(reminderTime));
 
-
     int accumulatedCharacters = 0;
     bool addedPlusLabel = false;
     for (int i = 0; i < labels.length; i++) {
-      var text = labels[i].text;
+      var text = labels[i].name;
       int textLength = text.length;
 
       bool isWithinCharLimit =
@@ -136,8 +145,6 @@ class _ChipsContainer extends StatelessWidget {
     }
     return finalList;
   }
-
-  
 
   @override
   Widget build(BuildContext context) {

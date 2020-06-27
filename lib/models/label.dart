@@ -1,11 +1,27 @@
 import 'package:keep_notes_clone/models/note.dart';
 
 class Label {
-  String text;
+  int id;
+  String name;
 
   List<Note> _notes = [];
 
-  Label({this.text});
+  Label({this.id, this.name});
+
+
+  factory Label.fromMap(Map<String, dynamic> labelMap) {
+
+    return Label(
+      id: labelMap['id'],
+      name: labelMap['name'],
+    );
+  }
+
+
+
+
+
+
 
   List<Note> get notes => _notes;
 

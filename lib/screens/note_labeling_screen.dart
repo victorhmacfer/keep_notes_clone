@@ -95,7 +95,7 @@ class _NoteLabelListItem extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        label.text,
+                        label.name,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: drawerItemStyle.copyWith(
@@ -133,8 +133,8 @@ class _CreateLabelButton extends StatelessWidget {
     var notifier = Provider.of<NoteSetupScreenController>(context);
 
     return GestureDetector(
-      onTap: () {
-        var createdLabel = noteTrackingBloc.onCreateLabelInsideNote(labelText);
+      onTap: () async {
+        var createdLabel = await noteTrackingBloc.onCreateLabelInsideNote(labelText);
         notifier.checkLabel(createdLabel);
         noteTrackingBloc.onResetLabelSearch();
         _labelSearchController.clear();

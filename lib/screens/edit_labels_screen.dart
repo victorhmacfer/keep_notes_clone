@@ -10,7 +10,7 @@ class EditLabelsScreen extends StatelessWidget {
   List<Widget> _labelList(List<Label> labels) {
     return labels
         .map((label) => _EditLabelListItem(
-            key: ValueKey(label.text), initialText: label.text))
+            key: ValueKey(label.name), initialText: label.name))
         .toList();
   }
 
@@ -143,8 +143,10 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
                     icon: Icon(Icons.check),
                     color: appIconGrey,
                     onPressed: () {
+                      print('entrei aqui');
                       var newLabelText = newLabelTextController.text;
                       if (newLabelText.isNotEmpty) {
+                        print('chameu o createnewlabel com o text de ${newLabelTextController.text}');
                         noteTrackingBloc
                             .onCreateNewLabel(newLabelTextController.text);
                         newLabelTextController.clear();

@@ -20,7 +20,7 @@ class NoteSetupLabelChip extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 7, horizontal: 14),
       decoration: _noteSetupChipDecoration,
       child: Text(
-        label.text,
+        label.name,
         style: drawerItemStyle.copyWith(fontSize: 13),
       ),
     );

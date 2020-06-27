@@ -25,14 +25,17 @@ class HomeScreen extends StatelessWidget {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark));
 
-    return Scaffold(
-      backgroundColor: appWhite,
-      extendBody: true, // making the bottom bar notch transparent
-      floatingActionButton: MyCustomFab(),
-      floatingActionButtonLocation: MyCustomFabLocation(),
-      bottomNavigationBar: MyNotchedBottomAppBar(),
-      drawer: MyDrawer(),
-      body: _HomeBody(),
+    return Provider<NoteTrackingBloc>(
+      create: (context) => NoteTrackingBloc(),
+      child: Scaffold(
+        backgroundColor: appWhite,
+        extendBody: true, // making the bottom bar notch transparent
+        floatingActionButton: MyCustomFab(),
+        floatingActionButtonLocation: MyCustomFabLocation(),
+        bottomNavigationBar: MyNotchedBottomAppBar(),
+        drawer: MyDrawer(),
+        body: _HomeBody(),
+      ),
     );
   }
 }
@@ -90,7 +93,9 @@ class _HomeBody extends StatelessWidget {
                     return NoNotesScreen();
                   }
 
-                  return NoNotesScreen();
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
                 },
               ),
             ),
