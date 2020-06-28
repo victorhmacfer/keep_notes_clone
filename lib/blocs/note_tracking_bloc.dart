@@ -155,8 +155,9 @@ class NoteTrackingBloc {
   }
 
   void _filterNotesForLabelAndDropIntoStream(Label theLabel) {
-    var filteredNotes =
-        _lastAllNotesEmitted.where((n) => n.labels.contains(theLabel)).toList();
+    var filteredNotes = _lastAllNotesEmitted
+        .where((n) => n.labels.any((lab) => lab.id == theLabel.id))
+        .toList();
 
     _labelFilteredNotesBS.add(filteredNotes);
   }
