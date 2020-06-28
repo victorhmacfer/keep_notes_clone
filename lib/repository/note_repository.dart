@@ -22,8 +22,7 @@ class NoteRepository {
   void _fetchNotes() async {
     await dbHandler.initialized;
 
-    var sqliteNoteReadResult = await dbHandler.readAllNotes();
-    var notes = sqliteNoteReadResult.notes;
+    var notes = await dbHandler.readAllNotes();
 
     _notesBS.add(notes);
   }
@@ -48,7 +47,6 @@ class NoteRepository {
     _notesBS.add(currentNotes);
     return insertedNoteId;
 
-    //TODO: add in webservice
   }
 
   Future<int> addLabel(Label label) async {
@@ -67,7 +65,6 @@ class NoteRepository {
     await dbHandler.updateNote(note);
 
     List<Note> currentNotes = _notesBS.value;
-
     _notesBS.add(currentNotes);
   }
 }

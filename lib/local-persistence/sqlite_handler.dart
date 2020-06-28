@@ -6,9 +6,7 @@ class SQLiteHandler {
   Database _database;
 
   SQLiteHandler() {
-    print('SQlitehandler constructor  #1');
     _initialized = _openOrCreateDatabase();
-    print('SQlitehandler constructor  #2');
   }
 
   Future<bool> _initialized;
@@ -98,7 +96,7 @@ class SQLiteHandler {
     String noteLastEdited = note.lastEdited.toString();
     String noteReminderTime = note.reminderTime.toString();
 
-    _database.rawUpdate('''UPDATE note
+    await _database.rawUpdate('''UPDATE note
          SET title = "$noteTitle",
              text = "$noteText",
              pinned = $notePinned,
@@ -108,18 +106,19 @@ class SQLiteHandler {
              lastEdited = "$noteLastEdited",
              reminderTime = "$noteReminderTime"
          WHERE id = ${note.id};''');
+
+    await _database.rawDelete('''
+        DELETE FROM note_label WHERE note_id = ${note.id}''');
+
+    for (var label in note.labels) {
+      _database.rawInsert('''INSERT INTO note_label (note_id, label_id)
+           VALUES (${note.id}, ${label.id});''');
+    }
   }
 
-  Future<SQLiteNoteReadResult> readAllNotes() async {
+  Future<List<Note>> readAllNotes() async {
     var initialized = await _initialized;
     assert(initialized);
-
-    // var debugReadNoteLabelTable =
-    //     await _database.rawQuery('''SELECT * FROM note_label''');
-
-    // for (var x in debugReadNoteLabelTable) {
-    //   print(x);
-    // }
 
     var rows = await _database.rawQuery(
         '''SELECT id, title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime, label_id, name
@@ -127,21 +126,12 @@ class SQLiteHandler {
          (SELECT note_id, label_id, name FROM note_label INNER JOIN label ON label_id = label.id)
          ON note.id = note_id''');
 
-    return SQLiteNoteReadResult(rows);
+    return _mapReadQueryRowsToNoteList(rows);
   }
 
-  Future<List<Map<String, dynamic>>> readAllLabels() async {
-    var initialized = await _initialized;
-    assert(initialized);
+  List<Note> _mapReadQueryRowsToNoteList(List<Map<String, dynamic>> rows) {
+    List<Note> theNotes = [];
 
-    return _database.rawQuery('SELECT * FROM label');
-  }
-}
-
-class SQLiteNoteReadResult {
-  List<Note> notes = [];
-
-  SQLiteNoteReadResult(List<Map<String, dynamic>> rows) {
     for (var r in rows) {
       int theNoteId = r['id'];
       String theTitle = r['title'];
@@ -160,7 +150,7 @@ class SQLiteNoteReadResult {
       int theLabelId = r['label_id'];
       String theLabelName = r['name'];
 
-      var index = notes.indexWhere((note) => note.id == theNoteId);
+      var index = theNotes.indexWhere((note) => note.id == theNoteId);
       if (index == -1) {
         var theNote = Note(
             id: theNoteId,
@@ -175,12 +165,19 @@ class SQLiteNoteReadResult {
         if (theLabelId != null) {
           theNote.labels.add(Label(id: theLabelId, name: theLabelName));
         }
-        notes.add(theNote);
+        theNotes.add(theNote);
       } else {
-        var foundNote = notes[index];
+        var foundNote = theNotes[index];
         foundNote.labels.add(Label(id: theLabelId, name: theLabelName));
       }
     }
+    return theNotes;
+  }
 
+  Future<List<Map<String, dynamic>>> readAllLabels() async {
+    var initialized = await _initialized;
+    assert(initialized);
+
+    return _database.rawQuery('SELECT * FROM label');
   }
 }

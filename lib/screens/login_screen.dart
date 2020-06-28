@@ -9,7 +9,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);
-    print('queota');
 
     return Scaffold(
       appBar: AppBar(),

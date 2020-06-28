@@ -36,37 +36,6 @@ class Note {
     _deleted = deleted;
   }
 
-  factory Note.fromMap(Map<String, dynamic> noteMap) {
-    String theTitle = noteMap['title'] ?? '';
-    String theText = noteMap['text'] ?? '';
-    bool thePinned = (noteMap['pinned'] == 0) ? false : true;
-    bool theArchived = (noteMap['archived'] == 0) ? false : true;
-    bool theDeleted = (noteMap['deleted'] == 0) ? false : true;
-
-    // assumes it will never be null in the DB.
-
-    DateTime theLastEdited = DateTime.parse(noteMap['lastEdited']);
-
-    String reminderTimeInDb = noteMap['reminderTime'];
-
-
-    DateTime theReminderTime =
-        (reminderTimeInDb != 'null') ? DateTime.parse(reminderTimeInDb) : null;
-
-    return Note(
-      id: noteMap['id'],
-      title: theTitle,
-      text: theText,
-      colorIndex: noteMap['colorIndex'],
-      pinned: thePinned,
-      archived: theArchived,
-      deleted: theDeleted,
-      lastEdited: theLastEdited,
-      reminderTime: theReminderTime,
-      labels: [], //FIXME: always creating note without labels
-    );
-  }
-
   bool get pinned => _pinned;
   bool get archived => _archived;
 

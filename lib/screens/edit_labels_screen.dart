@@ -143,10 +143,8 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
                     icon: Icon(Icons.check),
                     color: appIconGrey,
                     onPressed: () {
-                      print('entrei aqui');
                       var newLabelText = newLabelTextController.text;
                       if (newLabelText.isNotEmpty) {
-                        print('chameu o createnewlabel com o text de ${newLabelTextController.text}');
                         noteTrackingBloc
                             .onCreateNewLabel(newLabelTextController.text);
                         newLabelTextController.clear();

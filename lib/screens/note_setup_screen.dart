@@ -36,7 +36,6 @@ class NoteSetupScreen extends StatelessWidget {
         theAppBar = _NoteSetupAppBar();
       }
     } else {
-      print('cheguei aqui.');
       controller = NoteSetupScreenController.fromNote(note);
       theAppBar = _NoteSetupAppBar(note: note);
     }
