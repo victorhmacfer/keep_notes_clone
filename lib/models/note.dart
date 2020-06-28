@@ -12,14 +12,14 @@ class Note {
   DateTime lastEdited;
   DateTime reminderTime;
 
-  List<Label> labels = [];
+  List<Label> labels;
 
   Note(
       {this.id,
       this.title = '',
       this.text = '',
       this.colorIndex = 0,
-      this.labels,
+      labels,
       @required this.lastEdited,
       this.reminderTime,
       bool deleted = false,
@@ -28,6 +28,8 @@ class Note {
     if (deleted) {
       assert((reminderTime == null) && !pinned && !archived);
     }
+
+    this.labels = labels ?? [];
 
     _pinned = pinned;
     _archived = archived;

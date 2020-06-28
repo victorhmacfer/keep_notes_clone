@@ -17,9 +17,9 @@ class SQLiteHandler {
 
   Future<bool> _openOrCreateDatabase() async {
     var databasesPath = await getDatabasesPath();
-    String dbName = 'demo.db';
+
+    String dbName = '28jun20201600.db';
     String path = '$databasesPath/$dbName';
-    print(path);
 
     _database = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) {
@@ -32,17 +32,17 @@ class SQLiteHandler {
               deleted INTEGER, 
               colorIndex INTEGER, 
               lastEdited TEXT, 
-              reminderTime TEXT,
+              reminderTime TEXT
         );''');
       db.execute('''CREATE TABLE label (
               id INTEGER PRIMARY KEY, 
-              name TEXT,
+              name TEXT
         );''');
       db.execute('''CREATE TABLE note_label (
               note_id INTEGER,
               label_id INTEGER,
               FOREIGN KEY(note_id) REFERENCES note(id),
-              FOREIGN KEY(label_id) REFERENCES label(id),
+              FOREIGN KEY(label_id) REFERENCES label(id)
         );''');
     });
     return true;
@@ -62,10 +62,17 @@ class SQLiteHandler {
     String noteLastEdited = note.lastEdited.toString();
     String noteReminderTime = note.reminderTime.toString();
 
-    return _database.rawInsert(
+    var insertedNoteId = await _database.rawInsert(
         '''INSERT INTO note (title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime) 
       VALUES ("$noteTitle", "$noteText", $notePinned, $noteArchived, $noteDeleted,
               $noteColorIndex, "$noteLastEdited", "$noteReminderTime");''');
+
+    for (var label in note.labels) {
+      _database.rawInsert('''INSERT INTO note_label (note_id, label_id)
+           VALUES ($insertedNoteId, ${label.id});''');
+    }
+
+    return insertedNoteId;
   }
 
   Future<int> insertLabel(Label label) async {
@@ -91,8 +98,7 @@ class SQLiteHandler {
     String noteLastEdited = note.lastEdited.toString();
     String noteReminderTime = note.reminderTime.toString();
 
-    _database.rawUpdate(
-      '''UPDATE note
+    _database.rawUpdate('''UPDATE note
          SET title = "$noteTitle",
              text = "$noteText",
              pinned = $notePinned,
@@ -101,19 +107,27 @@ class SQLiteHandler {
              colorIndex = $noteColorIndex,
              lastEdited = "$noteLastEdited",
              reminderTime = "$noteReminderTime"
-         WHERE id = ${note.id};'''
-    );
-
+         WHERE id = ${note.id};''');
   }
 
-
-
-
-  Future<List<Map<String, dynamic>>> readAllNotes() async {
+  Future<SQLiteNoteReadResult> readAllNotes() async {
     var initialized = await _initialized;
     assert(initialized);
 
-    return _database.rawQuery('SELECT * FROM note');
+    // var debugReadNoteLabelTable =
+    //     await _database.rawQuery('''SELECT * FROM note_label''');
+
+    // for (var x in debugReadNoteLabelTable) {
+    //   print(x);
+    // }
+
+    var rows = await _database.rawQuery(
+        '''SELECT id, title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime, label_id, name
+         FROM note LEFT JOIN
+         (SELECT note_id, label_id, name FROM note_label INNER JOIN label ON label_id = label.id)
+         ON note.id = note_id''');
+
+    return SQLiteNoteReadResult(rows);
   }
 
   Future<List<Map<String, dynamic>>> readAllLabels() async {
@@ -122,7 +136,51 @@ class SQLiteHandler {
 
     return _database.rawQuery('SELECT * FROM label');
   }
+}
 
+class SQLiteNoteReadResult {
+  List<Note> notes = [];
 
+  SQLiteNoteReadResult(List<Map<String, dynamic>> rows) {
+    for (var r in rows) {
+      int theNoteId = r['id'];
+      String theTitle = r['title'];
+      String theText = r['text'];
+      bool thePinned = (r['pinned'] == 0) ? false : true;
+      bool theArchived = (r['archived'] == 0) ? false : true;
+      bool theDeleted = (r['deleted'] == 0) ? false : true;
+      int theColorIndex = r['colorIndex'];
+      DateTime theLastEdited = DateTime.parse(r['lastEdited']);
 
+      String reminderTimeInDb = r['reminderTime'];
+      DateTime theReminderTime = (reminderTimeInDb != 'null')
+          ? DateTime.parse(reminderTimeInDb)
+          : null;
+
+      int theLabelId = r['label_id'];
+      String theLabelName = r['name'];
+
+      var index = notes.indexWhere((note) => note.id == theNoteId);
+      if (index == -1) {
+        var theNote = Note(
+            id: theNoteId,
+            title: theTitle,
+            text: theText,
+            pinned: thePinned,
+            archived: theArchived,
+            deleted: theDeleted,
+            colorIndex: theColorIndex,
+            lastEdited: theLastEdited,
+            reminderTime: theReminderTime);
+        if (theLabelId != null) {
+          theNote.labels.add(Label(id: theLabelId, name: theLabelName));
+        }
+        notes.add(theNote);
+      } else {
+        var foundNote = notes[index];
+        foundNote.labels.add(Label(id: theLabelId, name: theLabelName));
+      }
+    }
+
+  }
 }

@@ -22,9 +22,8 @@ class NoteRepository {
   void _fetchNotes() async {
     await dbHandler.initialized;
 
-    List<Map<String, dynamic>> noteMaps = await dbHandler.readAllNotes();
-
-    List<Note> notes = noteMaps.map((m) => Note.fromMap(m)).toList();
+    var sqliteNoteReadResult = await dbHandler.readAllNotes();
+    var notes = sqliteNoteReadResult.notes;
 
     _notesBS.add(notes);
   }
@@ -48,7 +47,6 @@ class NoteRepository {
     currentNotes.add(note);
     _notesBS.add(currentNotes);
     return insertedNoteId;
-
 
     //TODO: add in webservice
   }
