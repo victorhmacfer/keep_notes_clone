@@ -30,7 +30,7 @@ class NoteSetupScreenController with ChangeNotifier {
   DateTime _futureReminderDateTime = DateTime.now();
 
   DateTime _savedReminderDateTime;
-  bool _reminderExpired;
+  bool _reminderExpired = false;
 
   NoteSetupScreenController()
       : titleController = TextEditingController(),
