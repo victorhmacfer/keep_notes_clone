@@ -618,21 +618,30 @@ class _ColorSelectionCircle extends StatelessWidget {
   }
 }
 
-class _ReminderSetupDialog extends StatelessWidget {
+class _ReminderSetupDialog extends StatefulWidget {
+  @override
+  __ReminderSetupDialogState createState() => __ReminderSetupDialogState();
+}
+
+class __ReminderSetupDialogState extends State<_ReminderSetupDialog> {
+  bool chosenTimeIsPast = false;
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
 
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    String reminderDayText = translateReminderDay(notifier.futureReminderTime);
+    String reminderDayText = translateReminderDay(notifier.futureReminderDateTime);
     String reminderTimeText =
-        translateReminderTime(notifier.futureReminderTime);
+        translateReminderTime(notifier.futureReminderDateTime);
 
     var now = DateTime.now();
     var twoYearsInTheFuture = now.add(Duration(days: 366 * 2));
 
     bool hasSavedReminder = notifier.savedReminderTime != null;
+
+    String timeSettingFailureText = (chosenTimeIsPast) ? 'The time has passed' : '';
 
     Widget _deleteButton(bool hasSaved) {
       if (hasSaved) {
@@ -672,11 +681,21 @@ class _ReminderSetupDialog extends StatelessWidget {
                 onTap: () async {
                   var chosenDate = await showDatePicker(
                       context: context,
-                      initialDate: notifier.futureReminderTime,
+                      initialDate: notifier.futureReminderDateTime,
                       firstDate: now,
                       lastDate: twoYearsInTheFuture);
                   if (chosenDate != null) {
+                    var now = DateTime.now();
+                    var r = notifier.futureReminderDateTime;
+
+                    var chosenInstant = DateTime(chosenDate.year,
+                        chosenDate.month, chosenDate.day, r.hour, r.minute);
+
                     notifier.futureReminderDay = chosenDate;
+
+                    setState(() {
+                      chosenTimeIsPast = chosenInstant.isBefore(now);
+                    });
                   }
                 },
                 child: Container(
@@ -691,19 +710,27 @@ class _ReminderSetupDialog extends StatelessWidget {
                   ),
                 ),
               ),
-              _Divider(),
+              _Divider(color: appDividerGrey,),
               GestureDetector(
                 onTap: () async {
                   var chosenTime = await showTimePicker(
                     context: context,
                     initialTime:
-                        TimeOfDay.fromDateTime(notifier.futureReminderTime),
+                        TimeOfDay.fromDateTime(notifier.futureReminderDateTime),
                   );
                   if (chosenTime != null) {
-                    var hour = chosenTime.hour;
-                    var minute = chosenTime.minute;
-                    notifier.futureReminderTime =
-                        DateTime(9999, 12, 12, hour, minute);
+                    var now = DateTime.now();
+                    var r = notifier.futureReminderDateTime;
+
+                    var chosenInstant = DateTime(r.year, r.month, r.day,
+                        chosenTime.hour, chosenTime.minute);
+
+                    notifier.futureReminderTime = DateTime(
+                        9999, 12, 12, chosenTime.hour, chosenTime.minute);
+
+                    setState(() {
+                      chosenTimeIsPast = chosenInstant.isBefore(now);
+                    });
                   }
                 },
                 child: Container(
@@ -718,9 +745,12 @@ class _ReminderSetupDialog extends StatelessWidget {
                   ),
                 ),
               ),
-              _Divider(),
-              SizedBox(
-                height: 32,
+              _Divider(color: (chosenTimeIsPast) ? Colors.red : appDividerGrey),
+              Container(
+                // color: Colors.brown,
+                alignment: Alignment.centerLeft,
+                height: 20,
+                child: Text(timeSettingFailureText, style: TextStyle(fontSize: 12, color: Colors.red),)
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -737,8 +767,10 @@ class _ReminderSetupDialog extends StatelessWidget {
                     color: NoteColor.orange.getColor(),
                     child: Text('Save'),
                     onPressed: () {
-                      notifier.saveReminderTime();
-                      Navigator.pop(context);
+                      if (chosenTimeIsPast == false) {
+                        notifier.saveReminderTime();
+                        Navigator.pop(context);
+                      }
                     },
                   ),
                 ],
@@ -752,11 +784,15 @@ class _ReminderSetupDialog extends StatelessWidget {
 }
 
 class _Divider extends StatelessWidget {
+  final Color color;
+
+  _Divider({@required this.color});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 1,
-      color: appDividerGrey,
+      color: color,
     );
   }
 }

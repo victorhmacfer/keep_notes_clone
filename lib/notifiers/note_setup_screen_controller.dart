@@ -66,7 +66,7 @@ class NoteSetupScreenController with ChangeNotifier {
 
   int get selectedColorIndex => _selectedColorIndex;
 
-  DateTime get futureReminderTime => _futureReminderDateTime;
+  DateTime get futureReminderDateTime => _futureReminderDateTime;
 
   DateTime get savedReminderTime => _savedReminderDateTime;
 
