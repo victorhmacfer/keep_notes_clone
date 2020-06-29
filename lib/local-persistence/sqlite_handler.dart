@@ -16,7 +16,7 @@ class SQLiteHandler {
   Future<bool> _openOrCreateDatabase() async {
     var databasesPath = await getDatabasesPath();
 
-    String dbName = '28jun20201600.db';
+    String dbName = '29jun20201925.db';
     String path = '$databasesPath/$dbName';
 
     _database = await openDatabase(path, version: 1,
@@ -42,6 +42,14 @@ class SQLiteHandler {
               FOREIGN KEY(note_id) REFERENCES note(id),
               FOREIGN KEY(label_id) REFERENCES label(id)
         );''');
+      db.execute('''CREATE TABLE reminder_alarm (
+              id INTEGER PRIMARY KEY,
+              unused_field TEXT
+        );''');
+
+      
+
+
     });
     return true;
   }
@@ -114,6 +122,11 @@ class SQLiteHandler {
       _database.rawInsert('''INSERT INTO note_label (note_id, label_id)
            VALUES (${note.id}, ${label.id});''');
     }
+  }
+
+  Future<int> insertReminderAlarm() async {
+    return _database.rawInsert(
+      '''INSERT INTO reminder_alarm (unused_field) VALUES ("blabla");''');
   }
 
   Future<List<Note>> readAllNotes() async {

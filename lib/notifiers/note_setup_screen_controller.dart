@@ -1,4 +1,7 @@
+import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -27,6 +30,7 @@ class NoteSetupScreenController with ChangeNotifier {
   DateTime _futureReminderDateTime = DateTime.now();
 
   DateTime _savedReminderDateTime;
+  bool _reminderExpired;
 
   NoteSetupScreenController()
       : titleController = TextEditingController(),
@@ -55,13 +59,11 @@ class NoteSetupScreenController with ChangeNotifier {
         _editing = true,
         _futureLabels = List.from(note.labels),
         _noteToBeDeleted = note {
-
-          if (note.reminderTime != null) {
-            _futureReminderDateTime = note.reminderTime;
-            _savedReminderDateTime = note.reminderTime;
-          } 
-     
-    
+    if (note.reminderTime != null) {
+      _futureReminderDateTime = note.reminderTime;
+      _savedReminderDateTime = note.reminderTime;
+      _reminderExpired = _savedReminderDateTime.isBefore(DateTime.now());
+    }
   }
 
   int get selectedColorIndex => _selectedColorIndex;
@@ -69,6 +71,8 @@ class NoteSetupScreenController with ChangeNotifier {
   DateTime get futureReminderDateTime => _futureReminderDateTime;
 
   DateTime get savedReminderTime => _savedReminderDateTime;
+
+  bool get reminderExpired => _reminderExpired;
 
   set futureReminderTime(DateTime newTime) {
     _futureReminderDateTime = DateTime(
@@ -92,8 +96,13 @@ class NoteSetupScreenController with ChangeNotifier {
     _futureReminderDateTime = _savedReminderDateTime ?? DateTime.now();
   }
 
-  void saveReminderTime() {
+  void saveReminderTime(int alarmId) async {
     _savedReminderDateTime = _futureReminderDateTime;
+
+    var successful = await AndroidAlarmManager.oneShotAt(_savedReminderDateTime,
+        alarmId, NoteTrackingBloc.androidAlarmManagerCallback);
+    print(successful);
+
     notifyListeners();
   }
 

@@ -1,3 +1,7 @@
+import 'dart:ui';
+import 'dart:isolate';
+
+import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/auth_bloc.dart';
@@ -7,7 +11,19 @@ import 'package:keep_notes_clone/screens/login_screen.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+const String isolateName = 'isolate';
+
+final ReceivePort port = ReceivePort();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AndroidAlarmManager.initialize();
+
+  IsolateNameServer.registerPortWithName(
+    port.sendPort,
+    isolateName,
+  );
+
   runApp(MyApp());
 }
 

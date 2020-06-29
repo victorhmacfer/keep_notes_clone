@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'dart:isolate';
+import 'dart:ui';
+
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
@@ -8,6 +12,8 @@ import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:rxdart/subjects.dart';
+
+import 'package:keep_notes_clone/main.dart';
 
 class NoteTrackingBloc {
   List<Label> _lastAllLabelsEmitted = [];
@@ -24,6 +30,17 @@ class NoteTrackingBloc {
 
   final _labelForFilteringNotesBS = BehaviorSubject<Label>();
 
+  static SendPort uiSendPort;
+
+  static void androidAlarmManagerCallback() {
+    FlutterRingtonePlayer.playNotification();
+
+    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
+    uiSendPort?.send(null);
+  }
+
+  StreamSubscription _portSubscription;
+
   NoteTrackingBloc() {
     noteRepo = NoteRepository();
 
@@ -33,10 +50,15 @@ class NoteTrackingBloc {
 
     noteRepo.notes.listen((noteList) {
       _lastAllNotesEmitted = noteList;
+      _notesBS.add(noteList);
     });
 
     _labelForFilteringNotesBS.stream
         .listen(_filterNotesForLabelAndDropIntoStream);
+
+    _portSubscription = port.listen((_) {
+      _notesBS.add(_lastAllNotesEmitted);
+    });
   }
 
   StreamSink<Label> get labelFilteringSink => _labelForFilteringNotesBS.sink;
@@ -54,7 +76,7 @@ class NoteTrackingBloc {
   Stream<LabelSearchResult> get labelSearchResultStream =>
       _labelSearchBS.stream;
 
-  Stream<List<Note>> get noteListStream => noteRepo.notes;
+  Stream<List<Note>> get noteListStream => _notesBS.stream;
 
   Stream<PinnedUnpinnedNotes> get pinnedUnpinnedNoteListsStream =>
       _notArchivedNotDeletedNoteListStream
@@ -95,6 +117,15 @@ class NoteTrackingBloc {
         labels: labels);
 
     noteRepo.addNote(newNote);
+  }
+
+  // Will reference a stand-alone table that stores only ids.
+  // This is just for storing the AUTO INCREMENTED (therefore unused) id
+  // and create an alarm with it.
+  // Cannot be linked to notes because at the time I call this, the note
+  // may not exist.. so I cant pass the note here as an argument.
+  Future<int> addReminderAlarm() async {
+    return noteRepo.addReminderAlarm();
   }
 
   void onNoteChanged(Note changedNote) {
@@ -193,5 +224,6 @@ class NoteTrackingBloc {
     _labelSearchBS.close();
     _labelFilteredNotesBS.close();
     _labelForFilteringNotesBS.close();
+    _portSubscription.cancel();
   }
 }

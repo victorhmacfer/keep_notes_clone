@@ -154,9 +154,13 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
               onTap: () {
                 showDialog(
                     context: context,
-                    builder: (context) =>
-                        ChangeNotifierProvider<NoteSetupScreenController>.value(
-                          value: notifier,
+                    builder: (context) => MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider<
+                                    NoteSetupScreenController>.value(
+                                value: notifier),
+                            Provider<NoteTrackingBloc>.value(value: noteBloc),
+                          ],
                           child: _ReminderSetupDialog(),
                         ));
               }),
@@ -231,13 +235,16 @@ class _NoteSetupBody extends StatelessWidget {
     return theLabels.map((lab) => NoteSetupLabelChip(label: lab)).toList();
   }
 
-  Widget _noteChips(DateTime reminderTime, List<Label> theLabels) {
+  Widget _noteChips(
+      DateTime reminderTime, bool reminderExpired, List<Label> theLabels) {
     if (theLabels.isEmpty && (reminderTime == null)) {
       return Container();
     }
     List<Widget> chipList = [];
 
-    if (reminderTime != null) chipList.add(NoteSetupReminderChip(reminderTime));
+    if (reminderTime != null) {
+      chipList.add(NoteSetupReminderChip(reminderTime, reminderExpired));
+    }
 
     chipList.addAll(_labelWidgets(theLabels));
 
@@ -323,7 +330,8 @@ class _NoteSetupBody extends StatelessWidget {
                             TextStyle(color: appGreyForColoredBg, fontSize: 15),
                       ),
                     ),
-                    _noteChips(notifier.savedReminderTime, noteLabels),
+                    _noteChips(notifier.savedReminderTime,
+                        notifier.reminderExpired, noteLabels),
                   ],
                 )),
           )
@@ -630,9 +638,12 @@ class __ReminderSetupDialogState extends State<_ReminderSetupDialog> {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
 
+    final noteBloc = Provider.of<NoteTrackingBloc>(context);
+
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    String reminderDayText = translateReminderDay(notifier.futureReminderDateTime);
+    String reminderDayText =
+        translateReminderDay(notifier.futureReminderDateTime);
     String reminderTimeText =
         translateReminderTime(notifier.futureReminderDateTime);
 
@@ -641,7 +652,8 @@ class __ReminderSetupDialogState extends State<_ReminderSetupDialog> {
 
     bool hasSavedReminder = notifier.savedReminderTime != null;
 
-    String timeSettingFailureText = (chosenTimeIsPast) ? 'The time has passed' : '';
+    String timeSettingFailureText =
+        (chosenTimeIsPast) ? 'The time has passed' : '';
 
     Widget _deleteButton(bool hasSaved) {
       if (hasSaved) {
@@ -710,7 +722,9 @@ class __ReminderSetupDialogState extends State<_ReminderSetupDialog> {
                   ),
                 ),
               ),
-              _Divider(color: appDividerGrey,),
+              _Divider(
+                color: appDividerGrey,
+              ),
               GestureDetector(
                 onTap: () async {
                   var chosenTime = await showTimePicker(
@@ -747,11 +761,13 @@ class __ReminderSetupDialogState extends State<_ReminderSetupDialog> {
               ),
               _Divider(color: (chosenTimeIsPast) ? Colors.red : appDividerGrey),
               Container(
-                // color: Colors.brown,
-                alignment: Alignment.centerLeft,
-                height: 20,
-                child: Text(timeSettingFailureText, style: TextStyle(fontSize: 12, color: Colors.red),)
-              ),
+                  // color: Colors.brown,
+                  alignment: Alignment.centerLeft,
+                  height: 20,
+                  child: Text(
+                    timeSettingFailureText,
+                    style: TextStyle(fontSize: 12, color: Colors.red),
+                  )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -766,9 +782,10 @@ class __ReminderSetupDialogState extends State<_ReminderSetupDialog> {
                   FlatButton(
                     color: NoteColor.orange.getColor(),
                     child: Text('Save'),
-                    onPressed: () {
+                    onPressed: () async {
                       if (chosenTimeIsPast == false) {
-                        notifier.saveReminderTime();
+                        var alarmId = await noteBloc.addReminderAlarm();
+                        notifier.saveReminderTime(alarmId);
                         Navigator.pop(context);
                       }
                     },
