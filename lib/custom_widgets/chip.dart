@@ -62,8 +62,7 @@ class NoteSetupReminderChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color textColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
-    Color alarmIconColor =
-        (reminderExpired) ? appGreyForColoredBg : appBlack;
+    Color alarmIconColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
 
     TextDecoration textDecoration =
         (reminderExpired) ? TextDecoration.lineThrough : TextDecoration.none;
@@ -102,26 +101,36 @@ class NoteCardReminderChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //FIXME: this should not be computed by Ui
+    final reminderExpired = reminderTime.isBefore(DateTime.now());
+
+    Color textColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
+
+    Color alarmIconColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
+
+    TextDecoration textDecoration =
+        (reminderExpired) ? TextDecoration.lineThrough : TextDecoration.none;
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: appGreyForColoredBg, width: 1),
-      ),
+      decoration: (reminderExpired)
+          ? _expiredReminderChipDecoration
+          : _noteSetupChipDecoration,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Icon(
             Icons.alarm,
             size: 15,
-            color: appBlack,
+            color: alarmIconColor,
           ),
           SizedBox(
             width: 4,
           ),
           Text(
             chipReminderText(reminderTime),
-            style: drawerItemStyle.copyWith(fontSize: 12),
+            style: drawerItemStyle.copyWith(
+                fontSize: 12, color: textColor, decoration: textDecoration),
           ),
         ],
       ),
