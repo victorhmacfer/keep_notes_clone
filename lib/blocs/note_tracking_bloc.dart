@@ -98,6 +98,7 @@ class NoteTrackingBloc {
       int colorIndex,
       bool pinned,
       DateTime reminderTime,
+      int reminderAlarmId,
       @required DateTime lastEdited,
       bool archived,
       List<Label> labels}) {
@@ -112,6 +113,7 @@ class NoteTrackingBloc {
         colorIndex: colorIndex,
         pinned: pinned,
         reminderTime: reminderTime,
+        reminderAlarmId: reminderAlarmId,
         lastEdited: lastEdited,
         archived: archived,
         labels: labels);

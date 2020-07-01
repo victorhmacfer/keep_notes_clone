@@ -11,6 +11,7 @@ class Note {
   int colorIndex;
   DateTime lastEdited;
   DateTime reminderTime;
+  int reminderAlarmId;
 
   List<Label> labels;
 
@@ -22,6 +23,7 @@ class Note {
       labels,
       @required this.lastEdited,
       this.reminderTime,
+      this.reminderAlarmId,
       bool deleted = false,
       pinned = false,
       archived = false}) {

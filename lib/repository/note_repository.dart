@@ -46,7 +46,6 @@ class NoteRepository {
     currentNotes.add(note);
     _notesBS.add(currentNotes);
     return insertedNoteId;
-
   }
 
   Future<int> addLabel(Label label) async {
@@ -71,6 +70,4 @@ class NoteRepository {
   Future<int> addReminderAlarm() async {
     return dbHandler.insertReminderAlarm();
   }
-
-
 }

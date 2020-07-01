@@ -80,6 +80,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
             var pinned = notifier.isPinned;
             var labels = notifier.futureLabels;
             var savedReminderTime = notifier.savedReminderTime;
+            var reminderAlarmId = notifier.savedReminderAlarmId;
             if (title.isNotEmpty ||
                 text.isNotEmpty ||
                 (savedReminderTime != null)) {
@@ -91,6 +92,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                       colorIndex: colorIndex,
                       reminderTime: savedReminderTime,
                       pinned: pinned,
+                      reminderAlarmId: reminderAlarmId,
                       lastEdited: DateTime.now(),
                       archived: false,
                       labels: labels);
@@ -114,6 +116,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 note.colorIndex = colorIndex;
                 note.pinned = pinned;
                 note.reminderTime = savedReminderTime;
+                note.reminderAlarmId = reminderAlarmId;
                 if (notifier.noteIsDirty) {
                   note.lastEdited = DateTime.now();
                 }
@@ -183,6 +186,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 var colorIndex = notifier.selectedColorIndex;
                 var labels = notifier.futureLabels;
                 var savedReminderTime = notifier.savedReminderTime;
+                var reminderAlarmId = notifier.savedReminderAlarmId;
                 if (title.isNotEmpty ||
                     text.isNotEmpty ||
                     (savedReminderTime != null)) {
@@ -193,6 +197,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                           text: text,
                           colorIndex: colorIndex,
                           reminderTime: savedReminderTime,
+                          reminderAlarmId: reminderAlarmId,
                           pinned: false,
                           archived: true,
                           lastEdited: DateTime.now(),
@@ -213,6 +218,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     note.colorIndex = colorIndex;
                     note.archived = !note.archived;
                     note.reminderTime = savedReminderTime;
+                    note.reminderAlarmId = reminderAlarmId;
                     if (notifier.noteIsDirty) {
                       note.lastEdited = DateTime.now();
                     }
@@ -784,6 +790,10 @@ class __ReminderSetupDialogState extends State<_ReminderSetupDialog> {
                     child: Text('Save'),
                     onPressed: () async {
                       if (chosenTimeIsPast == false) {
+                        if (notifier.savedReminderTime != null) {
+                          notifier.removeSavedReminder();
+                        }
+
                         var alarmId = await noteBloc.addReminderAlarm();
                         notifier.saveReminderTime(alarmId);
                         Navigator.pop(context);

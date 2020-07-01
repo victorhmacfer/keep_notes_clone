@@ -31,6 +31,7 @@ class NoteSetupScreenController with ChangeNotifier {
 
   DateTime _savedReminderDateTime;
   bool _reminderExpired = false;
+  int _savedReminderAlarmId;
 
   NoteSetupScreenController()
       : titleController = TextEditingController(),
@@ -63,6 +64,7 @@ class NoteSetupScreenController with ChangeNotifier {
       _futureReminderDateTime = note.reminderTime;
       _savedReminderDateTime = note.reminderTime;
       _reminderExpired = _savedReminderDateTime.isBefore(DateTime.now());
+      _savedReminderAlarmId = note.reminderAlarmId;
     }
   }
 
@@ -98,18 +100,28 @@ class NoteSetupScreenController with ChangeNotifier {
 
   void saveReminderTime(int alarmId) async {
     _savedReminderDateTime = _futureReminderDateTime;
+    _savedReminderAlarmId = alarmId;
 
-    var successful = await AndroidAlarmManager.oneShotAt(_savedReminderDateTime,
+    var success = await AndroidAlarmManager.oneShotAt(_savedReminderDateTime,
         alarmId, NoteTrackingBloc.androidAlarmManagerCallback);
-    print(successful);
+
+    print('sucesso de armar eh: $success');
 
     notifyListeners();
   }
 
-  void removeSavedReminder() {
+  void removeSavedReminder() async {
     _savedReminderDateTime = null;
+
+    var success = await AndroidAlarmManager.cancel(_savedReminderAlarmId);
+    print('sucesso de desarmar eh: $success');
+
+    _savedReminderAlarmId = null;
+
     notifyListeners();
   }
+
+  int get savedReminderAlarmId => _savedReminderAlarmId;
 
   Note get noteToBeDeleted => _noteToBeDeleted;
 

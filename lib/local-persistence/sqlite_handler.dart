@@ -16,7 +16,7 @@ class SQLiteHandler {
   Future<bool> _openOrCreateDatabase() async {
     var databasesPath = await getDatabasesPath();
 
-    String dbName = '30jun20201700.db';
+    String dbName = '01jul20201220.db';
     String path = '$databasesPath/$dbName';
 
     _database = await openDatabase(path, version: 1,
@@ -30,7 +30,8 @@ class SQLiteHandler {
               deleted INTEGER, 
               colorIndex INTEGER, 
               lastEdited TEXT, 
-              reminderTime TEXT
+              reminderTime TEXT,
+              reminderAlarmId INTEGER
         );''');
       db.execute('''CREATE TABLE label (
               id INTEGER PRIMARY KEY, 
@@ -46,10 +47,6 @@ class SQLiteHandler {
               id INTEGER PRIMARY KEY,
               unused_field TEXT
         );''');
-
-      
-
-
     });
     return true;
   }
@@ -67,11 +64,12 @@ class SQLiteHandler {
     int noteColorIndex = note.colorIndex;
     String noteLastEdited = note.lastEdited.toString();
     String noteReminderTime = note.reminderTime.toString();
+    int noteReminderAlarmId = note.reminderAlarmId;
 
     var insertedNoteId = await _database.rawInsert(
-        '''INSERT INTO note (title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime) 
+        '''INSERT INTO note (title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime, reminderAlarmId) 
       VALUES ("$noteTitle", "$noteText", $notePinned, $noteArchived, $noteDeleted,
-              $noteColorIndex, "$noteLastEdited", "$noteReminderTime");''');
+              $noteColorIndex, "$noteLastEdited", "$noteReminderTime", $noteReminderAlarmId);''');
 
     for (var label in note.labels) {
       _database.rawInsert('''INSERT INTO note_label (note_id, label_id)
@@ -103,6 +101,7 @@ class SQLiteHandler {
     int noteColorIndex = note.colorIndex;
     String noteLastEdited = note.lastEdited.toString();
     String noteReminderTime = note.reminderTime.toString();
+    int noteReminderAlarmId = note.reminderAlarmId;
 
     await _database.rawUpdate('''UPDATE note
          SET title = "$noteTitle",
@@ -112,7 +111,8 @@ class SQLiteHandler {
              deleted = $noteDeleted,
              colorIndex = $noteColorIndex,
              lastEdited = "$noteLastEdited",
-             reminderTime = "$noteReminderTime"
+             reminderTime = "$noteReminderTime",
+             reminderAlarmId = $noteReminderAlarmId
          WHERE id = ${note.id};''');
 
     await _database.rawDelete('''
@@ -126,7 +126,7 @@ class SQLiteHandler {
 
   Future<int> insertReminderAlarm() async {
     return _database.rawInsert(
-      '''INSERT INTO reminder_alarm (unused_field) VALUES ("blabla");''');
+        '''INSERT INTO reminder_alarm (unused_field) VALUES ("blabla");''');
   }
 
   Future<List<Note>> readAllNotes() async {
@@ -134,7 +134,7 @@ class SQLiteHandler {
     assert(initialized);
 
     var rows = await _database.rawQuery(
-        '''SELECT id, title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime, label_id, name
+        '''SELECT id, title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime, reminderAlarmId, label_id, name
          FROM note LEFT JOIN
          (SELECT note_id, label_id, name FROM note_label INNER JOIN label ON label_id = label.id)
          ON note.id = note_id''');
@@ -154,6 +154,7 @@ class SQLiteHandler {
       bool theDeleted = (r['deleted'] == 0) ? false : true;
       int theColorIndex = r['colorIndex'];
       DateTime theLastEdited = DateTime.parse(r['lastEdited']);
+      int theReminderAlarmId = r['reminderAlarmId'];
 
       String reminderTimeInDb = r['reminderTime'];
       DateTime theReminderTime = (reminderTimeInDb != 'null')
@@ -174,7 +175,8 @@ class SQLiteHandler {
             deleted: theDeleted,
             colorIndex: theColorIndex,
             lastEdited: theLastEdited,
-            reminderTime: theReminderTime);
+            reminderTime: theReminderTime,
+            reminderAlarmId: theReminderAlarmId);
         if (theLabelId != null) {
           theNote.labels.add(Label(id: theLabelId, name: theLabelName));
         }
