@@ -109,7 +109,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                 }
 
                 if (label != null) {
-                  noteBloc.labelFilteringSink.add(label);
+                  noteBloc.filterByLabelSink.add(label);
                 }
               } else {
                 note.title = title;

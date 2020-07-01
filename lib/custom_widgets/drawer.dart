@@ -49,7 +49,7 @@ class MyDrawer extends StatelessWidget {
         onPressed: () {
           if (drawerScreenSelection.selectedScreenIndex != i + 4) {
             drawerScreenSelection.changeSelectedScreenToIndex(i + 4);
-            noteBloc.labelFilteringSink.add(labels[i]);
+            noteBloc.filterByLabelSink.add(labels[i]);
 
             Navigator.pushReplacement(
                 context,
@@ -94,7 +94,7 @@ class MyDrawer extends StatelessWidget {
             onPressed: () {},
           ),
           StreamBuilder<List<Label>>(
-              stream: noteTrackingBloc.allLabelsStream,
+              stream: noteTrackingBloc.sortedLabelsStream,
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data.isNotEmpty) {
                   return Column(

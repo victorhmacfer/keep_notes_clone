@@ -16,15 +16,14 @@ import 'package:rxdart/subjects.dart';
 import 'package:keep_notes_clone/main.dart';
 
 class NoteTrackingBloc {
-  List<Label> _lastAllLabelsEmitted = [];
-  List<Note> _lastAllNotesEmitted = [];
+  List<Label> _lastLabelsEmitted = [];
+  List<Note> _lastNotesEmitted = [];
 
   NoteRepository noteRepo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
-  final _labelsBS = BehaviorSubject<List<Label>>();
 
-  final _labelSearchBS = BehaviorSubject<LabelSearchResult>();
+  final _labelSearchResultBS = BehaviorSubject<LabelSearchResult>();
 
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
@@ -45,11 +44,11 @@ class NoteTrackingBloc {
     noteRepo = NoteRepository();
 
     noteRepo.allLabels.listen((labelList) {
-      _lastAllLabelsEmitted = labelList;
+      _lastLabelsEmitted = labelList;
     });
 
     noteRepo.notes.listen((noteList) {
-      _lastAllNotesEmitted = noteList;
+      _lastNotesEmitted = noteList;
       _notesBS.add(noteList);
     });
 
@@ -57,24 +56,19 @@ class NoteTrackingBloc {
         .listen(_filterNotesForLabelAndDropIntoStream);
 
     _portSubscription = port.listen((_) {
-      _notesBS.add(_lastAllNotesEmitted);
+      _notesBS.add(_lastNotesEmitted);
     });
   }
 
-  StreamSink<Label> get labelFilteringSink => _labelForFilteringNotesBS.sink;
+  StreamSink<Label> get filterByLabelSink => _labelForFilteringNotesBS.sink;
 
-  Stream<List<Label>> get allLabelsStream =>
+  Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
 
-  List<Label> _sortLabelsAlphabetically(List<Label> input) {
-    var sorted = List<Label>.from(input)
-      ..sort((a, b) => a.name.compareTo(b.name));
-
-    return sorted;
-  }
+  
 
   Stream<LabelSearchResult> get labelSearchResultStream =>
-      _labelSearchBS.stream;
+      _labelSearchResultBS.stream;
 
   Stream<List<Note>> get noteListStream => _notesBS.stream;
 
@@ -93,18 +87,21 @@ class NoteTrackingBloc {
           .map((notes) => LabelFilteredNotesContainer(notes));
 
   void onCreateNewNote(
-      {String title,
-      String text,
-      int colorIndex,
-      bool pinned,
+      {String title = '',
+      String text = '',
+      int colorIndex = 0,
+      bool pinned = false,
       DateTime reminderTime,
       int reminderAlarmId,
       @required DateTime lastEdited,
-      bool archived,
+      bool archived = false,
       List<Label> labels}) {
     if (pinned) {
       assert(archived == false,
           'Note cannot be created as both pinned and archived');
+    }
+    if (labels == null) {
+      labels = [];
     }
 
     var newNote = Note(
@@ -133,7 +130,6 @@ class NoteTrackingBloc {
   void onNoteChanged(Note changedNote) {
     noteRepo.updateNote(changedNote);
 
-    //TODO: complete this part
     if (_labelForFilteringNotesBS.hasValue) {
       var lastLabelFiltered = _labelForFilteringNotesBS.value;
       _filterNotesForLabelAndDropIntoStream(lastLabelFiltered);
@@ -142,16 +138,15 @@ class NoteTrackingBloc {
 
   void onCreateNewLabel(String text) async {
     var labelExists = await _labelAlreadyExists(text);
-    if (labelExists) {
-      return;
+    if (labelExists == false) {
+      noteRepo.addLabel(Label(name: text));
     }
-    noteRepo.addLabel(Label(name: text));
   }
 
   Future<bool> _labelAlreadyExists(String text) async {
-    if (_lastAllLabelsEmitted == null) return false;
+    if (_lastLabelsEmitted.isEmpty) return false;
 
-    return _lastAllLabelsEmitted.map((lab) => lab.name).contains(text);
+    return _lastLabelsEmitted.map((lab) => lab.name).contains(text);
   }
 
   Future<Label> onCreateLabelInsideNote(String text) async {
@@ -167,12 +162,12 @@ class NoteTrackingBloc {
 
   void onSearchLabel(String substring) {
     if (substring.isEmpty) {
-      _labelSearchBS.add(LabelSearchResult(false, _lastAllLabelsEmitted));
+      _labelSearchResultBS.add(LabelSearchResult(false, _lastLabelsEmitted));
     }
 
     List<Label> results = [];
     var foundExact = false;
-    for (Label label in _lastAllLabelsEmitted) {
+    for (var label in _lastLabelsEmitted) {
       if (label.name.contains(substring)) {
         results.add(label);
         if (label.name == substring) {
@@ -180,15 +175,15 @@ class NoteTrackingBloc {
         }
       }
     }
-    _labelSearchBS.add(LabelSearchResult(foundExact, results));
+    _labelSearchResultBS.add(LabelSearchResult(foundExact, results));
   }
 
   void onResetLabelSearch() {
-    _labelSearchBS.add(LabelSearchResult(false, _lastAllLabelsEmitted));
+    _labelSearchResultBS.add(LabelSearchResult(false, _lastLabelsEmitted));
   }
 
   void _filterNotesForLabelAndDropIntoStream(Label theLabel) {
-    var filteredNotes = _lastAllNotesEmitted
+    var filteredNotes = _lastNotesEmitted
         .where((n) => n.labels.any((lab) => lab.id == theLabel.id))
         .toList();
 
@@ -211,6 +206,13 @@ class NoteTrackingBloc {
     return input.where((note) => note.deleted == false).toList();
   }
 
+  List<Label> _sortLabelsAlphabetically(List<Label> input) {
+    var sorted = List<Label>.from(input)
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+    return sorted;
+  }
+
   Stream<List<Note>> get _unarchivedNoteListStream =>
       noteListStream.map(_filterUnarchivedNotes);
 
@@ -222,8 +224,7 @@ class NoteTrackingBloc {
 
   void dispose() {
     _notesBS.close();
-    _labelsBS.close();
-    _labelSearchBS.close();
+    _labelSearchResultBS.close();
     _labelFilteredNotesBS.close();
     _labelForFilteringNotesBS.close();
     _portSubscription.cancel();
