@@ -66,7 +66,7 @@ class _NoteLabelListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     var notifier = Provider.of<NoteSetupScreenController>(context);
 
-    var labelIsChecked = notifier.futureLabels.contains(label);
+    var labelIsChecked = notifier.futureLabels.any((lab) => lab.id == label.id);
 
     var screenWidth = MediaQuery.of(context).size.width;
 

@@ -82,11 +82,8 @@ class MyDrawer extends StatelessWidget {
               if (drawerScreenSelection.selectedScreenIndex != 0) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
 
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Provider<NoteTrackingBloc>.value(
-                            value: noteTrackingBloc, child: HomeScreen())));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(noteBloc: noteTrackingBloc,)));
+
               }
             },
           ),

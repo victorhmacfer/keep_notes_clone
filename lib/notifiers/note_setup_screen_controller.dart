@@ -151,7 +151,9 @@ class NoteSetupScreenController with ChangeNotifier {
   }
 
   void uncheckLabel(Label label) {
-    _futureLabels.remove(label);
+    var foundLabelIndex = _futureLabels.indexWhere((lab) => lab.id == label.id);
+
+    _futureLabels.removeAt(foundLabelIndex);
     notifyListeners();
   }
 
