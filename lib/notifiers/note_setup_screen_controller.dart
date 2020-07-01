@@ -113,8 +113,10 @@ class NoteSetupScreenController with ChangeNotifier {
   void removeSavedReminder() async {
     _savedReminderDateTime = null;
 
-    var success = await AndroidAlarmManager.cancel(_savedReminderAlarmId);
-    print('sucesso de desarmar eh: $success');
+    if (_savedReminderAlarmId != null) {
+      var success = await AndroidAlarmManager.cancel(_savedReminderAlarmId);
+      print('sucesso de desarmar eh: $success');
+    }
 
     _savedReminderAlarmId = null;
 
