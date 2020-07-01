@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
+import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/datetime_translation.dart';
+import 'package:provider/provider.dart';
 
 var _noteSetupChipDecoration = BoxDecoration(
   borderRadius: BorderRadius.circular(32),
@@ -21,12 +26,36 @@ class NoteSetupLabelChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 7, horizontal: 14),
-      decoration: _noteSetupChipDecoration,
-      child: Text(
-        label.name,
-        style: drawerItemStyle.copyWith(fontSize: 13),
+    final notifier = Provider.of<NoteSetupScreenController>(context);
+    final noteBloc = Provider.of<NoteTrackingBloc>(context);
+
+    return GestureDetector(
+      onTap: () {
+        notifier.titleFocusNode.unfocus();
+        notifier.textFocusNode.unfocus();
+        notifier.closeRightBottomSheet();
+        notifier.closeLeftBottomSheet();
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider<NoteSetupScreenController>.value(
+                          value: notifier,
+                        ),
+                        Provider<NoteTrackingBloc>.value(value: noteBloc),
+                      ],
+                      child: NoteLabelingScreen(),
+                    )));
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 7, horizontal: 14),
+        decoration: _noteSetupChipDecoration,
+        child: Text(
+          label.name,
+          style: drawerItemStyle.copyWith(fontSize: 13),
+        ),
       ),
     );
   }
@@ -61,34 +90,51 @@ class NoteSetupReminderChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final notifier = Provider.of<NoteSetupScreenController>(context);
+    final noteBloc = Provider.of<NoteTrackingBloc>(context);
+
     Color textColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
     Color alarmIconColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
 
     TextDecoration textDecoration =
         (reminderExpired) ? TextDecoration.lineThrough : TextDecoration.none;
 
-    return Container(
-      padding: EdgeInsets.fromLTRB(8, 6, 14, 6),
-      decoration: (reminderExpired)
-          ? _expiredReminderChipDecoration
-          : _noteSetupChipDecoration,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(
-            Icons.alarm,
-            size: 18,
-            color: alarmIconColor,
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          Text(
-            chipReminderText(reminderTime),
-            style: drawerItemStyle.copyWith(
-                fontSize: 12, color: textColor, decoration: textDecoration),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (context) => MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider<NoteSetupScreenController>.value(
+                        value: notifier),
+                    Provider<NoteTrackingBloc>.value(value: noteBloc),
+                  ],
+                  child: ReminderSetupDialog(),
+                ));
+      },
+      child: Container(
+        padding: EdgeInsets.fromLTRB(8, 6, 14, 6),
+        decoration: (reminderExpired)
+            ? _expiredReminderChipDecoration
+            : _noteSetupChipDecoration,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.alarm,
+              size: 18,
+              color: alarmIconColor,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Text(
+              chipReminderText(reminderTime),
+              style: drawerItemStyle.copyWith(
+                  fontSize: 12, color: textColor, decoration: textDecoration),
+            ),
+          ],
+        ),
       ),
     );
   }
