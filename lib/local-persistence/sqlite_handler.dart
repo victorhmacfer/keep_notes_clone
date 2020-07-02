@@ -16,7 +16,7 @@ class SQLiteHandler {
   Future<bool> _openOrCreateDatabase() async {
     var databasesPath = await getDatabasesPath();
 
-    String dbName = '01jul20201220.db';
+    String dbName = '02jul20201540.db';
     String path = '$databasesPath/$dbName';
 
     _database = await openDatabase(path, version: 1,

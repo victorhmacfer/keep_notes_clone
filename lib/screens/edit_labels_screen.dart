@@ -7,6 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 class EditLabelsScreen extends StatelessWidget {
+  final bool autoFocus;
+
+  EditLabelsScreen({@required this.autoFocus});
+
   List<Widget> _labelList(List<Label> labels) {
     return labels
         .map((label) => _EditLabelListItem(
@@ -34,7 +38,10 @@ class EditLabelsScreen extends StatelessWidget {
         color: appWhite,
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverToBoxAdapter(child: _CreateLabelListItem()),
+            SliverToBoxAdapter(
+                child: _CreateLabelListItem(
+              autoFocus: autoFocus,
+            )),
             SliverToBoxAdapter(
               child: StreamBuilder<List<Label>>(
                   stream: noteTrackingBloc.sortedLabelsStream,
@@ -55,6 +62,10 @@ class EditLabelsScreen extends StatelessWidget {
 }
 
 class _CreateLabelListItem extends StatefulWidget {
+  final bool autoFocus;
+
+  _CreateLabelListItem({@required this.autoFocus});
+
   @override
   _CreateLabelListItemState createState() => _CreateLabelListItemState();
 }
@@ -69,7 +80,7 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
   @override
   void initState() {
     super.initState();
-    isFocused = true;
+    isFocused = widget.autoFocus;
     newLabelTextController = TextEditingController();
     newLabelFocusNode.addListener(() {
       setState(() {
@@ -131,7 +142,7 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
         cursorWidth: 1,
         style: drawerItemStyle,
         focusNode: newLabelFocusNode,
-        autofocus: true,
+        autofocus: widget.autoFocus,
         decoration: InputDecoration(
             prefixIcon: paddedPrefixIcon,
             border: InputBorder.none,

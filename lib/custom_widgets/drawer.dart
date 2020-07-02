@@ -82,8 +82,12 @@ class MyDrawer extends StatelessWidget {
               if (drawerScreenSelection.selectedScreenIndex != 0) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
 
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(noteBloc: noteTrackingBloc,)));
-
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomeScreen(
+                              noteBloc: noteTrackingBloc,
+                            )));
               }
             },
           ),
@@ -100,13 +104,31 @@ class MyDrawer extends StatelessWidget {
                   return Column(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.only(left: 16, right: 4),
                         height: 40,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text('LABELS', style: drawerLabelsEditStyle),
-                            Text('EDIT', style: drawerLabelsEditStyle),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Provider<NoteTrackingBloc>.value(
+                                                value: noteTrackingBloc,
+                                                child: EditLabelsScreen(
+                                                  autoFocus: false,
+                                                ))));
+                              },
+                              child: Container(
+                                color: appWhite,
+                                padding: EdgeInsets.all(12),
+                                child:
+                                    Text('EDIT', style: drawerLabelsEditStyle),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -127,7 +149,10 @@ class MyDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => Provider<NoteTrackingBloc>.value(
-                          value: noteTrackingBloc, child: EditLabelsScreen())));
+                          value: noteTrackingBloc,
+                          child: EditLabelsScreen(
+                            autoFocus: true,
+                          ))));
             },
           ),
           _MyCustomDrawerDivider(),
