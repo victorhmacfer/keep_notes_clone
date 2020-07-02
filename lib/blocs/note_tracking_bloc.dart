@@ -65,8 +65,6 @@ class NoteTrackingBloc {
   Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
 
-  
-
   Stream<LabelSearchResult> get labelSearchResultStream =>
       _labelSearchResultBS.stream;
 
@@ -141,6 +139,10 @@ class NoteTrackingBloc {
     if (labelExists == false) {
       noteRepo.addLabel(Label(name: text));
     }
+  }
+
+  void onLabelEdited(Label changedLabel) {
+    noteRepo.updateLabel(changedLabel);
   }
 
   Future<bool> _labelAlreadyExists(String text) async {

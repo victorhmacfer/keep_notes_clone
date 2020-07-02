@@ -124,6 +124,17 @@ class SQLiteHandler {
     }
   }
 
+  Future<void> updateLabel(Label label) async {
+    var initialized = await _initialized;
+    assert(initialized);
+
+    String newLabelName = label.name;
+
+    _database.rawUpdate('''UPDATE label
+          SET name = "$newLabelName"
+          WHERE id = ${label.id};''');
+  }
+
   Future<int> insertReminderAlarm() async {
     return _database.rawInsert(
         '''INSERT INTO reminder_alarm (unused_field) VALUES ("blabla");''');

@@ -67,6 +67,13 @@ class NoteRepository {
     _notesBS.add(currentNotes);
   }
 
+  void updateLabel(Label label) async {
+    dbHandler.updateLabel(label);
+
+    List<Label> currentLabels = _labelsBS.value;
+    _labelsBS.add(currentLabels);
+  }
+
   Future<int> addReminderAlarm() async {
     return dbHandler.insertReminderAlarm();
   }

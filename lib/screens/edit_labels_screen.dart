@@ -14,7 +14,8 @@ class EditLabelsScreen extends StatelessWidget {
   List<Widget> _labelList(List<Label> labels) {
     return labels
         .map((label) => _EditLabelListItem(
-            key: ValueKey(label.name), initialText: label.name))
+              label: label,
+            ))
         .toList();
   }
 
@@ -173,11 +174,11 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
 }
 
 class _EditLabelListItem extends StatefulWidget {
-  final String initialText;
+  final ValueKey<int> _key;
 
-  final ValueKey<String> key;
+  final Label label;
 
-  _EditLabelListItem({this.key, this.initialText});
+  _EditLabelListItem({@required this.label}) : _key = ValueKey(label.id);
 
   @override
   _EditLabelListItemState createState() => _EditLabelListItemState();
@@ -194,7 +195,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
   void initState() {
     super.initState();
     isFocused = false;
-    itemTextController = TextEditingController(text: widget.initialText);
+    itemTextController = TextEditingController(text: widget.label.name);
     itemFocusNode.addListener(() {
       setState(() {
         isFocused = itemFocusNode.hasFocus;
@@ -204,6 +205,8 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
 
   @override
   Widget build(BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+
     var fakeBorderColor = (isFocused) ? appDividerGrey : appWhite;
 
     var myPrefixIconChoice = (isFocused)
@@ -215,7 +218,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
         : Icon(
             Icons.label_outline,
             color: appIconGrey,
-            size: 28,
+            size: 24,
           );
 
     var paddedPrefixIcon = Container(
@@ -227,7 +230,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
     );
 
     return Container(
-      key: widget.key,
+      key: widget._key,
       height: 56,
       padding: EdgeInsets.symmetric(horizontal: 4),
       alignment: Alignment.center,
@@ -249,12 +252,17 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                 ? IconButton(
                     icon: Icon(Icons.check),
                     color: appSettingsBlue,
-                    onPressed: () {},
+                    onPressed: () {
+                      if (itemTextController.text.isNotEmpty) {
+                        widget.label.name = itemTextController.text;
+                        noteBloc.onLabelEdited(widget.label);
+                      }
+                      itemFocusNode.unfocus();
+                    },
                   )
-                : IconButton(
-                    icon: Icon(Icons.create),
+                : Icon(
+                    Icons.create,
                     color: appIconGrey,
-                    onPressed: () {},
                   )),
       ),
     );
