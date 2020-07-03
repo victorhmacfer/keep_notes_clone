@@ -6,6 +6,13 @@ import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
+const _customFlatButtonTextStyle = TextStyle(
+  fontFamily: 'Montserrat',
+  fontSize: 14,
+  fontWeight: FontWeight.w600,
+  color: appSettingsBlue,
+);
+
 class EditLabelsScreen extends StatelessWidget {
   final bool autoFocus;
 
@@ -174,11 +181,10 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
 }
 
 class _EditLabelListItem extends StatefulWidget {
-  final ValueKey<int> _key;
 
   final Label label;
 
-  _EditLabelListItem({@required this.label}) : _key = ValueKey(label.id);
+  _EditLabelListItem({@required this.label}) : super(key: ValueKey(label.id));
 
   @override
   _EditLabelListItemState createState() => _EditLabelListItemState();
@@ -209,11 +215,24 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
 
     var fakeBorderColor = (isFocused) ? appDividerGrey : appWhite;
 
-    var myPrefixIconChoice = (isFocused)
-        ? Icon(
-            Icons.delete_outline,
+    Widget myPrefixIconButtonChoice = (isFocused)
+        ? IconButton(
+            onPressed: () async {
+              var shouldDelete = await showDialog<bool>(
+                barrierDismissible:
+                    true, // "shouldDelete" might be null as well.
+                context: context,
+                builder: _deleteConfirmationDialog,
+              );
+              if (shouldDelete) {
+                noteBloc.onDeleteLabel(widget.label);
+              }
+            },
+            icon: Icon(
+              Icons.delete_outline,
+              size: 24,
+            ),
             color: appIconGrey,
-            size: 24,
           )
         : Icon(
             Icons.label_outline,
@@ -226,11 +245,10 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
       height: 2,
       width: 52,
       margin: EdgeInsets.only(right: 16),
-      child: myPrefixIconChoice,
+      child: myPrefixIconButtonChoice,
     );
 
     return Container(
-      key: widget._key,
       height: 56,
       padding: EdgeInsets.symmetric(horizontal: 4),
       alignment: Alignment.center,
@@ -264,6 +282,48 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                     Icons.create,
                     color: appIconGrey,
                   )),
+      ),
+    );
+  }
+}
+
+Widget _deleteConfirmationDialog(BuildContext context) {
+  return AlertDialog(
+    title: Text('Delete label?'),
+    titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
+    titleTextStyle: cardTitleStyle,
+    content: Text(
+        "We'll delete this label and remove it from all of your Keep notes. Your notes won't be deleted."),
+    contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+    actions: <Widget>[
+      _CustomFlatButton('Cancel', onTap: () {
+        Navigator.pop<bool>(context, false);
+      }),
+      _CustomFlatButton('Delete', onTap: () {
+        Navigator.pop<bool>(context, true);
+      }),
+    ],
+  );
+}
+
+class _CustomFlatButton extends StatelessWidget {
+  final String text;
+
+  final void Function() onTap;
+
+  _CustomFlatButton(this.text, {@required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 12, 12, 12),
+        color: appWhite,
+        child: Text(
+          text,
+          style: _customFlatButtonTextStyle,
+        ),
       ),
     );
   }

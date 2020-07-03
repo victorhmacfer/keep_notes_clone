@@ -74,6 +74,18 @@ class NoteRepository {
     _labelsBS.add(currentLabels);
   }
 
+  void deleteLabel(Label label) async {
+    List<Label> currentLabels = _labelsBS.value;
+
+    var index = currentLabels.indexWhere((lab) => lab.id == label.id);
+    currentLabels.removeAt(index);
+    _labelsBS.add(currentLabels);
+
+    await dbHandler.deleteLabel(label);
+    
+    _fetchNotes();
+  }
+
   Future<int> addReminderAlarm() async {
     return dbHandler.insertReminderAlarm();
   }
