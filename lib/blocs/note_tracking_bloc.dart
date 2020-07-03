@@ -44,7 +44,7 @@ class NoteTrackingBloc {
     noteRepo = NoteRepository();
 
     noteRepo.allLabels.listen((labelList) {
-      _lastLabelsEmitted = labelList;
+      _lastLabelsEmitted = _sortLabelsAlphabetically(labelList);
     });
 
     noteRepo.notes.listen((noteList) {
