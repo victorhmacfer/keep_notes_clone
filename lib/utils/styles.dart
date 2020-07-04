@@ -44,4 +44,5 @@ final appLightThemeData = ThemeData(
     visualDensity: VisualDensity.adaptivePlatformDensity,
     iconTheme: IconThemeData(color: appIconGrey),
     hintColor: Colors.grey[400],
+    textSelectionHandleColor: appVeryDarkGrey,
     canvasColor: appWhite);
