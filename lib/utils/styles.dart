@@ -48,6 +48,13 @@ var dialogFlatButtonTextStyle = TextStyle(
   color: appSettingsBlue,
 );
 
+var noNotesMessageTextStyle = TextStyle(
+    color: appBlack,
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: FontWeight.w500,
+    letterSpacing: -0.5);
+
 final appLightThemeData = ThemeData(
     visualDensity: VisualDensity.adaptivePlatformDensity,
     iconTheme: IconThemeData(color: appIconGrey),

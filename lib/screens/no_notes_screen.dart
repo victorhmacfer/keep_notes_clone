@@ -22,7 +22,7 @@ class NoNotesScreen extends StatelessWidget {
           ),
           Text(
             'Notes you add appear here',
-            style: cardSmallTextStyle,
+            style: noNotesMessageTextStyle,
           ),
         ],
       ),

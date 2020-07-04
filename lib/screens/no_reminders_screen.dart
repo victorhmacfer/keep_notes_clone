@@ -3,7 +3,7 @@ import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/utils/styles.dart';
 
-class NoLabelsScreen extends StatelessWidget {
+class NoRemindersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
@@ -15,7 +15,7 @@ class NoLabelsScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Icon(
-            Icons.label_outline,
+            Icons.notifications_none,
             color: NoteColor.orange.getColor(),
             size: 120,
           ),
@@ -23,7 +23,7 @@ class NoLabelsScreen extends StatelessWidget {
             height: 16,
           ),
           Text(
-            'No notes with this label yet',
+            'Notes with upcoming reminders appear here',
             style: noNotesMessageTextStyle,
           ),
         ],

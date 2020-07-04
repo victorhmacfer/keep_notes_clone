@@ -3,6 +3,7 @@ import 'package:keep_notes_clone/screens/archive_screen.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/screens/label_filtered_notes_screen.dart';
+import 'package:keep_notes_clone/screens/reminders_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/screens/edit_labels_screen.dart';
@@ -95,7 +96,18 @@ class MyDrawer extends StatelessWidget {
             'Reminders',
             iconFileName: 'outline_notifications_black_48.png',
             drawerItemIndex: 1,
-            onPressed: () {},
+            onPressed: () {
+              if (drawerScreenSelection.selectedScreenIndex != 1) {
+                drawerScreenSelection.changeSelectedScreenToIndex(1);
+
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Provider<NoteTrackingBloc>.value(
+                            value: noteTrackingBloc,
+                            child: RemindersScreen())));
+              }
+            },
           ),
           StreamBuilder<List<Label>>(
               stream: noteTrackingBloc.sortedLabelsStream,
