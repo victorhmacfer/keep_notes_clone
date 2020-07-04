@@ -6,13 +6,6 @@ import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
-const _customFlatButtonTextStyle = TextStyle(
-  fontFamily: 'Montserrat',
-  fontSize: 14,
-  fontWeight: FontWeight.w600,
-  color: appSettingsBlue,
-);
-
 class EditLabelsScreen extends StatelessWidget {
   final bool autoFocus;
 
@@ -181,7 +174,6 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
 }
 
 class _EditLabelListItem extends StatefulWidget {
-
   final Label label;
 
   _EditLabelListItem({@required this.label}) : super(key: ValueKey(label.id));
@@ -322,7 +314,7 @@ class _CustomFlatButton extends StatelessWidget {
         color: appWhite,
         child: Text(
           text,
-          style: _customFlatButtonTextStyle,
+          style: dialogFlatButtonTextStyle,
         ),
       ),
     );

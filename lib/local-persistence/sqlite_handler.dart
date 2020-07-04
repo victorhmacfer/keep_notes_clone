@@ -145,6 +145,16 @@ class SQLiteHandler {
         .rawDelete('''DELETE FROM note_label WHERE label_id = ${label.id};''');
   }
 
+  Future<void> deleteNote(Note note) async {
+    var initialized = await _initialized;
+    assert(initialized);
+
+    await _database.rawDelete('''DELETE FROM note WHERE id = ${note.id};''');
+
+    _database
+        .rawDelete('''DELETE FROM note_label WHERE note_id = ${note.id};''');
+  }
+
   Future<int> insertReminderAlarm() async {
     return _database.rawInsert(
         '''INSERT INTO reminder_alarm (unused_field) VALUES ("blabla");''');

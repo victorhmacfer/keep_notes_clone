@@ -8,6 +8,7 @@ import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/utils/styles.dart';
 
 import 'package:provider/provider.dart';
 
@@ -141,7 +142,10 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
         children: <Widget>[
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'baseline_restore_black_48.png', iconColor: appIconGreyForColoredBg,),
+            pngIcon: PngIcon(
+              fileName: 'baseline_restore_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Restore',
             onTap: () {
               var noteToBeRestored = notifier.noteBeingEdited;
@@ -154,9 +158,27 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'baseline_delete_forever_black_48.png', iconColor: appIconGreyForColoredBg,),
+            pngIcon: PngIcon(
+              fileName: 'baseline_delete_forever_black_48.png',
+              iconColor: appIconGreyForColoredBg,
+            ),
             text: 'Delete forever',
-            onTap: () {},
+            onTap: () async {
+              var shouldDelete = await showDialog<bool>(
+                barrierDismissible:
+                    true, // "shouldDelete" might be null as well.
+                context: context,
+                builder: _deleteConfirmationDialog,
+              );
+
+              if (shouldDelete) {
+                var noteForPermanentDeletion = notifier.noteBeingEdited;
+                noteBloc.onDeleteNoteForever(noteForPermanentDeletion);
+              }
+
+              notifier.closeRightBottomSheet();
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
@@ -207,5 +229,44 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
             ),
           ),
         ));
+  }
+}
+
+Widget _deleteConfirmationDialog(BuildContext context) {
+  return AlertDialog(
+    title: Text('Delete this note forever?'),
+    titlePadding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+    titleTextStyle: cardTitleStyle,
+    actions: <Widget>[
+      _CustomFlatButton('Cancel', onTap: () {
+        Navigator.pop<bool>(context, false);
+      }),
+      _CustomFlatButton('Delete', onTap: () {
+        Navigator.pop<bool>(context, true);
+      }),
+    ],
+  );
+}
+
+class _CustomFlatButton extends StatelessWidget {
+  final String text;
+
+  final void Function() onTap;
+
+  _CustomFlatButton(this.text, {@required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(8, 12, 12, 12),
+        color: appWhite,
+        child: Text(
+          text,
+          style: dialogFlatButtonTextStyle,
+        ),
+      ),
+    );
   }
 }

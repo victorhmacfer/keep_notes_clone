@@ -149,6 +149,10 @@ class NoteTrackingBloc {
     noteRepo.deleteLabel(label);
   }
 
+  void onDeleteNoteForever(Note noteForPermanentDeletion) {
+    noteRepo.deleteNote(noteForPermanentDeletion);
+  }
+
   Future<bool> _labelAlreadyExists(String text) async {
     if (_lastLabelsEmitted.isEmpty) return false;
 

@@ -38,7 +38,15 @@ var drawerItemStyle = TextStyle(
 var drawerLabelsEditStyle =
     TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: appIconGrey);
 
-var bottomSheetStyle = TextStyle(fontSize: 16, color: appVeryDarkGreyForColoredBg);
+var bottomSheetStyle =
+    TextStyle(fontSize: 16, color: appVeryDarkGreyForColoredBg);
+
+var dialogFlatButtonTextStyle = TextStyle(
+  fontFamily: 'Montserrat',
+  fontSize: 14,
+  fontWeight: FontWeight.w600,
+  color: appSettingsBlue,
+);
 
 final appLightThemeData = ThemeData(
     visualDensity: VisualDensity.adaptivePlatformDensity,
