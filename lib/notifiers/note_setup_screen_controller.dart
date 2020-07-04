@@ -19,7 +19,7 @@ class NoteSetupScreenController with ChangeNotifier {
 
   List<Label> _futureLabels;
 
-  Note _noteToBeDeleted;
+  Note _noteBeingEdited;
 
   final bool _editing;
 
@@ -59,7 +59,7 @@ class NoteSetupScreenController with ChangeNotifier {
         noteLastEdited = note.lastEdited,
         _editing = true,
         _futureLabels = List.from(note.labels),
-        _noteToBeDeleted = note {
+        _noteBeingEdited = note {
     if (note.reminderTime != null) {
       _futureReminderDateTime = note.reminderTime;
       _savedReminderDateTime = note.reminderTime;
@@ -125,7 +125,7 @@ class NoteSetupScreenController with ChangeNotifier {
 
   int get savedReminderAlarmId => _savedReminderAlarmId;
 
-  Note get noteToBeDeleted => _noteToBeDeleted;
+  Note get noteBeingEdited => _noteBeingEdited;
 
   bool get editing => _editing;
   bool get notEditing => !editing;

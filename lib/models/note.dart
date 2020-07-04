@@ -61,4 +61,8 @@ class Note {
     _deleted = true;
     reminderTime = null;
   }
+
+  void restore() {
+    _deleted = false;
+  }
 }

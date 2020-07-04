@@ -424,7 +424,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             ),
             text: 'Delete',
             onTap: () {
-              var noteForDeletion = notifier.noteToBeDeleted;
+              var noteForDeletion = notifier.noteBeingEdited;
               if (noteForDeletion != null) {
                 noteForDeletion.delete();
                 notifier.removeSavedReminder();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottomsheet_tile.dart';
 import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/models/label.dart';
@@ -43,7 +44,7 @@ class _DeletedNoteSetupAppBar extends StatelessWidget
     return AppBar(
       brightness: Brightness.light,
       backgroundColor: notifier.selectedColor.getColor(),
-      iconTheme: IconThemeData(color: appIconGrey),
+      iconTheme: IconThemeData(color: appIconGreyForColoredBg),
       leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -131,6 +132,7 @@ class _DeletedNoteSetupBody extends StatelessWidget {
 class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
   Widget _rightBottomSheetBuilder(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
+    final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return Container(
       color: notifier.selectedColor.getColor(),
@@ -139,13 +141,20 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
         children: <Widget>[
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'baseline_restore_black_48.png'),
+            pngIcon: PngIcon(fileName: 'baseline_restore_black_48.png', iconColor: appIconGreyForColoredBg,),
             text: 'Restore',
-            onTap: () {},
+            onTap: () {
+              var noteToBeRestored = notifier.noteBeingEdited;
+              noteToBeRestored.restore();
+              noteBloc.onNoteChanged(noteToBeRestored);
+
+              notifier.closeRightBottomSheet();
+              Navigator.pop(context);
+            },
           ),
           BottomSheetTile(
             noteSetupController: notifier,
-            pngIcon: PngIcon(fileName: 'baseline_delete_forever_black_48.png'),
+            pngIcon: PngIcon(fileName: 'baseline_delete_forever_black_48.png', iconColor: appIconGreyForColoredBg,),
             text: 'Delete forever',
             onTap: () {},
           ),
@@ -177,6 +186,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
                 PngIconButton(
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
+                      iconColor: appIconGreyForColoredBg,
                     ),
                     onTap: () {
                       if (notifier.rightBottomSheetOpen == false) {
