@@ -71,6 +71,8 @@ class NoteSearchScreen extends StatelessWidget {
   }
 }
 
+// FIXME: the grid crossaxis count is hardcoded everywhere as 3.
+// this is on purpose.. make this widget more general later !
 class _OptionalExpandableGridSection extends StatefulWidget {
   final String sectionTitle;
 
@@ -86,9 +88,26 @@ class _OptionalExpandableGridSection extends StatefulWidget {
 
 class _OptionalExpandableGridSectionState
     extends State<_OptionalExpandableGridSection> {
+  bool expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    expanded = false;
+  }
+
+  List<Widget> _gridChildren() {
+    if ((widget.items.length > 3) && !expanded) {
+      return widget.items.getRange(0, 3).toList();
+    }
+    return widget.items;
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
+
+    var moreLessButtonIsVisible = widget.items.length > 3;
 
     if (widget.items.isEmpty) {
       return Container();
@@ -111,18 +130,23 @@ class _OptionalExpandableGridSectionState
                 style: drawerLabelsEditStyle.copyWith(
                     fontSize: 11, letterSpacing: 0.5),
               ),
-              _MoreFlatButton(onTap: () {}),
+              (moreLessButtonIsVisible)
+                  ? _MoreLessFlatButton(expanded, onTap: () {
+                      setState(() {
+                        expanded = !expanded;
+                      });
+                    })
+                  : Container(),
             ],
           ),
         ),
         GridView.count(
-          shrinkWrap: true,
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
-          crossAxisCount: 3,
-          physics: NeverScrollableScrollPhysics(),
-          children: widget.items,
-        ),
+            shrinkWrap: true,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            crossAxisCount: 3,
+            physics: NeverScrollableScrollPhysics(),
+            children: _gridChildren()),
       ],
     );
   }
@@ -239,10 +263,12 @@ class _LabelGridItem extends StatelessWidget {
   }
 }
 
-class _MoreFlatButton extends StatelessWidget {
+class _MoreLessFlatButton extends StatelessWidget {
   final void Function() onTap;
 
-  _MoreFlatButton({@required this.onTap});
+  final bool expanded;
+
+  _MoreLessFlatButton(this.expanded, {@required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +278,7 @@ class _MoreFlatButton extends StatelessWidget {
         padding: EdgeInsets.all(8),
         color: appWhite,
         child: Text(
-          'MORE',
+          (expanded) ? 'LESS' : 'MORE',
           style: drawerLabelsEditStyle.copyWith(
               fontSize: 11, letterSpacing: 0.5, color: appSettingsBlue),
         ),
