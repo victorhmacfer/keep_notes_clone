@@ -1,72 +1,179 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
+import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/models/search_result.dart';
+import 'package:keep_notes_clone/notifiers/note_search_state.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:provider/provider.dart';
+
+var _decorationWithGreyUpperBorder = BoxDecoration(
+    color: appWhite, border: Border(top: BorderSide(color: appDividerGrey)));
 
 class NoteSearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        brightness: Brightness.light,
-        elevation: 0,
-        title: TextField(
-          cursorWidth: 1,
-          cursorColor: appSettingsBlue,
-          decoration: InputDecoration.collapsed(
-              hintText: 'Search your notes', hintStyle: searchAppBarStyle),
-        ),
-        iconTheme: IconThemeData(color: appIconGrey),
-        backgroundColor: appWhite,
+    return ChangeNotifierProvider<NoteSearchStateNotifier>(
+      create: (context) => NoteSearchStateNotifier(),
+      child: Scaffold(
+        appBar: _NoteSearchAppBar(),
+        body: _BodyPicker(),
       ),
-      body: Container(
-        constraints: BoxConstraints.expand(),
-        decoration: BoxDecoration(
-            color: appWhite,
-            border: Border(top: BorderSide(color: appDividerGrey))),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _OptionalExpandableGridSection(sectionTitle: 'TYPES', items: [
-                _TypeGridItem(
-                  text: 'Lists',
-                  pngIconFileName: 'outline_check_box_black_48.png',
-                ),
-                _TypeGridItem(
-                  text: 'Images',
-                  pngIconFileName: 'outline_mic_none_black_48.png',
-                ),
-                _TypeGridItem(
-                  text: 'Voice',
-                  pngIconFileName: 'outline_mic_none_black_48.png',
-                ),
-                _TypeGridItem(
-                  text: 'Drawings',
-                  pngIconFileName: 'outline_mic_none_black_48.png',
-                ),
-                _TypeGridItem(
-                  text: 'URLs',
-                  pngIconFileName: 'outline_mic_none_black_48.png',
-                ),
-              ]),
-              _OptionalExpandableGridSection(sectionTitle: 'LABELS', items: [
-                _LabelGridItem(text: 'android-dev'),
-                _LabelGridItem(text: 'clean'),
-                _LabelGridItem(text: 'compras-vendas'),
-                _LabelGridItem(text: 'conseguir estagio'),
-                _LabelGridItem(text: 'expenses'),
-                _LabelGridItem(text: 'git'),
-                _LabelGridItem(text: 'ideas'),
-              ]),
-              _ColorsGridSection(),
-              SizedBox(
-                height: 16,
-              )
-            ],
-          ),
+    );
+  }
+}
+
+class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
+  //FIXME: depending on framework code..
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      brightness: Brightness.light,
+      elevation: 0,
+      title: TextField(
+        cursorWidth: 1,
+        cursorColor: appSettingsBlue,
+        decoration: InputDecoration.collapsed(
+            hintText: 'Search your notes', hintStyle: searchAppBarStyle),
+      ),
+      iconTheme: IconThemeData(color: appIconGrey),
+      backgroundColor: appWhite,
+    );
+  }
+}
+
+class _BodyPicker extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var notifier = Provider.of<NoteSearchStateNotifier>(context);
+
+    return (notifier.searching)
+        ? _SearchResultsBody()
+        : _SearchCategoriesBody();
+  }
+}
+
+//FIXME: dummy implementation .. will have streambuilder later
+class _SearchCategoriesBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints.expand(),
+      decoration: _decorationWithGreyUpperBorder,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _OptionalExpandableGridSection(sectionTitle: 'TYPES', items: [
+              _TypeGridItem(
+                text: 'Lists',
+                pngIconFileName: 'outline_check_box_black_48.png',
+              ),
+              _TypeGridItem(
+                text: 'Images',
+                pngIconFileName: 'outline_mic_none_black_48.png',
+              ),
+              _TypeGridItem(
+                text: 'Voice',
+                pngIconFileName: 'outline_mic_none_black_48.png',
+              ),
+              _TypeGridItem(
+                text: 'Drawings',
+                pngIconFileName: 'outline_mic_none_black_48.png',
+              ),
+              _TypeGridItem(
+                text: 'URLs',
+                pngIconFileName: 'outline_mic_none_black_48.png',
+              ),
+            ]),
+            _OptionalExpandableGridSection(sectionTitle: 'LABELS', items: [
+              _LabelGridItem(text: 'android-dev'),
+              _LabelGridItem(text: 'clean'),
+              _LabelGridItem(text: 'compras-vendas'),
+              _LabelGridItem(text: 'conseguir estagio'),
+              _LabelGridItem(text: 'expenses'),
+              _LabelGridItem(text: 'git'),
+              _LabelGridItem(text: 'ideas'),
+            ]),
+            _ColorsGridSection(),
+            SizedBox(
+              height: 16,
+            )
+          ],
         ),
       ),
+    );
+  }
+}
+
+class _SearchResultsBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+
+    return Container(
+      constraints: BoxConstraints.expand(),
+      decoration: _decorationWithGreyUpperBorder,
+      child: SingleChildScrollView(
+        child: StreamBuilder<SearchResult>(
+          stream: noteBloc.noteColorSearchResultStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var regularNotes = snapshot.data.regular;
+              var archivedNotes = snapshot.data.archived;
+              var deletedNotes = snapshot.data.deleted;
+
+              return Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 32),
+                child: Column(
+                  children: <Widget>[
+                    _OptionalSectionColumn(notes: regularNotes),
+                    _OptionalSectionColumn(
+                        title: 'ARCHIVE', notes: archivedNotes),
+                    _OptionalSectionColumn(title: 'TRASH', notes: deletedNotes),
+                  ],
+                ),
+              );
+            }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+Widget _noteCardBuilder(Note note) => NoteCard(note: note);
+
+class _OptionalSectionColumn extends StatelessWidget {
+  final String title;
+
+  final List<Note> notes;
+
+  _OptionalSectionColumn({this.title, @required this.notes});
+
+  @override
+  Widget build(BuildContext context) {
+    if (notes.isEmpty) {
+      return Container();
+    }
+
+    return Column(
+      children: <Widget>[
+        (title != null)
+            ? CardTypeSectionTitle(title.toUpperCase())
+            : Container(),
+        Column(children: notes.map(_noteCardBuilder).toList()),
+        SizedBox(height: 16),
+      ],
     );
   }
 }
@@ -294,14 +401,23 @@ class _ColorCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var searchNotifier = Provider.of<NoteSearchStateNotifier>(context);
+
     return FractionallySizedBox(
       widthFactor: 0.75,
       heightFactor: 0.75,
-      child: Container(
-        decoration: BoxDecoration(
-            color: noteColor.getColor(),
-            border: Border.all(width: 0.5, color: appGreyForColoredBg),
-            borderRadius: BorderRadius.circular(40)),
+      child: GestureDetector(
+        onTap: () {
+          noteBloc.searchByNoteColorSink.add(noteColor);
+          searchNotifier.searching = true;
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              color: noteColor.getColor(),
+              border: Border.all(width: 0.5, color: appGreyForColoredBg),
+              borderRadius: BorderRadius.circular(40)),
+        ),
       ),
     );
   }

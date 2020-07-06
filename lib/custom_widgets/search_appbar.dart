@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/screens/note_search_screen.dart';
 
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 class SearchAppBar extends StatelessWidget {
   @override
@@ -31,6 +33,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+
     return Container(
       padding: EdgeInsets.only(bottom: 8, left: 16, right: 16),
       alignment: Alignment.bottomCenter,
@@ -39,10 +43,11 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
         width: double.infinity,
         child: GestureDetector(
           onTap: () {
-            //TODO: pushar com o provider de bloc aqui
-
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => NoteSearchScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Provider<NoteTrackingBloc>.value(
+                        value: noteBloc, child: NoteSearchScreen())));
           },
           child: Container(
             alignment: Alignment.center,

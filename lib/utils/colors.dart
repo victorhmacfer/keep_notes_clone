@@ -38,6 +38,8 @@ abstract class NoteColor {
 
   Color getColor();
 
+  int get index;
+
   static const NoteColor white = _WhiteNoteColor();
   static const NoteColor darkBlue = _DarkBlueNoteColor();
   static const NoteColor mediumBlue = _MediumBlueNoteColor();
@@ -78,69 +80,8 @@ class _WhiteNoteColor extends NoteColor {
 
   @override
   Color getColor() => Color.fromARGB(255, 255, 255, 255);
-}
 
-class _DarkBlueNoteColor extends NoteColor {
-  const _DarkBlueNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 175, 203, 250);
-}
-
-class _MediumBlueNoteColor extends NoteColor {
-  const _MediumBlueNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 203, 240, 248);
-}
-
-class _LightBlueNoteColor extends NoteColor {
-  const _LightBlueNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 167, 254, 235);
-}
-
-class _PurpleNoteColor extends NoteColor {
-  const _PurpleNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 216, 173, 252);
-}
-
-class _OrangeNoteColor extends NoteColor {
-  const _OrangeNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 250, 189, 3);
-}
-
-class _GreenNoteColor extends NoteColor {
-  const _GreenNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 205, 255, 144);
-}
-
-class _BrownNoteColor extends NoteColor {
-  const _BrownNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 230, 201, 169);
-}
-
-class _YellowNoteColor extends NoteColor {
-  const _YellowNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 255, 244, 118);
-}
-
-class _GreyNoteColor extends NoteColor {
-  const _GreyNoteColor();
-
-  @override
-  Color getColor() => Color.fromARGB(255, 233, 234, 238);
+  int get index => 0;
 }
 
 class _RedNoteColor extends NoteColor {
@@ -148,6 +89,71 @@ class _RedNoteColor extends NoteColor {
 
   @override
   Color getColor() => Color.fromARGB(255, 242, 139, 130);
+
+  int get index => 1;
+}
+
+class _OrangeNoteColor extends NoteColor {
+  const _OrangeNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 250, 189, 3);
+
+  int get index => 2;
+}
+
+class _YellowNoteColor extends NoteColor {
+  const _YellowNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 255, 244, 118);
+
+  int get index => 3;
+}
+
+class _GreenNoteColor extends NoteColor {
+  const _GreenNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 205, 255, 144);
+
+  int get index => 4;
+}
+
+class _LightBlueNoteColor extends NoteColor {
+  const _LightBlueNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 167, 254, 235);
+
+  int get index => 5;
+}
+
+class _MediumBlueNoteColor extends NoteColor {
+  const _MediumBlueNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 203, 240, 248);
+
+  int get index => 6;
+}
+
+class _DarkBlueNoteColor extends NoteColor {
+  const _DarkBlueNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 175, 203, 250);
+
+  int get index => 7;
+}
+
+class _PurpleNoteColor extends NoteColor {
+  const _PurpleNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 216, 173, 252);
+
+  int get index => 8;
 }
 
 class _PinkNoteColor extends NoteColor {
@@ -155,4 +161,24 @@ class _PinkNoteColor extends NoteColor {
 
   @override
   Color getColor() => Color.fromARGB(255, 253, 207, 233);
+
+  int get index => 9;
+}
+
+class _BrownNoteColor extends NoteColor {
+  const _BrownNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 230, 201, 169);
+
+  int get index => 10;
+}
+
+class _GreyNoteColor extends NoteColor {
+  const _GreyNoteColor();
+
+  @override
+  Color getColor() => Color.fromARGB(255, 233, 234, 238);
+
+  int get index => 11;
 }

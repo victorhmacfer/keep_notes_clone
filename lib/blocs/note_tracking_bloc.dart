@@ -11,7 +11,9 @@ import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/label_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
+import 'package:keep_notes_clone/models/search_result.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:rxdart/subjects.dart';
 
 import 'package:keep_notes_clone/main.dart';
@@ -24,11 +26,18 @@ class NoteTrackingBloc {
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
+  //FIXME:
+  // this one is for seeing if label already exists prior to creating it
+  // in note labeling screen... change this name later
   final _labelSearchResultBS = BehaviorSubject<LabelSearchResult>();
 
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
   final _labelForFilteringNotesBS = BehaviorSubject<Label>();
+
+  final _noteColorForNoteSearchBS = BehaviorSubject<NoteColor>();
+
+  final _noteColorSearchResultBS = BehaviorSubject<SearchResult>();
 
   static SendPort uiSendPort;
 
@@ -56,12 +65,21 @@ class NoteTrackingBloc {
     _labelForFilteringNotesBS.stream
         .listen(_filterNotesForLabelAndDropIntoStream);
 
+    _noteColorForNoteSearchBS.stream
+        .listen(_filterNotesForNoteColorAndDropIntoStream);
+
     _portSubscription = port.listen((_) {
       _notesBS.add(_lastNotesEmitted);
     });
   }
 
   StreamSink<Label> get filterByLabelSink => _labelForFilteringNotesBS.sink;
+
+  StreamSink<NoteColor> get searchByNoteColorSink =>
+      _noteColorForNoteSearchBS.sink;
+
+  Stream<SearchResult> get noteColorSearchResultStream =>
+      _noteColorSearchResultBS.stream;
 
   Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
@@ -204,6 +222,16 @@ class NoteTrackingBloc {
     _labelFilteredNotesBS.add(filteredNotes);
   }
 
+  void _filterNotesForNoteColorAndDropIntoStream(NoteColor noteColor) {
+    var filteredNotes = _lastNotesEmitted
+        .where((note) => note.colorIndex == noteColor.index)
+        .toList();
+
+    var noteColorSearchResult = SearchResult(filteredNotes);
+
+    _noteColorSearchResultBS.add(noteColorSearchResult);
+  }
+
   List<Note> _filterArchivedNotes(List<Note> input) {
     return input.where((note) => note.archived).toList();
   }
@@ -241,6 +269,8 @@ class NoteTrackingBloc {
     _labelSearchResultBS.close();
     _labelFilteredNotesBS.close();
     _labelForFilteringNotesBS.close();
+    _noteColorForNoteSearchBS.close();
+    _noteColorSearchResultBS.close();
     _portSubscription.cancel();
   }
 }
