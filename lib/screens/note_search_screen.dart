@@ -260,9 +260,13 @@ class _OptionalExpandableGridSectionState
 }
 
 class _ColorsGridSection extends StatelessWidget {
+  Widget _colorCircleBuilder(int colorIndex) =>
+      _ColorCircle(NoteColor.getNoteColorFromIndex(colorIndex));
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -279,26 +283,22 @@ class _ColorsGridSection extends StatelessWidget {
                 fontSize: 11, letterSpacing: 0.5),
           ),
         ),
-        GridView.count(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          shrinkWrap: true,
-          crossAxisCount: 6,
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            _ColorCircle(NoteColor.white),
-            _ColorCircle(NoteColor.red),
-            _ColorCircle(NoteColor.orange),
-            _ColorCircle(NoteColor.yellow),
-            _ColorCircle(NoteColor.green),
-            _ColorCircle(NoteColor.lightBlue),
-            _ColorCircle(NoteColor.mediumBlue),
-            _ColorCircle(NoteColor.darkBlue),
-            _ColorCircle(NoteColor.purple),
-            _ColorCircle(NoteColor.pink),
-            _ColorCircle(NoteColor.brown),
-            _ColorCircle(NoteColor.grey),
-          ],
-        ),
+        StreamBuilder<List<int>>(
+            stream: noteBloc.noteColorsAlreadyUsedStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var noteColorsUsed = snapshot.data;
+
+                return GridView.count(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  shrinkWrap: true,
+                  crossAxisCount: 6,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: noteColorsUsed.map(_colorCircleBuilder).toList(),
+                );
+              }
+              return Container();
+            }),
       ],
     );
   }

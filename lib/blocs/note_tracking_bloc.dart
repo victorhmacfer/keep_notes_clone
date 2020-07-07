@@ -81,6 +81,9 @@ class NoteTrackingBloc {
   Stream<SearchResult> get noteColorSearchResultStream =>
       _noteColorSearchResultBS.stream;
 
+  Stream<List<int>> get noteColorsAlreadyUsedStream =>
+      noteListStream.map(_filterNoteColorsAlreadyUsed);
+
   Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
 
@@ -230,6 +233,16 @@ class NoteTrackingBloc {
     var noteColorSearchResult = SearchResult(filteredNotes);
 
     _noteColorSearchResultBS.add(noteColorSearchResult);
+  }
+
+  List<int> _filterNoteColorsAlreadyUsed(List<Note> notes) {
+    Set<int> noteColors = {};
+
+    notes.forEach((n) {
+      noteColors.add(n.colorIndex);
+    });
+
+    return List<int>.from(noteColors)..sort();
   }
 
   List<Note> _filterArchivedNotes(List<Note> input) {
