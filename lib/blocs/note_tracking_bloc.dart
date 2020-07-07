@@ -86,7 +86,7 @@ class NoteTrackingBloc {
       _noteColorSearchResultBS.stream;
 
   Stream<List<int>> get noteColorsAlreadyUsedStream =>
-      noteListStream.map(_filterNoteColorsAlreadyUsed);
+      _allNotesStream.map(_filterNoteColorsAlreadyUsed);
 
   Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
@@ -94,20 +94,18 @@ class NoteTrackingBloc {
   Stream<LabelSearchResult> get labelSearchResultStream =>
       _labelSearchResultBS.stream;
 
-  Stream<List<Note>> get noteListStream => _notesBS.stream;
-
   Stream<PinnedUnpinnedNotes> get pinnedUnpinnedNoteListsStream =>
       _notArchivedNotDeletedNoteListStream
           .map((notes) => PinnedUnpinnedNotes(notes));
 
   Stream<FiredUpcomingReminders> get firedUpcomingReminderNotesStream =>
-      noteListStream.map((notes) => FiredUpcomingReminders(notes));
+      _allNotesStream.map((notes) => FiredUpcomingReminders(notes));
 
   Stream<List<Note>> get archivedNoteListStream =>
-      noteListStream.map(_filterArchivedNotes);
+      _allNotesStream.map(_filterArchivedNotes);
 
   Stream<List<Note>> get deletedNoteListStream =>
-      noteListStream.map(_filterDeletedNotes);
+      _allNotesStream.map(_filterDeletedNotes);
 
   Stream<LabelFilteredNotesContainer> get labelFilteredNotesContainerStream =>
       _labelFilteredNotDeletedNotesStream
@@ -224,6 +222,8 @@ class NoteTrackingBloc {
     _labelSearchResultBS.add(LabelSearchResult(false, _lastLabelsEmitted));
   }
 
+  Stream<List<Note>> get _allNotesStream => _notesBS.stream;
+
   void _applyDrawerLabelFilterWithNewLabel(Label theLabel) {
     var filteredNotes = _filterNotesWithLabel(theLabel, _lastNotesEmitted);
 
@@ -290,7 +290,7 @@ class NoteTrackingBloc {
   }
 
   Stream<List<Note>> get _unarchivedNoteListStream =>
-      noteListStream.map(_filterUnarchivedNotes);
+      _allNotesStream.map(_filterUnarchivedNotes);
 
   Stream<List<Note>> get _notArchivedNotDeletedNoteListStream =>
       _unarchivedNoteListStream.map(_filterNotDeletedNotes);
