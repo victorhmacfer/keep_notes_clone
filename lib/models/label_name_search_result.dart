@@ -1,9 +1,9 @@
 import 'package:keep_notes_clone/models/label.dart';
 
-class LabelSearchResult {
+class LabelNameSearchResult {
   final List<Label> labels;
 
   final bool foundExactMatch;
 
-  LabelSearchResult(this.foundExactMatch, this.labels);
+  LabelNameSearchResult(this.foundExactMatch, this.labels);
 }

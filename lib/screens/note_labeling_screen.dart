@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/label_search_result.dart';
+import 'package:keep_notes_clone/models/label_name_search_result.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -38,8 +38,8 @@ class NoteLabelingScreen extends StatelessWidget {
       body: Container(
         constraints: BoxConstraints.expand(),
         color: appWhite,
-        child: StreamBuilder<LabelSearchResult>(
-            stream: noteTrackingBloc.labelSearchResultStream,
+        child: StreamBuilder<LabelNameSearchResult>(
+            stream: noteTrackingBloc.labelNameSearchResultStream,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var showCreateButton = !snapshot.data.foundExactMatch &&

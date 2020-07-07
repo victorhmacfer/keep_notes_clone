@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/fired_upcoming_reminders.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
-import 'package:keep_notes_clone/models/label_search_result.dart';
+import 'package:keep_notes_clone/models/label_name_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
 import 'package:keep_notes_clone/models/search_result.dart';
@@ -29,7 +29,7 @@ class NoteTrackingBloc {
   //FIXME:
   // this one is for seeing if label already exists prior to creating it
   // in note labeling screen... change this name later
-  final _labelSearchResultBS = BehaviorSubject<LabelSearchResult>();
+  final _labelNameSearchResultBS = BehaviorSubject<LabelNameSearchResult>();
 
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
@@ -91,8 +91,8 @@ class NoteTrackingBloc {
   Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
 
-  Stream<LabelSearchResult> get labelSearchResultStream =>
-      _labelSearchResultBS.stream;
+  Stream<LabelNameSearchResult> get labelNameSearchResultStream =>
+      _labelNameSearchResultBS.stream;
 
   Stream<PinnedUnpinnedNotes> get pinnedUnpinnedNoteListsStream =>
       _notArchivedNotDeletedNoteListStream
@@ -202,7 +202,7 @@ class NoteTrackingBloc {
 
   void onSearchLabel(String substring) {
     if (substring.isEmpty) {
-      _labelSearchResultBS.add(LabelSearchResult(false, _lastLabelsEmitted));
+      _labelNameSearchResultBS.add(LabelNameSearchResult(false, _lastLabelsEmitted));
     }
 
     List<Label> results = [];
@@ -215,11 +215,11 @@ class NoteTrackingBloc {
         }
       }
     }
-    _labelSearchResultBS.add(LabelSearchResult(foundExact, results));
+    _labelNameSearchResultBS.add(LabelNameSearchResult(foundExact, results));
   }
 
   void onResetLabelSearch() {
-    _labelSearchResultBS.add(LabelSearchResult(false, _lastLabelsEmitted));
+    _labelNameSearchResultBS.add(LabelNameSearchResult(false, _lastLabelsEmitted));
   }
 
   Stream<List<Note>> get _allNotesStream => _notesBS.stream;
@@ -300,7 +300,7 @@ class NoteTrackingBloc {
 
   void dispose() {
     _notesBS.close();
-    _labelSearchResultBS.close();
+    _labelNameSearchResultBS.close();
     _labelFilteredNotesBS.close();
     _labelForFilteringNotesBS.close();
     _noteColorForNoteSearchBS.close();
