@@ -63,13 +63,17 @@ class NoteTrackingBloc {
     });
 
     _labelForFilteringNotesBS.stream
-        .listen(_filterNotesForLabelAndDropIntoStream);
+        .listen(_applyDrawerLabelFilterWithNewLabel);
 
     _noteColorForNoteSearchBS.stream
         .listen(_filterNotesForNoteColorAndDropIntoStream);
 
     _portSubscription = port.listen((_) {
       _notesBS.add(_lastNotesEmitted);
+    });
+
+    _notesBS.listen((allNotes) {
+      _updateDrawerLabelFilterStream(allNotes);
     });
   }
 
@@ -153,12 +157,6 @@ class NoteTrackingBloc {
   void onNoteChanged(Note changedNote) {
     noteRepo.updateNote(changedNote);
 
-    if (_labelForFilteringNotesBS.hasValue) {
-      var lastLabelFiltered = _labelForFilteringNotesBS.value;
-      _filterNotesForLabelAndDropIntoStream(lastLabelFiltered);
-    }
-
-    //the IF above could be written as the one below.. slightly cleaner.
     if (_noteColorForNoteSearchBS.hasValue) {
       _noteColorForNoteSearchBS.add(_noteColorForNoteSearchBS.value);
     }
@@ -226,12 +224,26 @@ class NoteTrackingBloc {
     _labelSearchResultBS.add(LabelSearchResult(false, _lastLabelsEmitted));
   }
 
-  void _filterNotesForLabelAndDropIntoStream(Label theLabel) {
-    var filteredNotes = _lastNotesEmitted
-        .where((n) => n.labels.any((lab) => lab.id == theLabel.id))
-        .toList();
+  void _applyDrawerLabelFilterWithNewLabel(Label theLabel) {
+    var filteredNotes = _filterNotesWithLabel(theLabel, _lastNotesEmitted);
 
     _labelFilteredNotesBS.add(filteredNotes);
+  }
+
+  void _updateDrawerLabelFilterStream(List<Note> allNotes) {
+    var hasEverFilteredByThisLabelInDrawer = _labelForFilteringNotesBS.hasValue;
+
+    if (hasEverFilteredByThisLabelInDrawer) {
+      var filteredNotes =
+          _filterNotesWithLabel(_labelForFilteringNotesBS.value, allNotes);
+      _labelFilteredNotesBS.add(filteredNotes);
+    }
+  }
+
+  List<Note> _filterNotesWithLabel(Label theLabel, List<Note> input) {
+    return input
+        .where((n) => n.labels.any((lab) => lab.id == theLabel.id))
+        .toList();
   }
 
   void _filterNotesForNoteColorAndDropIntoStream(NoteColor noteColor) {

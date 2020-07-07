@@ -107,10 +107,6 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                       archived: false,
                       labels: labels);
                 }
-
-                if (label != null) {
-                  noteBloc.filterByLabelSink.add(label);
-                }
               } else {
                 note.title = title;
                 note.text = text;
@@ -633,4 +629,3 @@ class _ColorSelectionCircle extends StatelessWidget {
     );
   }
 }
-
