@@ -157,6 +157,11 @@ class NoteTrackingBloc {
       var lastLabelFiltered = _labelForFilteringNotesBS.value;
       _filterNotesForLabelAndDropIntoStream(lastLabelFiltered);
     }
+
+    //the IF above could be written as the one below.. slightly cleaner.
+    if (_noteColorForNoteSearchBS.hasValue) {
+      _noteColorForNoteSearchBS.add(_noteColorForNoteSearchBS.value);
+    }
   }
 
   void onCreateNewLabel(String text) async {
@@ -176,6 +181,10 @@ class NoteTrackingBloc {
 
   void onDeleteNoteForever(Note noteForPermanentDeletion) {
     noteRepo.deleteNote(noteForPermanentDeletion);
+
+    if (_noteColorForNoteSearchBS.hasValue) {
+      _noteColorForNoteSearchBS.add(_noteColorForNoteSearchBS.value);
+    }
   }
 
   Future<bool> _labelAlreadyExists(String text) async {
