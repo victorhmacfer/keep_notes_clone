@@ -66,7 +66,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
     final notifier = Provider.of<NoteSetupScreenController>(context);
     final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
-    bool isArchived = (note == null) ? false : note.archived;
+    bool shouldUnarchive = note?.archived ?? false;
 
     return AppBar(
       brightness: Brightness.light,
@@ -75,52 +75,19 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            var title = notifier.titleController.text;
-            var text = notifier.textController.text;
-            var colorIndex = notifier.selectedColorIndex;
-            var pinned = notifier.isPinned;
-            var labels = notifier.futureLabels;
-            var savedReminderTime = notifier.savedReminderTime;
-            var reminderAlarmId = notifier.savedReminderAlarmId;
-            if (title.isNotEmpty ||
-                text.isNotEmpty ||
-                (savedReminderTime != null)) {
-              if (note == null) {
-                if (savedReminderTime != null) {
-                  noteBloc.onCreateNewNote(
-                      title: title,
-                      text: text,
-                      colorIndex: colorIndex,
-                      reminderTime: savedReminderTime,
-                      pinned: pinned,
-                      reminderAlarmId: reminderAlarmId,
-                      lastEdited: DateTime.now(),
-                      archived: false,
-                      labels: labels);
-                } else {
-                  noteBloc.onCreateNewNote(
-                      title: title,
-                      text: text,
-                      colorIndex: colorIndex,
-                      pinned: pinned,
-                      lastEdited: DateTime.now(),
-                      archived: false,
-                      labels: labels);
-                }
+            if (notifier.canApplySetupModelToNote) {
+              print('canApplySetupModelToNote');
+              if (notifier.notEditing) {
+                print('not editing');
+                noteBloc.onCreateNote(notifier.noteSetupModel);
               } else {
-                note.title = title;
-                note.text = text;
-                note.colorIndex = colorIndex;
-                note.pinned = pinned;
-                note.reminderTime = savedReminderTime;
-                note.reminderAlarmId = reminderAlarmId;
-                if (notifier.noteIsDirty) {
-                  note.lastEdited = DateTime.now();
-                }
-                note.labels = labels;
+                print('editing');
+                notifier.tryToUpdateLastEdited();
+                note.updateWith(notifier.noteSetupModel);
                 noteBloc.onNoteChanged(note);
               }
             }
+            print('final');
             notifier.closeLeftBottomSheet();
             notifier.closeRightBottomSheet();
             Navigator.pop(context);
@@ -168,7 +135,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
-              pngIcon: (isArchived)
+              pngIcon: (shouldUnarchive)
                   ? PngIcon(
                       fileName: 'outline_unarchive_black_48.png',
                       iconColor: appIconGreyForColoredBg,
@@ -178,48 +145,21 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                       iconColor: appIconGreyForColoredBg,
                     ),
               onTap: () {
-                var title = notifier.titleController.text;
-                var text = notifier.textController.text;
-                var colorIndex = notifier.selectedColorIndex;
-                var labels = notifier.futureLabels;
-                var savedReminderTime = notifier.savedReminderTime;
-                var reminderAlarmId = notifier.savedReminderAlarmId;
-                if (title.isNotEmpty ||
-                    text.isNotEmpty ||
-                    (savedReminderTime != null)) {
-                  if (note == null) {
-                    if (savedReminderTime != null) {
-                      noteBloc.onCreateNewNote(
-                          title: title,
-                          text: text,
-                          colorIndex: colorIndex,
-                          reminderTime: savedReminderTime,
-                          reminderAlarmId: reminderAlarmId,
-                          pinned: false,
-                          archived: true,
-                          lastEdited: DateTime.now(),
-                          labels: labels);
-                    } else {
-                      noteBloc.onCreateNewNote(
-                          title: title,
-                          text: text,
-                          colorIndex: colorIndex,
-                          pinned: false,
-                          archived: true,
-                          lastEdited: DateTime.now(),
-                          labels: labels);
-                    }
+                if (notifier.canApplySetupModelToNote) {
+                  if (notifier.notEditing) {
+                    noteBloc.onCreateNote(notifier.noteSetupModel,
+                        createArchived: true);
                   } else {
-                    note.title = title;
-                    note.text = text;
-                    note.colorIndex = colorIndex;
-                    note.archived = !note.archived;
-                    note.reminderTime = savedReminderTime;
-                    note.reminderAlarmId = reminderAlarmId;
-                    if (notifier.noteIsDirty) {
-                      note.lastEdited = DateTime.now();
+                    notifier.tryToUpdateLastEdited();
+                    note.updateWith(notifier.noteSetupModel);
+
+                    if (shouldUnarchive) {
+                      if (note.archived) {
+                        note.archived = false;
+                      }
+                    } else {
+                      note.archived = true;
                     }
-                    note.labels = labels;
                     noteBloc.onNoteChanged(note);
                   }
                 }

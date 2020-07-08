@@ -4,12 +4,12 @@ import 'dart:ui';
 
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
-import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/fired_upcoming_reminders.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/label_name_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
 import 'package:keep_notes_clone/models/search_result.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
@@ -26,9 +26,6 @@ class NoteTrackingBloc {
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
-  //FIXME:
-  // this one is for seeing if label already exists prior to creating it
-  // in note labeling screen... change this name later
   final _labelNameSearchResultBS = BehaviorSubject<LabelNameSearchResult>();
 
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
@@ -77,7 +74,8 @@ class NoteTrackingBloc {
     });
   }
 
-  StreamSink<Label> get filterByLabelSink => _labelForFilteringNotesBS.sink;
+  StreamSink<Label> get drawerFilterByLabelSink =>
+      _labelForFilteringNotesBS.sink;
 
   StreamSink<NoteColor> get searchByNoteColorSink =>
       _noteColorForNoteSearchBS.sink;
@@ -111,35 +109,10 @@ class NoteTrackingBloc {
       _labelFilteredNotDeletedNotesStream
           .map((notes) => LabelFilteredNotesContainer(notes));
 
-  void onCreateNewNote(
-      {String title = '',
-      String text = '',
-      int colorIndex = 0,
-      bool pinned = false,
-      DateTime reminderTime,
-      int reminderAlarmId,
-      @required DateTime lastEdited,
-      bool archived = false,
-      List<Label> labels}) {
-    if (pinned) {
-      assert(archived == false,
-          'Note cannot be created as both pinned and archived');
-    }
-    if (labels == null) {
-      labels = [];
-    }
+  
 
-    var newNote = Note(
-        title: title,
-        text: text,
-        colorIndex: colorIndex,
-        pinned: pinned,
-        reminderTime: reminderTime,
-        reminderAlarmId: reminderAlarmId,
-        lastEdited: lastEdited,
-        archived: archived,
-        labels: labels);
-
+  void onCreateNote(NoteSetupModel noteSetupModel, {bool createArchived = false}) {
+    var newNote = Note.fromSetupModel(noteSetupModel, archived: createArchived);
     noteRepo.addNote(newNote);
   }
 
@@ -202,7 +175,8 @@ class NoteTrackingBloc {
 
   void onSearchLabel(String substring) {
     if (substring.isEmpty) {
-      _labelNameSearchResultBS.add(LabelNameSearchResult(false, _lastLabelsEmitted));
+      _labelNameSearchResultBS
+          .add(LabelNameSearchResult(false, _lastLabelsEmitted));
     }
 
     List<Label> results = [];
@@ -219,7 +193,8 @@ class NoteTrackingBloc {
   }
 
   void onResetLabelSearch() {
-    _labelNameSearchResultBS.add(LabelNameSearchResult(false, _lastLabelsEmitted));
+    _labelNameSearchResultBS
+        .add(LabelNameSearchResult(false, _lastLabelsEmitted));
   }
 
   Stream<List<Note>> get _allNotesStream => _notesBS.stream;

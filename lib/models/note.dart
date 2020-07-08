@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/models/note_setup_model.dart';
 
 class Note {
   int id;
@@ -36,6 +37,33 @@ class Note {
     _pinned = pinned;
     _archived = archived;
     _deleted = deleted;
+  }
+
+  // always used for creating a NEW NOTE
+  Note.fromSetupModel(NoteSetupModel setupModel, {bool archived = false})
+      : assert(setupModel.selectedColorIndex != null),
+        assert(setupModel.noteLastEdited != null) {
+    title = (setupModel.title.isNotEmpty) ? setupModel.title : '';
+    text = (setupModel.text.isNotEmpty) ? setupModel.text : '';
+    _pinned = setupModel.isPinned;
+    _archived = archived;
+    _deleted = false;
+    colorIndex = setupModel.selectedColorIndex;
+    lastEdited = setupModel.noteLastEdited;
+    reminderTime = setupModel.savedReminderTime;
+    reminderAlarmId = setupModel.savedReminderAlarmId;
+    labels = setupModel.labels ?? [];
+  }
+
+  void updateWith(NoteSetupModel setupModel) {
+    title = setupModel.title;
+    text = setupModel.text;
+    colorIndex = setupModel.selectedColorIndex;
+    lastEdited = setupModel.noteLastEdited;
+    pinned = setupModel.isPinned;
+    reminderTime = setupModel.savedReminderTime;
+    reminderAlarmId = setupModel.savedReminderAlarmId;
+    labels = setupModel.labels;
   }
 
   bool get pinned => _pinned;

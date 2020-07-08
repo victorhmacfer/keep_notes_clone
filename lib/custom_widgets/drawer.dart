@@ -50,7 +50,7 @@ class MyDrawer extends StatelessWidget {
         onPressed: () {
           if (drawerScreenSelection.selectedScreenIndex != i + 4) {
             drawerScreenSelection.changeSelectedScreenToIndex(i + 4);
-            noteBloc.filterByLabelSink.add(labels[i]);
+            noteBloc.drawerFilterByLabelSink.add(labels[i]);
 
             Navigator.pushReplacement(
                 context,
