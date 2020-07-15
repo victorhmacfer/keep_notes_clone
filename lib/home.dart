@@ -12,6 +12,7 @@ import 'package:keep_notes_clone/custom_widgets/search_appbar.dart';
 
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 import 'package:keep_notes_clone/screens/no_notes_screen.dart';
+import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
@@ -77,8 +78,8 @@ class _HomeBody extends StatelessWidget {
           slivers: <Widget>[
             SearchAppBar(),
             SliverToBoxAdapter(
-              child: StreamBuilder<PinnedUnpinnedNotes>(
-                stream: noteBloc.pinnedUnpinnedNoteListsStream,
+              child: StreamBuilder<HomeViewModel>(
+                stream: noteBloc.homeViewModelStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var pinnedNotes = snapshot.data.pinned;
