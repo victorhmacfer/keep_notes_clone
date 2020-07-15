@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
-import 'package:keep_notes_clone/models/fired_upcoming_reminders.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/label_name_search_result.dart';
@@ -14,6 +13,7 @@ import 'package:keep_notes_clone/models/search_result.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 import 'package:keep_notes_clone/main.dart';
@@ -95,8 +95,8 @@ class NoteTrackingBloc {
 
   Stream<HomeViewModel> get homeViewModelStream => _allNotesStream.map((notes) => HomeViewModel(notes));
 
-  Stream<FiredUpcomingReminders> get firedUpcomingReminderNotesStream =>
-      _allNotesStream.map((notes) => FiredUpcomingReminders(notes));
+  Stream<RemindersViewModel> get remindersViewModelStream =>
+      _allNotesStream.map((notes) => RemindersViewModel(notes));
 
   Stream<List<Note>> get archivedNoteListStream =>
       _allNotesStream.map(_filterArchivedNotes);

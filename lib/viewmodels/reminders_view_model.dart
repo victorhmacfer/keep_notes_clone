@@ -1,8 +1,6 @@
 import 'package:keep_notes_clone/models/note.dart';
 
-class FiredUpcomingReminders {
-  final List<Note> notes;
-
+class RemindersViewModel {
   final List<Note> _fired;
 
   final List<Note> _upcoming;
@@ -11,7 +9,7 @@ class FiredUpcomingReminders {
 
   List<Note> get upcoming => List.unmodifiable(_upcoming);
 
-  FiredUpcomingReminders(this.notes)
+  RemindersViewModel(List<Note> notes)
       : _fired = [],
         _upcoming = [] {
     var now = DateTime.now();

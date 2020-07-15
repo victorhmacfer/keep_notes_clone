@@ -6,11 +6,11 @@ import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
-import 'package:keep_notes_clone/models/fired_upcoming_reminders.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/no_reminders_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
 import 'package:provider/provider.dart';
 
 class RemindersScreen extends StatelessWidget {
@@ -69,8 +69,8 @@ class _Body extends StatelessWidget {
                 ],
               ),
               SliverToBoxAdapter(
-                child: StreamBuilder<FiredUpcomingReminders>(
-                    stream: noteBloc.firedUpcomingReminderNotesStream,
+                child: StreamBuilder<RemindersViewModel>(
+                    stream: noteBloc.remindersViewModelStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         print('entrei no reminders has data..');
