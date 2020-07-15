@@ -293,6 +293,7 @@ class _SimpleDrawerItem extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
+        color: appWhite,
         height: _drawerItemHeight,
         width: double.infinity,
         padding: EdgeInsets.only(left: 24),
