@@ -7,6 +7,7 @@ import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/no_notes_screen.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
@@ -64,16 +65,16 @@ class _ArchiveBody extends StatelessWidget {
                 ],
               ),
               SliverToBoxAdapter(
-                child: StreamBuilder<List<Note>>(
+                child: StreamBuilder<ArchiveViewModel>(
                     stream: noteBloc.archivedNoteListStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        if (snapshot.data.isNotEmpty) {
+                        if (snapshot.data.notes.isNotEmpty) {
                           return Container(
                             margin: EdgeInsets.only(bottom: _bottomPadding),
                             child: Column(
                               children:
-                                  snapshot.data.map(_noteCardBuilder).toList(),
+                                  snapshot.data.notes.map(_noteCardBuilder).toList(),
                             ),
                           );
                         }

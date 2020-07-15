@@ -12,6 +12,7 @@ import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/models/search_result.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
 import 'package:rxdart/subjects.dart';
@@ -93,13 +94,14 @@ class NoteTrackingBloc {
   Stream<LabelNameSearchResult> get labelNameSearchResultStream =>
       _labelNameSearchResultBS.stream;
 
-  Stream<HomeViewModel> get homeViewModelStream => _allNotesStream.map((notes) => HomeViewModel(notes));
+  Stream<HomeViewModel> get homeViewModelStream =>
+      _allNotesStream.map((notes) => HomeViewModel(notes));
 
   Stream<RemindersViewModel> get remindersViewModelStream =>
       _allNotesStream.map((notes) => RemindersViewModel(notes));
 
-  Stream<List<Note>> get archivedNoteListStream =>
-      _allNotesStream.map(_filterArchivedNotes);
+  Stream<ArchiveViewModel> get archivedNoteListStream =>
+      _allNotesStream.map((notes) => ArchiveViewModel(notes));
 
   Stream<List<Note>> get deletedNoteListStream =>
       _allNotesStream.map(_filterDeletedNotes);
@@ -108,9 +110,8 @@ class NoteTrackingBloc {
       _labelFilteredNotDeletedNotesStream
           .map((notes) => LabelFilteredNotesContainer(notes));
 
-  
-
-  void onCreateNote(NoteSetupModel noteSetupModel, {bool createArchived = false}) {
+  void onCreateNote(NoteSetupModel noteSetupModel,
+      {bool createArchived = false}) {
     var newNote = Note.fromSetupModel(noteSetupModel, archived: createArchived);
     noteRepo.addNote(newNote);
   }
@@ -240,14 +241,6 @@ class NoteTrackingBloc {
     return List<int>.from(noteColors)..sort();
   }
 
-  List<Note> _filterArchivedNotes(List<Note> input) {
-    return input.where((note) => note.archived).toList();
-  }
-
-  List<Note> _filterUnarchivedNotes(List<Note> input) {
-    return input.where((note) => note.archived == false).toList();
-  }
-
   List<Note> _filterDeletedNotes(List<Note> input) {
     return input.where((note) => note.deleted).toList();
   }
@@ -262,12 +255,6 @@ class NoteTrackingBloc {
 
     return sorted;
   }
-
-  Stream<List<Note>> get _unarchivedNoteListStream =>
-      _allNotesStream.map(_filterUnarchivedNotes);
-
-  Stream<List<Note>> get _notArchivedNotDeletedNoteListStream =>
-      _unarchivedNoteListStream.map(_filterNotDeletedNotes);
 
   Stream<List<Note>> get _labelFilteredNotDeletedNotesStream =>
       _labelFilteredNotesBS.stream.map(_filterNotDeletedNotes);
