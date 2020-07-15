@@ -52,6 +52,7 @@ class NoteTrackingBloc {
 
     noteRepo.allLabels.listen((labelList) {
       _lastLabelsEmitted = _sortLabelsAlphabetically(labelList);
+      _labelNameSearchResultBS.add(LabelNameSearchResult(false, labelList));
     });
 
     noteRepo.notes.listen((noteList) {
@@ -192,7 +193,7 @@ class NoteTrackingBloc {
     _labelNameSearchResultBS.add(LabelNameSearchResult(foundExact, results));
   }
 
-  void onResetLabelSearch() {
+  void resetLabelSearch() {
     _labelNameSearchResultBS
         .add(LabelNameSearchResult(false, _lastLabelsEmitted));
   }

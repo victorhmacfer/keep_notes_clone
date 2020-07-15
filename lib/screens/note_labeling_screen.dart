@@ -17,7 +17,9 @@ class NoteLabelingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
-    noteTrackingBloc.onResetLabelSearch();
+
+    _labelSearchController.clear();
+    noteTrackingBloc.resetLabelSearch();
 
     return Scaffold(
       appBar: AppBar(
@@ -136,7 +138,6 @@ class _CreateLabelButton extends StatelessWidget {
       onTap: () async {
         var createdLabel = await noteTrackingBloc.onCreateLabelInsideNote(labelText);
         notifier.checkLabel(createdLabel);
-        noteTrackingBloc.onResetLabelSearch();
         _labelSearchController.clear();
         _labelSearchFocusNode.unfocus();
       },
