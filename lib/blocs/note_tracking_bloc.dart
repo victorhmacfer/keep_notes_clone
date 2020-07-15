@@ -15,6 +15,7 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 import 'package:keep_notes_clone/main.dart';
@@ -103,8 +104,8 @@ class NoteTrackingBloc {
   Stream<ArchiveViewModel> get archivedNoteListStream =>
       _allNotesStream.map((notes) => ArchiveViewModel(notes));
 
-  Stream<List<Note>> get deletedNoteListStream =>
-      _allNotesStream.map(_filterDeletedNotes);
+  Stream<TrashViewModel> get deletedNoteListStream =>
+      _allNotesStream.map((notes) => TrashViewModel(notes));
 
   Stream<LabelFilteredNotesContainer> get labelFilteredNotesContainerStream =>
       _labelFilteredNotDeletedNotesStream
@@ -239,10 +240,6 @@ class NoteTrackingBloc {
     });
 
     return List<int>.from(noteColors)..sort();
-  }
-
-  List<Note> _filterDeletedNotes(List<Note> input) {
-    return input.where((note) => note.deleted).toList();
   }
 
   List<Note> _filterNotDeletedNotes(List<Note> input) {
