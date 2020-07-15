@@ -10,10 +10,10 @@ import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/label_name_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
-import 'package:keep_notes_clone/models/pinned_unpinned_notes.dart';
 import 'package:keep_notes_clone/models/search_result.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 import 'package:keep_notes_clone/main.dart';
@@ -93,9 +93,7 @@ class NoteTrackingBloc {
   Stream<LabelNameSearchResult> get labelNameSearchResultStream =>
       _labelNameSearchResultBS.stream;
 
-  Stream<PinnedUnpinnedNotes> get pinnedUnpinnedNoteListsStream =>
-      _notArchivedNotDeletedNoteListStream
-          .map((notes) => PinnedUnpinnedNotes(notes));
+  Stream<HomeViewModel> get homeViewModelStream => _allNotesStream.map((notes) => HomeViewModel(notes));
 
   Stream<FiredUpcomingReminders> get firedUpcomingReminderNotesStream =>
       _allNotesStream.map((notes) => FiredUpcomingReminders(notes));

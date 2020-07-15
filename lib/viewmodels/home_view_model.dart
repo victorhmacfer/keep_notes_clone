@@ -1,8 +1,6 @@
 import 'package:keep_notes_clone/models/note.dart';
 
-class PinnedUnpinnedNotes {
-  final List<Note> notes;
-
+class HomeViewModel {
   final List<Note> _pinned;
 
   final List<Note> _unpinned;
@@ -11,14 +9,16 @@ class PinnedUnpinnedNotes {
 
   List<Note> get unpinned => List.unmodifiable(_unpinned);
 
-  PinnedUnpinnedNotes(this.notes)
+  HomeViewModel(List<Note> notes)
       : _pinned = [],
         _unpinned = [] {
     for (var note in notes) {
-      if (note.pinned) {
-        _pinned.add(note);
-      } else {
-        _unpinned.add(note);
+      if (!note.archived && !note.deleted) {
+        if (note.pinned) {
+          _pinned.add(note);
+        } else {
+          _unpinned.add(note);
+        }
       }
     }
   }
