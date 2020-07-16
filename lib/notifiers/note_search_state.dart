@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class NoteSearchStateNotifier with ChangeNotifier {
-  bool _searching;
+  bool _showingResult;
 
-  NoteSearchStateNotifier() : _searching = false;
+  NoteSearchStateNotifier() : _showingResult = false;
 
-  bool get searching => _searching;
+  bool get showingResult => _showingResult;
 
-  set searching(bool value) {
-    _searching = value;
+  set showingResult(bool value) {
+    _showingResult = value;
     notifyListeners();
   }
 }

@@ -7,7 +7,6 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
-import 'package:keep_notes_clone/models/search_result.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
@@ -15,6 +14,7 @@ import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -34,9 +34,9 @@ class NoteTrackingBloc {
 
   final _labelScreenRequestBS = BehaviorSubject<Label>();
 
-  final _noteColorForNoteSearchBS = BehaviorSubject<NoteColor>();
+  final _searchScreenNoteColorRequestBS = BehaviorSubject<NoteColor>();
 
-  final _noteColorSearchResultBS = BehaviorSubject<SearchResult>();
+  final _searchResultViewModelBS = BehaviorSubject<SearchResultViewModel>();
 
   static SendPort uiSendPort;
 
@@ -64,8 +64,8 @@ class NoteTrackingBloc {
 
     _labelScreenRequestBS.stream.listen(_applyDrawerLabelFilterWithNewLabel);
 
-    _noteColorForNoteSearchBS.stream
-        .listen(_filterNotesForNoteColorAndDropIntoStream);
+    _searchScreenNoteColorRequestBS.stream
+        .listen(_filterNotesWithNoteColorAndDropIntoStream);
 
     _portSubscription = port.listen((_) {
       _notesBS.add(_lastNotesEmitted);
@@ -73,16 +73,17 @@ class NoteTrackingBloc {
 
     _notesBS.listen((allNotes) {
       _updateDrawerLabelFilterStream(allNotes);
+      _tryToRefreshNoteColorSearchRequest();
     });
   }
 
   StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
 
   StreamSink<NoteColor> get searchByNoteColorSink =>
-      _noteColorForNoteSearchBS.sink;
+      _searchScreenNoteColorRequestBS.sink;
 
-  Stream<SearchResult> get noteColorSearchResultStream =>
-      _noteColorSearchResultBS.stream;
+  Stream<SearchResultViewModel> get searchResultViewModelStream =>
+      _searchResultViewModelBS.stream;
 
   Stream<List<int>> get noteColorsAlreadyUsedStream =>
       _allNotesStream.map(_filterNoteColorsAlreadyUsed);
@@ -125,10 +126,6 @@ class NoteTrackingBloc {
 
   void onNoteChanged(Note changedNote) {
     noteRepo.updateNote(changedNote);
-
-    if (_noteColorForNoteSearchBS.hasValue) {
-      _noteColorForNoteSearchBS.add(_noteColorForNoteSearchBS.value);
-    }
   }
 
   void onCreateNewLabel(String text) async {
@@ -148,10 +145,6 @@ class NoteTrackingBloc {
 
   void onDeleteNoteForever(Note noteForPermanentDeletion) {
     noteRepo.deleteNote(noteForPermanentDeletion);
-
-    if (_noteColorForNoteSearchBS.hasValue) {
-      _noteColorForNoteSearchBS.add(_noteColorForNoteSearchBS.value);
-    }
   }
 
   Future<bool> _labelAlreadyExists(String text) async {
@@ -219,14 +212,22 @@ class NoteTrackingBloc {
         .toList();
   }
 
-  void _filterNotesForNoteColorAndDropIntoStream(NoteColor noteColor) {
-    var filteredNotes = _lastNotesEmitted
+  void _filterNotesWithNoteColorAndDropIntoStream(NoteColor noteColor) {
+    var currentNotes = _notesBS.value ?? [];
+    var filteredNotes = currentNotes
         .where((note) => note.colorIndex == noteColor.index)
         .toList();
 
-    var noteColorSearchResult = SearchResult(filteredNotes);
+    var noteColorSearchResult = SearchResultViewModel(filteredNotes);
 
-    _noteColorSearchResultBS.add(noteColorSearchResult);
+    _searchResultViewModelBS.add(noteColorSearchResult);
+  }
+
+  void _tryToRefreshNoteColorSearchRequest() {
+    if (_searchScreenNoteColorRequestBS.hasValue) {
+      _searchScreenNoteColorRequestBS
+          .add(_searchScreenNoteColorRequestBS.value);
+    }
   }
 
   List<int> _filterNoteColorsAlreadyUsed(List<Note> notes) {
@@ -251,8 +252,8 @@ class NoteTrackingBloc {
     _noteLabelingViewModelBS.close();
     _labelFilteredNotesBS.close();
     _labelScreenRequestBS.close();
-    _noteColorForNoteSearchBS.close();
-    _noteColorSearchResultBS.close();
+    _searchScreenNoteColorRequestBS.close();
+    _searchResultViewModelBS.close();
     _portSubscription.cancel();
   }
 }

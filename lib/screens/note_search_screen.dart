@@ -4,10 +4,10 @@ import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/models/search_result.dart';
 import 'package:keep_notes_clone/notifiers/note_search_state.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:provider/provider.dart';
 
 var _decorationWithGreyUpperBorder = BoxDecoration(
@@ -53,14 +53,14 @@ class _BodyPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     var notifier = Provider.of<NoteSearchStateNotifier>(context);
 
-    return (notifier.searching)
-        ? _SearchResultsBody()
-        : _SearchCategoriesBody();
+    return (notifier.showingResult)
+        ? _SearchResultBody()
+        : _SearchLandingPageBody();
   }
 }
 
 //FIXME: dummy implementation .. will have streambuilder later
-class _SearchCategoriesBody extends StatelessWidget {
+class _SearchLandingPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -112,7 +112,7 @@ class _SearchCategoriesBody extends StatelessWidget {
   }
 }
 
-class _SearchResultsBody extends StatelessWidget {
+class _SearchResultBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
@@ -121,8 +121,8 @@ class _SearchResultsBody extends StatelessWidget {
       constraints: BoxConstraints.expand(),
       decoration: _decorationWithGreyUpperBorder,
       child: SingleChildScrollView(
-        child: StreamBuilder<SearchResult>(
-          stream: noteBloc.noteColorSearchResultStream,
+        child: StreamBuilder<SearchResultViewModel>(
+          stream: noteBloc.searchResultViewModelStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var regularNotes = snapshot.data.regular;
@@ -410,7 +410,7 @@ class _ColorCircle extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           noteBloc.searchByNoteColorSink.add(noteColor);
-          searchNotifier.searching = true;
+          searchNotifier.showingResult = true;
         },
         child: Container(
           decoration: BoxDecoration(

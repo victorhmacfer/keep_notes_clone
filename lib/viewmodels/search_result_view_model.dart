@@ -1,6 +1,6 @@
 import 'package:keep_notes_clone/models/note.dart';
 
-class SearchResult {
+class SearchResultViewModel {
   final List<Note> _regular;
 
   final List<Note> _archived;
@@ -17,7 +17,7 @@ class SearchResult {
 
   bool get isNotEmpty => !isEmpty;
 
-  SearchResult(List<Note> notes)
+  SearchResultViewModel(List<Note> notes)
       : _regular = [],
         _archived = [],
         _deleted = [] {
