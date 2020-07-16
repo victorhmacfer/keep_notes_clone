@@ -32,7 +32,7 @@ class NoteTrackingBloc {
 
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
-  final _labelForFilteringNotesBS = BehaviorSubject<Label>();
+  final _labelScreenRequestBS = BehaviorSubject<Label>();
 
   final _noteColorForNoteSearchBS = BehaviorSubject<NoteColor>();
 
@@ -62,8 +62,7 @@ class NoteTrackingBloc {
       _notesBS.add(noteList);
     });
 
-    _labelForFilteringNotesBS.stream
-        .listen(_applyDrawerLabelFilterWithNewLabel);
+    _labelScreenRequestBS.stream.listen(_applyDrawerLabelFilterWithNewLabel);
 
     _noteColorForNoteSearchBS.stream
         .listen(_filterNotesForNoteColorAndDropIntoStream);
@@ -77,8 +76,7 @@ class NoteTrackingBloc {
     });
   }
 
-  StreamSink<Label> get drawerFilterByLabelSink =>
-      _labelForFilteringNotesBS.sink;
+  StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
 
   StreamSink<NoteColor> get searchByNoteColorSink =>
       _noteColorForNoteSearchBS.sink;
@@ -206,11 +204,11 @@ class NoteTrackingBloc {
   }
 
   void _updateDrawerLabelFilterStream(List<Note> allNotes) {
-    var hasEverFilteredByThisLabelInDrawer = _labelForFilteringNotesBS.hasValue;
+    var hasEverFilteredByThisLabelInDrawer = _labelScreenRequestBS.hasValue;
 
     if (hasEverFilteredByThisLabelInDrawer) {
       var filteredNotes =
-          _filterNotesWithLabel(_labelForFilteringNotesBS.value, allNotes);
+          _filterNotesWithLabel(_labelScreenRequestBS.value, allNotes);
       _labelFilteredNotesBS.add(filteredNotes);
     }
   }
@@ -252,7 +250,7 @@ class NoteTrackingBloc {
     _notesBS.close();
     _noteLabelingViewModelBS.close();
     _labelFilteredNotesBS.close();
-    _labelForFilteringNotesBS.close();
+    _labelScreenRequestBS.close();
     _noteColorForNoteSearchBS.close();
     _noteColorSearchResultBS.close();
     _portSubscription.cancel();

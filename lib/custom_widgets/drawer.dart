@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/screens/archive_screen.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
-import 'package:keep_notes_clone/screens/label_filtered_notes_screen.dart';
+import 'package:keep_notes_clone/screens/label_screen.dart';
 import 'package:keep_notes_clone/screens/reminders_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -50,14 +50,14 @@ class MyDrawer extends StatelessWidget {
         onPressed: () {
           if (drawerScreenSelection.selectedScreenIndex != i + 4) {
             drawerScreenSelection.changeSelectedScreenToIndex(i + 4);
-            noteBloc.drawerFilterByLabelSink.add(labels[i]);
+            noteBloc.labelScreenRequestSink.add(labels[i]);
 
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => Provider<NoteTrackingBloc>.value(
                         value: noteBloc,
-                        child: LabelFilteredNotesScreen(labels[i]))));
+                        child: LabelScreen(labels[i]))));
           }
         },
       );

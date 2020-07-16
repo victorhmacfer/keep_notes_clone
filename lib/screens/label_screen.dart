@@ -14,10 +14,10 @@ import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:provider/provider.dart';
 
-class LabelFilteredNotesScreen extends StatelessWidget {
+class LabelScreen extends StatelessWidget {
   final Label label;
 
-  LabelFilteredNotesScreen(this.label);
+  LabelScreen(this.label);
 
   @override
   Widget build(BuildContext context) {
