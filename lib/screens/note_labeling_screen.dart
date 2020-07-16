@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/label_name_search_result.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:provider/provider.dart';
 
 // FIXME: made these global for now.. better than creating notifier for exposing
@@ -40,8 +40,8 @@ class NoteLabelingScreen extends StatelessWidget {
       body: Container(
         constraints: BoxConstraints.expand(),
         color: appWhite,
-        child: StreamBuilder<LabelNameSearchResult>(
-            stream: noteTrackingBloc.labelNameSearchResultStream,
+        child: StreamBuilder<NoteLabelingViewModel>(
+            stream: noteTrackingBloc.noteLabelingViewModelStream,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var showCreateButton = !snapshot.data.foundExactMatch &&

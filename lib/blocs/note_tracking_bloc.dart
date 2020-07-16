@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/label_name_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/models/search_result.dart';
@@ -14,6 +13,7 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
@@ -28,7 +28,7 @@ class NoteTrackingBloc {
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
-  final _labelNameSearchResultBS = BehaviorSubject<LabelNameSearchResult>();
+  final _noteLabelingViewModelBS = BehaviorSubject<NoteLabelingViewModel>();
 
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
@@ -54,7 +54,7 @@ class NoteTrackingBloc {
 
     noteRepo.allLabels.listen((labelList) {
       _lastLabelsEmitted = _sortLabelsAlphabetically(labelList);
-      _labelNameSearchResultBS.add(LabelNameSearchResult(false, labelList));
+      _noteLabelingViewModelBS.add(NoteLabelingViewModel(false, labelList));
     });
 
     noteRepo.notes.listen((noteList) {
@@ -92,8 +92,8 @@ class NoteTrackingBloc {
   Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
 
-  Stream<LabelNameSearchResult> get labelNameSearchResultStream =>
-      _labelNameSearchResultBS.stream;
+  Stream<NoteLabelingViewModel> get noteLabelingViewModelStream =>
+      _noteLabelingViewModelBS.stream;
 
   Stream<HomeViewModel> get homeViewModelStream =>
       _allNotesStream.map((notes) => HomeViewModel(notes));
@@ -175,8 +175,8 @@ class NoteTrackingBloc {
 
   void onSearchLabel(String substring) {
     if (substring.isEmpty) {
-      _labelNameSearchResultBS
-          .add(LabelNameSearchResult(false, _lastLabelsEmitted));
+      _noteLabelingViewModelBS
+          .add(NoteLabelingViewModel(false, _lastLabelsEmitted));
     }
 
     List<Label> results = [];
@@ -189,12 +189,12 @@ class NoteTrackingBloc {
         }
       }
     }
-    _labelNameSearchResultBS.add(LabelNameSearchResult(foundExact, results));
+    _noteLabelingViewModelBS.add(NoteLabelingViewModel(foundExact, results));
   }
 
   void resetLabelSearch() {
-    _labelNameSearchResultBS
-        .add(LabelNameSearchResult(false, _lastLabelsEmitted));
+    _noteLabelingViewModelBS
+        .add(NoteLabelingViewModel(false, _lastLabelsEmitted));
   }
 
   Stream<List<Note>> get _allNotesStream => _notesBS.stream;
@@ -250,7 +250,7 @@ class NoteTrackingBloc {
 
   void dispose() {
     _notesBS.close();
-    _labelNameSearchResultBS.close();
+    _noteLabelingViewModelBS.close();
     _labelFilteredNotesBS.close();
     _labelForFilteringNotesBS.close();
     _noteColorForNoteSearchBS.close();

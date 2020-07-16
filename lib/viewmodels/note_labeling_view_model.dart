@@ -1,9 +1,9 @@
 import 'package:keep_notes_clone/models/label.dart';
 
-class LabelNameSearchResult {
+class NoteLabelingViewModel {
   final List<Label> labels;
 
   final bool foundExactMatch;
 
-  LabelNameSearchResult(this.foundExactMatch, this.labels);
+  NoteLabelingViewModel(this.foundExactMatch, this.labels);
 }
