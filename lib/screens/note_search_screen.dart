@@ -7,6 +7,7 @@ import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/notifiers/note_search_state.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/viewmodels/search_landing_page_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -63,51 +64,35 @@ class _BodyPicker extends StatelessWidget {
 class _SearchLandingPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+
     return Container(
       constraints: BoxConstraints.expand(),
       decoration: _decorationWithGreyUpperBorder,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _OptionalExpandableGridSection(sectionTitle: 'TYPES', items: [
-              _TypeGridItem(
-                text: 'Lists',
-                pngIconFileName: 'outline_check_box_black_48.png',
-              ),
-              _TypeGridItem(
-                text: 'Images',
-                pngIconFileName: 'outline_mic_none_black_48.png',
-              ),
-              _TypeGridItem(
-                text: 'Voice',
-                pngIconFileName: 'outline_mic_none_black_48.png',
-              ),
-              _TypeGridItem(
-                text: 'Drawings',
-                pngIconFileName: 'outline_mic_none_black_48.png',
-              ),
-              _TypeGridItem(
-                text: 'URLs',
-                pngIconFileName: 'outline_mic_none_black_48.png',
-              ),
-            ]),
-            _OptionalExpandableGridSection(sectionTitle: 'LABELS', items: [
-              _LabelGridItem(text: 'android-dev'),
-              _LabelGridItem(text: 'clean'),
-              _LabelGridItem(text: 'compras-vendas'),
-              _LabelGridItem(text: 'conseguir estagio'),
-              _LabelGridItem(text: 'expenses'),
-              _LabelGridItem(text: 'git'),
-              _LabelGridItem(text: 'ideas'),
-            ]),
-            _ColorsGridSection(),
-            SizedBox(
-              height: 16,
-            )
-          ],
-        ),
-      ),
+      child: StreamBuilder<SearchLandingPageViewModel>(
+          stream: noteBloc.searchLandingPageViewModelStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    _OptionalExpandableGridSection(
+                        sectionTitle: 'LABELS',
+                        items: snapshot.data.sortedLabelsInUse
+                            .map((lab) => _LabelGridItem(name: lab.name))
+                            .toList()),
+                    _OptionalColorsGridSection(
+                        items: snapshot.data.noteColorsInUse),
+                    SizedBox(
+                      height: 16,
+                    )
+                  ],
+                ),
+              );
+            }
+            return Center(child: CircularProgressIndicator());
+          }),
     );
   }
 }
@@ -259,14 +244,18 @@ class _OptionalExpandableGridSectionState
   }
 }
 
-class _ColorsGridSection extends StatelessWidget {
-  Widget _colorCircleBuilder(int colorIndex) =>
-      _ColorCircle(NoteColor.getNoteColorFromIndex(colorIndex));
+class _OptionalColorsGridSection extends StatelessWidget {
+  final List<NoteColor> items;
+
+  _OptionalColorsGridSection({@required this.items});
 
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+
+    if (items.isEmpty) {
+      return Container();
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -283,65 +272,56 @@ class _ColorsGridSection extends StatelessWidget {
                 fontSize: 11, letterSpacing: 0.5),
           ),
         ),
-        StreamBuilder<List<int>>(
-            stream: noteBloc.noteColorsAlreadyUsedStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var noteColorsUsed = snapshot.data;
-
-                return GridView.count(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  shrinkWrap: true,
-                  crossAxisCount: 6,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: noteColorsUsed.map(_colorCircleBuilder).toList(),
-                );
-              }
-              return Container();
-            }),
+        GridView.count(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          shrinkWrap: true,
+          crossAxisCount: 6,
+          physics: NeverScrollableScrollPhysics(),
+          children: items.map((noteColor) => _ColorCircle(noteColor)).toList(),
+        ),
       ],
     );
   }
 }
 
-class _TypeGridItem extends StatelessWidget {
-  final String pngIconFileName;
+// class _TypeGridItem extends StatelessWidget {
+//   final String pngIconFileName;
 
-  final String text;
+//   final String text;
 
-  _TypeGridItem({@required this.pngIconFileName, @required this.text});
+//   _TypeGridItem({@required this.pngIconFileName, @required this.text});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: appSettingsBlue,
-      padding: EdgeInsets.symmetric(vertical: 8),
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          SizedBox(
-            height: 1,
-          ),
-          PngIcon(
-            fileName: pngIconFileName,
-            size: 32,
-            iconColor: appWhite,
-          ),
-          Text(
-            text,
-            style: TextStyle(color: appWhite, fontSize: 13),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: appSettingsBlue,
+//       padding: EdgeInsets.symmetric(vertical: 8),
+//       alignment: Alignment.bottomCenter,
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: <Widget>[
+//           SizedBox(
+//             height: 1,
+//           ),
+//           PngIcon(
+//             fileName: pngIconFileName,
+//             size: 32,
+//             iconColor: appWhite,
+//           ),
+//           Text(
+//             text,
+//             style: TextStyle(color: appWhite, fontSize: 13),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class _LabelGridItem extends StatelessWidget {
-  final String text;
+  final String name;
 
-  _LabelGridItem({@required this.text});
+  _LabelGridItem({@required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -361,7 +341,7 @@ class _LabelGridItem extends StatelessWidget {
             iconColor: Color.fromARGB(255, 136, 136, 136),
           ),
           Text(
-            text,
+            name,
             style: TextStyle(fontSize: 13),
           ),
         ],

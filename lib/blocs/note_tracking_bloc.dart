@@ -14,6 +14,7 @@ import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/search_landing_page_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
@@ -37,6 +38,9 @@ class NoteTrackingBloc {
   final _searchScreenNoteColorRequestBS = BehaviorSubject<NoteColor>();
 
   final _searchResultViewModelBS = BehaviorSubject<SearchResultViewModel>();
+
+  final _searchLandingPageViewModelBS =
+      BehaviorSubject<SearchLandingPageViewModel>();
 
   static SendPort uiSendPort;
 
@@ -74,6 +78,7 @@ class NoteTrackingBloc {
     _notesBS.listen((allNotes) {
       _updateDrawerLabelFilterStream(allNotes);
       _tryToRefreshNoteColorSearchRequest();
+      _searchLandingPageViewModelBS.add(SearchLandingPageViewModel(allNotes));
     });
   }
 
@@ -84,9 +89,6 @@ class NoteTrackingBloc {
 
   Stream<SearchResultViewModel> get searchResultViewModelStream =>
       _searchResultViewModelBS.stream;
-
-  Stream<List<int>> get noteColorsAlreadyUsedStream =>
-      _allNotesStream.map(_filterNoteColorsAlreadyUsed);
 
   Stream<List<Label>> get sortedLabelsStream =>
       noteRepo.allLabels.map(_sortLabelsAlphabetically);
@@ -108,6 +110,9 @@ class NoteTrackingBloc {
 
   Stream<LabelViewModel> get labelViewModelStream =>
       _labelFilteredNotesBS.stream.map((notes) => LabelViewModel(notes));
+
+  Stream<SearchLandingPageViewModel> get searchLandingPageViewModelStream =>
+      _searchLandingPageViewModelBS.stream;
 
   void onCreateNote(NoteSetupModel noteSetupModel,
       {bool createArchived = false}) {
@@ -228,16 +233,6 @@ class NoteTrackingBloc {
       _searchScreenNoteColorRequestBS
           .add(_searchScreenNoteColorRequestBS.value);
     }
-  }
-
-  List<int> _filterNoteColorsAlreadyUsed(List<Note> notes) {
-    Set<int> noteColors = {};
-
-    notes.forEach((n) {
-      noteColors.add(n.colorIndex);
-    });
-
-    return List<int>.from(noteColors)..sort();
   }
 
   List<Label> _sortLabelsAlphabetically(List<Label> input) {

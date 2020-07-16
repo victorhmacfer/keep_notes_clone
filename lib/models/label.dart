@@ -1,4 +1,8 @@
-class Label {
+import 'package:equatable/equatable.dart';
+
+//TODO: maybe I should make the id required.. so I cant ever have
+// a Label object without an id.. since the id is used in equality comparison
+class Label extends Equatable {
   int id;
   String name;
 
@@ -10,4 +14,7 @@ class Label {
       name: labelMap['name'],
     );
   }
+
+  @override
+  List<Object> get props => [id];
 }
