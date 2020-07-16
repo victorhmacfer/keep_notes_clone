@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/label_name_search_result.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
@@ -14,6 +13,7 @@ import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
@@ -107,9 +107,8 @@ class NoteTrackingBloc {
   Stream<TrashViewModel> get deletedNoteListStream =>
       _allNotesStream.map((notes) => TrashViewModel(notes));
 
-  Stream<LabelFilteredNotesContainer> get labelFilteredNotesContainerStream =>
-      _labelFilteredNotDeletedNotesStream
-          .map((notes) => LabelFilteredNotesContainer(notes));
+  Stream<LabelViewModel> get labelViewModelStream =>
+      _labelFilteredNotesBS.stream.map((notes) => LabelViewModel(notes));
 
   void onCreateNote(NoteSetupModel noteSetupModel,
       {bool createArchived = false}) {
@@ -242,19 +241,12 @@ class NoteTrackingBloc {
     return List<int>.from(noteColors)..sort();
   }
 
-  List<Note> _filterNotDeletedNotes(List<Note> input) {
-    return input.where((note) => note.deleted == false).toList();
-  }
-
   List<Label> _sortLabelsAlphabetically(List<Label> input) {
     var sorted = List<Label>.from(input)
       ..sort((a, b) => a.name.compareTo(b.name));
 
     return sorted;
   }
-
-  Stream<List<Note>> get _labelFilteredNotDeletedNotesStream =>
-      _labelFilteredNotesBS.stream.map(_filterNotDeletedNotes);
 
   void dispose() {
     _notesBS.close();

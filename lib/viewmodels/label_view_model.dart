@@ -1,6 +1,6 @@
 import 'package:keep_notes_clone/models/note.dart';
 
-class LabelFilteredNotesContainer {
+class LabelViewModel {
   List<Note> _pinned = [];
   List<Note> _unpinned = [];
   List<Note> _archived = [];
@@ -11,14 +11,16 @@ class LabelFilteredNotesContainer {
 
   List<Note> get archived => List.unmodifiable(_archived);
 
-  LabelFilteredNotesContainer(List<Note> notes) {
+  LabelViewModel(List<Note> notes) {
     for (var n in notes) {
-      if (n.pinned) {
-        _pinned.add(n);
-      } else if (n.archived) {
-        _archived.add(n);
-      } else {
-        _unpinned.add(n);
+      if (!n.deleted) {
+        if (n.pinned) {
+          _pinned.add(n);
+        } else if (n.archived) {
+          _archived.add(n);
+        } else {
+          _unpinned.add(n);
+        }
       }
     }
   }

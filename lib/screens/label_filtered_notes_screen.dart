@@ -7,11 +7,11 @@ import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/label_filtered_notes_container.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/no_labels_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
+import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:provider/provider.dart';
 
 class LabelFilteredNotesScreen extends StatelessWidget {
@@ -85,8 +85,8 @@ class _Body extends StatelessWidget {
                 ],
               ),
               SliverToBoxAdapter(
-                child: StreamBuilder<LabelFilteredNotesContainer>(
-                    stream: noteBloc.labelFilteredNotesContainerStream,
+                child: StreamBuilder<LabelViewModel>(
+                    stream: noteBloc.labelViewModelStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         var pinnedNotes = snapshot.data.pinned;
