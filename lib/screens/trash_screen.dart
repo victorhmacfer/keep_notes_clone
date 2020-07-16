@@ -57,7 +57,7 @@ class _TrashBody extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: StreamBuilder<TrashViewModel>(
-                stream: noteBloc.deletedNoteListStream,
+                stream: noteBloc.trashViewModelStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data.notes.isNotEmpty) {

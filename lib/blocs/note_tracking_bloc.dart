@@ -101,10 +101,10 @@ class NoteTrackingBloc {
   Stream<RemindersViewModel> get remindersViewModelStream =>
       _allNotesStream.map((notes) => RemindersViewModel(notes));
 
-  Stream<ArchiveViewModel> get archivedNoteListStream =>
+  Stream<ArchiveViewModel> get archiveViewModelStream =>
       _allNotesStream.map((notes) => ArchiveViewModel(notes));
 
-  Stream<TrashViewModel> get deletedNoteListStream =>
+  Stream<TrashViewModel> get trashViewModelStream =>
       _allNotesStream.map((notes) => TrashViewModel(notes));
 
   Stream<LabelViewModel> get labelViewModelStream =>

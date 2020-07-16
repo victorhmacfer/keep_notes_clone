@@ -66,7 +66,7 @@ class _ArchiveBody extends StatelessWidget {
               ),
               SliverToBoxAdapter(
                 child: StreamBuilder<ArchiveViewModel>(
-                    stream: noteBloc.archivedNoteListStream,
+                    stream: noteBloc.archiveViewModelStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data.notes.isNotEmpty) {
