@@ -21,8 +21,9 @@ var _expiredReminderChipDecoration = BoxDecoration(
 
 class NoteSetupLabelChip extends StatelessWidget {
   final Label label;
+  final bool deleted;
 
-  NoteSetupLabelChip({@required this.label});
+  NoteSetupLabelChip({@required this.label, this.deleted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +37,23 @@ class NoteSetupLabelChip extends StatelessWidget {
         notifier.closeRightBottomSheet();
         notifier.closeLeftBottomSheet();
 
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MultiProvider(
-                      providers: [
-                        ChangeNotifierProvider<NoteSetupScreenController>.value(
-                          value: notifier,
-                        ),
-                        Provider<NoteTrackingBloc>.value(value: noteBloc),
-                      ],
-                      child: NoteLabelingScreen(),
-                    )));
+        if (!deleted) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider<
+                              NoteSetupScreenController>.value(
+                            value: notifier,
+                          ),
+                          Provider<NoteTrackingBloc>.value(value: noteBloc),
+                        ],
+                        child: NoteLabelingScreen(),
+                      )));
+        } else {
+          Scaffold.of(context).showSnackBar(SnackBar(content: Text("Can't edit in Trash")));
+        }
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 7, horizontal: 14),

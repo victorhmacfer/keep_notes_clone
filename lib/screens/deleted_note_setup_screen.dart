@@ -59,7 +59,12 @@ class _DeletedNoteSetupAppBar extends StatelessWidget
 
 class _DeletedNoteSetupBody extends StatelessWidget {
   List<Widget> _labelWidgets(List<Label> theLabels) {
-    return theLabels.map((lab) => NoteSetupLabelChip(label: lab)).toList();
+    return theLabels
+        .map((lab) => NoteSetupLabelChip(
+              label: lab,
+              deleted: true,
+            ))
+        .toList();
   }
 
   Widget _noteLabels(List<Label> theLabels) {
