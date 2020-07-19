@@ -22,12 +22,11 @@ import 'package:rxdart/subjects.dart';
 import 'package:keep_notes_clone/main.dart';
 
 class NoteTrackingBloc {
-  List<Label> _lastLabelsEmitted = [];
-  List<Note> _lastNotesEmitted = [];
-
   NoteRepository noteRepo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
+
+  final _sortedLabelsBS = BehaviorSubject<List<Label>>();
 
   final _noteLabelingViewModelBS = BehaviorSubject<NoteLabelingViewModel>();
 
@@ -36,6 +35,8 @@ class NoteTrackingBloc {
   final _labelScreenRequestBS = BehaviorSubject<Label>();
 
   final _searchScreenNoteColorRequestBS = BehaviorSubject<NoteColor>();
+
+  final _searchScreenLabelRequestBS = BehaviorSubject<Label>();
 
   final _searchResultViewModelBS = BehaviorSubject<SearchResultViewModel>();
 
@@ -57,22 +58,15 @@ class NoteTrackingBloc {
     noteRepo = NoteRepository();
 
     noteRepo.allLabels.listen((labelList) {
-      _lastLabelsEmitted = _sortLabelsAlphabetically(labelList);
-      _noteLabelingViewModelBS.add(NoteLabelingViewModel(false, labelList));
+      _sortedLabelsBS.add(_sortLabelsAlphabetically(labelList));
     });
 
     noteRepo.notes.listen((noteList) {
-      _lastNotesEmitted = noteList;
       _notesBS.add(noteList);
     });
 
-    _labelScreenRequestBS.stream.listen(_applyDrawerLabelFilterWithNewLabel);
-
-    _searchScreenNoteColorRequestBS.stream
-        .listen(_filterNotesWithNoteColorAndDropIntoStream);
-
-    _portSubscription = port.listen((_) {
-      _notesBS.add(_lastNotesEmitted);
+    _sortedLabelsBS.listen((sortedLabels) {
+      _noteLabelingViewModelBS.add(NoteLabelingViewModel(false, sortedLabels));
     });
 
     _notesBS.listen((allNotes) {
@@ -80,12 +74,26 @@ class NoteTrackingBloc {
       _tryToRefreshNoteColorSearchRequest();
       _searchLandingPageViewModelBS.add(SearchLandingPageViewModel(allNotes));
     });
+
+    _labelScreenRequestBS.stream.listen(_applyDrawerLabelFilterWithNewLabel);
+
+    _searchScreenNoteColorRequestBS.stream
+        .listen(_filterNotesWithNoteColorAndStreamSearchResult);
+
+    _searchScreenLabelRequestBS.stream.listen(_filterNotesWithLabelAndStreamSearchResult);
+
+    _portSubscription = port.listen((_) {
+      var lastNotesEmitted = _notesBS.value ?? [];
+      _notesBS.add(lastNotesEmitted);
+    });
   }
 
   StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
 
   StreamSink<NoteColor> get searchByNoteColorSink =>
       _searchScreenNoteColorRequestBS.sink;
+
+  StreamSink<Label> get searchByLabelSink => _searchScreenLabelRequestBS.sink;
 
   Stream<SearchResultViewModel> get searchResultViewModelStream =>
       _searchResultViewModelBS.stream;
@@ -153,9 +161,10 @@ class NoteTrackingBloc {
   }
 
   Future<bool> _labelAlreadyExists(String text) async {
-    if (_lastLabelsEmitted.isEmpty) return false;
+    var lastLabelsEmitted = _sortedLabelsBS.value ?? [];
+    if (lastLabelsEmitted.isEmpty) return false;
 
-    return _lastLabelsEmitted.map((lab) => lab.name).contains(text);
+    return lastLabelsEmitted.map((lab) => lab.name).contains(text);
   }
 
   Future<Label> onCreateLabelInsideNote(String text) async {
@@ -169,15 +178,17 @@ class NoteTrackingBloc {
     return createdLabel;
   }
 
-  void onSearchLabel(String substring) {
+  void onSearchLabelName(String substring) {
+    var lastLabelsEmitted = _sortedLabelsBS.value ?? [];
+
     if (substring.isEmpty) {
       _noteLabelingViewModelBS
-          .add(NoteLabelingViewModel(false, _lastLabelsEmitted));
+          .add(NoteLabelingViewModel(false, lastLabelsEmitted));
     }
 
     List<Label> results = [];
     var foundExact = false;
-    for (var label in _lastLabelsEmitted) {
+    for (var label in lastLabelsEmitted) {
       if (label.name.contains(substring)) {
         results.add(label);
         if (label.name == substring) {
@@ -188,15 +199,17 @@ class NoteTrackingBloc {
     _noteLabelingViewModelBS.add(NoteLabelingViewModel(foundExact, results));
   }
 
-  void resetLabelSearch() {
+  void resetLabelNameSearch() {
+    var lastLabelsEmitted = _sortedLabelsBS.value ?? [];
     _noteLabelingViewModelBS
-        .add(NoteLabelingViewModel(false, _lastLabelsEmitted));
+        .add(NoteLabelingViewModel(false, lastLabelsEmitted));
   }
 
   Stream<List<Note>> get _allNotesStream => _notesBS.stream;
 
   void _applyDrawerLabelFilterWithNewLabel(Label theLabel) {
-    var filteredNotes = _filterNotesWithLabel(theLabel, _lastNotesEmitted);
+    var lastNotesEmitted = _notesBS.value ?? [];
+    var filteredNotes = _filterNotesWithLabel(theLabel, lastNotesEmitted);
 
     _labelFilteredNotesBS.add(filteredNotes);
   }
@@ -217,7 +230,7 @@ class NoteTrackingBloc {
         .toList();
   }
 
-  void _filterNotesWithNoteColorAndDropIntoStream(NoteColor noteColor) {
+  void _filterNotesWithNoteColorAndStreamSearchResult(NoteColor noteColor) {
     var currentNotes = _notesBS.value ?? [];
     var filteredNotes = currentNotes
         .where((note) => note.colorIndex == noteColor.index)
@@ -226,6 +239,15 @@ class NoteTrackingBloc {
     var noteColorSearchResult = SearchResultViewModel(filteredNotes);
 
     _searchResultViewModelBS.add(noteColorSearchResult);
+  }
+
+  void _filterNotesWithLabelAndStreamSearchResult(Label label) {
+    var currentNotes = _notesBS.value ?? [];
+    var filteredNotes = _filterNotesWithLabel(label, currentNotes);
+
+    var labelSearchResult = SearchResultViewModel(filteredNotes);
+
+    _searchResultViewModelBS.add(labelSearchResult);
   }
 
   void _tryToRefreshNoteColorSearchRequest() {
@@ -250,5 +272,6 @@ class NoteTrackingBloc {
     _searchScreenNoteColorRequestBS.close();
     _searchResultViewModelBS.close();
     _portSubscription.cancel();
+    _searchScreenLabelRequestBS.close();
   }
 }

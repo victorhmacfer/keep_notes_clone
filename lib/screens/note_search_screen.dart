@@ -3,6 +3,7 @@ import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/notifiers/note_search_state.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -80,7 +81,7 @@ class _SearchLandingPageBody extends StatelessWidget {
                     _OptionalExpandableGridSection(
                         sectionTitle: 'LABELS',
                         items: snapshot.data.sortedLabelsInUse
-                            .map((lab) => _LabelGridItem(name: lab.name))
+                            .map((lab) => _LabelGridItem(label: lab))
                             .toList()),
                     _OptionalColorsGridSection(
                         items: snapshot.data.noteColorsInUse),
@@ -319,32 +320,41 @@ class _OptionalColorsGridSection extends StatelessWidget {
 // }
 
 class _LabelGridItem extends StatelessWidget {
-  final String name;
+  final Label label;
 
-  _LabelGridItem({@required this.name});
+  _LabelGridItem({@required this.label});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[100],
-      padding: EdgeInsets.symmetric(vertical: 8),
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          SizedBox(
-            height: 1,
-          ),
-          PngIcon(
-            fileName: 'outline_label_black_48.png',
-            size: 38,
-            iconColor: Color.fromARGB(255, 136, 136, 136),
-          ),
-          Text(
-            name,
-            style: TextStyle(fontSize: 13),
-          ),
-        ],
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var searchNotifier = Provider.of<NoteSearchStateNotifier>(context);
+
+    return GestureDetector(
+      onTap: () {
+        noteBloc.searchByLabelSink.add(label);
+        searchNotifier.showingResult = true;
+      },
+      child: Container(
+        color: Colors.grey[100],
+        padding: EdgeInsets.symmetric(vertical: 8),
+        alignment: Alignment.bottomCenter,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            SizedBox(
+              height: 1,
+            ),
+            PngIcon(
+              fileName: 'outline_label_black_48.png',
+              size: 38,
+              iconColor: Color.fromARGB(255, 136, 136, 136),
+            ),
+            Text(
+              label.name,
+              style: TextStyle(fontSize: 13),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -19,7 +19,7 @@ class NoteLabelingScreen extends StatelessWidget {
     var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
 
     _labelSearchController.clear();
-    noteTrackingBloc.resetLabelSearch();
+    noteTrackingBloc.resetLabelNameSearch();
 
     return Scaffold(
       appBar: AppBar(
@@ -29,7 +29,7 @@ class NoteLabelingScreen extends StatelessWidget {
           focusNode: _labelSearchFocusNode,
           cursorWidth: 1,
           onChanged: (text) {
-            noteTrackingBloc.onSearchLabel(text);
+            noteTrackingBloc.onSearchLabelName(text);
           },
           cursorColor: appIconGrey,
           decoration: InputDecoration.collapsed(hintText: 'Enter label name'),
