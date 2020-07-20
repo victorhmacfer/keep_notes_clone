@@ -35,6 +35,7 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
     var notifier = Provider.of<NoteSearchStateNotifier>(context);
 
     var hintText = (notifier.showingResult)
@@ -45,6 +46,14 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       brightness: Brightness.light,
       elevation: 0,
       title: TextField(
+        controller: notifier.searchController,
+        onChanged: (value) {
+          if (notifier.tryFullClear(value)) {
+            return;
+          }
+          notifier.showingResult = true;
+          noteBloc.searchNotesWithSubstring(value, notifier.lastResultViewModel);
+        },
         cursorWidth: 1,
         cursorColor: appSettingsBlue,
         decoration: InputDecoration.collapsed(
@@ -108,6 +117,7 @@ class _SearchResultBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var notifier = Provider.of<NoteSearchStateNotifier>(context);
 
     return Container(
       constraints: BoxConstraints.expand(),
@@ -120,6 +130,8 @@ class _SearchResultBody extends StatelessWidget {
               var regularNotes = snapshot.data.regular;
               var archivedNotes = snapshot.data.archived;
               var deletedNotes = snapshot.data.deleted;
+
+              notifier.lastResultViewModel = snapshot.data;
 
               return Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 32),

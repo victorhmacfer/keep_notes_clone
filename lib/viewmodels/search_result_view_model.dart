@@ -13,6 +13,8 @@ class SearchResultViewModel {
 
   List<Note> get deleted => List.unmodifiable(_deleted);
 
+  List<Note> get all => List.unmodifiable(_regular + _archived + _deleted);
+
   bool get isEmpty => _regular.isEmpty && _archived.isEmpty && _deleted.isEmpty;
 
   bool get isNotEmpty => !isEmpty;

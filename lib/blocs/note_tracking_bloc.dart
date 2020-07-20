@@ -80,7 +80,8 @@ class NoteTrackingBloc {
     _searchScreenNoteColorRequestBS.stream
         .listen(_filterNotesWithNoteColorAndStreamSearchResult);
 
-    _searchScreenLabelRequestBS.stream.listen(_filterNotesWithLabelAndStreamSearchResult);
+    _searchScreenLabelRequestBS.stream
+        .listen(_filterNotesWithLabelAndStreamSearchResult);
 
     _portSubscription = port.listen((_) {
       var lastNotesEmitted = _notesBS.value ?? [];
@@ -203,6 +204,23 @@ class NoteTrackingBloc {
     var lastLabelsEmitted = _sortedLabelsBS.value ?? [];
     _noteLabelingViewModelBS
         .add(NoteLabelingViewModel(false, lastLabelsEmitted));
+  }
+
+  void searchNotesWithSubstring(
+      String substring, SearchResultViewModel categoryResult) {
+    if (substring.isEmpty) {
+      _searchLandingPageViewModelBS
+          .add(SearchLandingPageViewModel(_notesBS.value ?? []));
+    } else {
+      var notesToSearchIn = (categoryResult != null)
+          ? categoryResult.all
+          : (_notesBS.value ?? []);
+
+      var filteredNotes =
+          notesToSearchIn.where((n) => n.contains(substring)).toList();
+
+      _searchResultViewModelBS.add(SearchResultViewModel(filteredNotes));
+    }
   }
 
   Stream<List<Note>> get _allNotesStream => _notesBS.stream;

@@ -66,6 +66,18 @@ class Note {
     labels = setupModel.labels;
   }
 
+  bool contains(String substring) {
+    if (title.contains(substring)) return true;
+
+    if (text.contains(substring)) return true;
+
+    for (var lab in labels) {
+      if (lab.name.contains(substring)) return true;
+    }
+
+    return false;
+  }
+
   bool get pinned => _pinned;
   bool get archived => _archived;
 
