@@ -35,6 +35,12 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    var notifier = Provider.of<NoteSearchStateNotifier>(context);
+
+    var hintText = (notifier.showingResult)
+        ? 'Search within "${notifier.resultCategory}"'
+        : 'Search your notes';
+
     return AppBar(
       brightness: Brightness.light,
       elevation: 0,
@@ -42,7 +48,7 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         cursorWidth: 1,
         cursorColor: appSettingsBlue,
         decoration: InputDecoration.collapsed(
-            hintText: 'Search your notes', hintStyle: searchAppBarStyle),
+            hintText: hintText, hintStyle: searchAppBarStyle),
       ),
       iconTheme: IconThemeData(color: appIconGrey),
       backgroundColor: appWhite,
@@ -332,6 +338,7 @@ class _LabelGridItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         noteBloc.searchByLabelSink.add(label);
+        searchNotifier.setResultCategoryFromLabel(label);
         searchNotifier.showingResult = true;
       },
       child: Container(
@@ -400,6 +407,7 @@ class _ColorCircle extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           noteBloc.searchByNoteColorSink.add(noteColor);
+          searchNotifier.setResultCategoryFromNoteColor(noteColor);
           searchNotifier.showingResult = true;
         },
         child: Container(

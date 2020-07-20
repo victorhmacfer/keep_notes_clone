@@ -39,6 +39,8 @@ abstract class NoteColor extends Equatable {
 
   Color getColor();
 
+  String get colorDescription;
+
   int get index;
 
   @override
@@ -86,6 +88,8 @@ class _WhiteNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 255, 255, 255);
 
   int get index => 0;
+
+  String get colorDescription => 'White';
 }
 
 class _RedNoteColor extends NoteColor {
@@ -95,6 +99,8 @@ class _RedNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 242, 139, 130);
 
   int get index => 1;
+
+  String get colorDescription => 'Red';
 }
 
 class _OrangeNoteColor extends NoteColor {
@@ -104,6 +110,8 @@ class _OrangeNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 250, 189, 3);
 
   int get index => 2;
+
+  String get colorDescription => 'Orange';
 }
 
 class _YellowNoteColor extends NoteColor {
@@ -113,6 +121,8 @@ class _YellowNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 255, 244, 118);
 
   int get index => 3;
+
+  String get colorDescription => 'Yellow';
 }
 
 class _GreenNoteColor extends NoteColor {
@@ -122,6 +132,8 @@ class _GreenNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 205, 255, 144);
 
   int get index => 4;
+
+  String get colorDescription => 'Green';
 }
 
 class _CyanNoteColor extends NoteColor {
@@ -131,6 +143,8 @@ class _CyanNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 167, 254, 235);
 
   int get index => 5;
+
+  String get colorDescription => 'Cyan';
 }
 
 class _BlueNoteColor extends NoteColor {
@@ -140,6 +154,8 @@ class _BlueNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 203, 240, 248);
 
   int get index => 6;
+
+  String get colorDescription => 'Blue';
 }
 
 class _DarkBlueNoteColor extends NoteColor {
@@ -149,6 +165,8 @@ class _DarkBlueNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 175, 203, 250);
 
   int get index => 7;
+
+  String get colorDescription => 'Dark Blue';
 }
 
 class _PurpleNoteColor extends NoteColor {
@@ -158,6 +176,8 @@ class _PurpleNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 216, 173, 252);
 
   int get index => 8;
+
+  String get colorDescription => 'Purple';
 }
 
 class _PinkNoteColor extends NoteColor {
@@ -167,6 +187,8 @@ class _PinkNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 253, 207, 233);
 
   int get index => 9;
+
+  String get colorDescription => 'Pink';
 }
 
 class _BrownNoteColor extends NoteColor {
@@ -176,6 +198,8 @@ class _BrownNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 230, 201, 169);
 
   int get index => 10;
+
+  String get colorDescription => 'Brown';
 }
 
 class _GreyNoteColor extends NoteColor {
@@ -185,4 +209,6 @@ class _GreyNoteColor extends NoteColor {
   Color getColor() => Color.fromARGB(255, 233, 234, 238);
 
   int get index => 11;
+
+  String get colorDescription => 'Grey';
 }
