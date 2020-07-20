@@ -343,7 +343,7 @@ class _LabelGridItem extends StatelessWidget {
       },
       child: Container(
         color: Colors.grey[100],
-        padding: EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         alignment: Alignment.bottomCenter,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -358,6 +358,8 @@ class _LabelGridItem extends StatelessWidget {
             ),
             Text(
               label.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 13),
             ),
           ],
