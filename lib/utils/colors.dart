@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 const appWhite = Color.fromARGB(255, 255, 255, 255);
@@ -33,17 +34,20 @@ const appSettingsBlue = Color.fromARGB(255, 26, 113, 228);
 
 final appDividerGrey = Colors.grey[300];
 
-abstract class NoteColor {
+abstract class NoteColor extends Equatable {
   const NoteColor();
 
   Color getColor();
 
   int get index;
 
+  @override
+  List<Object> get props => [index];
+
   static const NoteColor white = _WhiteNoteColor();
   static const NoteColor darkBlue = _DarkBlueNoteColor();
-  static const NoteColor mediumBlue = _MediumBlueNoteColor();
-  static const NoteColor lightBlue = _LightBlueNoteColor();
+  static const NoteColor blue = _BlueNoteColor();
+  static const NoteColor cyan = _CyanNoteColor();
   static const NoteColor purple = _PurpleNoteColor();
   static const NoteColor orange = _OrangeNoteColor();
   static const NoteColor green = _GreenNoteColor();
@@ -63,8 +67,8 @@ abstract class NoteColor {
       NoteColor.orange,
       NoteColor.yellow,
       NoteColor.green,
-      NoteColor.lightBlue,
-      NoteColor.mediumBlue,
+      NoteColor.cyan,
+      NoteColor.blue,
       NoteColor.darkBlue,
       NoteColor.purple,
       NoteColor.pink,
@@ -120,8 +124,8 @@ class _GreenNoteColor extends NoteColor {
   int get index => 4;
 }
 
-class _LightBlueNoteColor extends NoteColor {
-  const _LightBlueNoteColor();
+class _CyanNoteColor extends NoteColor {
+  const _CyanNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 167, 254, 235);
@@ -129,8 +133,8 @@ class _LightBlueNoteColor extends NoteColor {
   int get index => 5;
 }
 
-class _MediumBlueNoteColor extends NoteColor {
-  const _MediumBlueNoteColor();
+class _BlueNoteColor extends NoteColor {
+  const _BlueNoteColor();
 
   @override
   Color getColor() => Color.fromARGB(255, 203, 240, 248);
