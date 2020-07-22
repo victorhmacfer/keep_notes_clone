@@ -46,6 +46,7 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       brightness: Brightness.light,
       elevation: 0,
       title: TextField(
+        autofocus: true,
         controller: notifier.searchController,
         onChanged: (value) {
           if (notifier.tryFullClear(value)) {
