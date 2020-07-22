@@ -21,6 +21,16 @@ class NoRemindersScreen extends StatelessWidget {
   }
 }
 
+class NoSearchResultScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return _NoScreenWithMaterialIcon(
+      icon: Icons.search, 
+      message: 'No matching notes'
+    );
+  }
+}
+
 class _NoScreenWithMaterialIcon extends StatelessWidget {
   final IconData icon;
   final String message;

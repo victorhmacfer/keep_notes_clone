@@ -6,6 +6,7 @@ import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/notifiers/note_search_state.dart';
+import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/search_landing_page_view_model.dart';
@@ -133,6 +134,10 @@ class _SearchResultBody extends StatelessWidget {
               var deletedNotes = snapshot.data.deleted;
 
               notifier.lastResultViewModel = snapshot.data;
+
+              if (snapshot.data.isEmpty) {
+                return NoSearchResultScreen();
+              }
 
               return Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 32),
