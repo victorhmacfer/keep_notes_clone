@@ -10,7 +10,7 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/custom_widgets/search_appbar.dart';
 
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
-import 'package:keep_notes_clone/screens/no_notes_screen.dart';
+import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
 

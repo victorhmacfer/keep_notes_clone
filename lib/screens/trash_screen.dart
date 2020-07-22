@@ -5,7 +5,7 @@ import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/screens/no_notes_screen.dart';
+import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:provider/provider.dart';

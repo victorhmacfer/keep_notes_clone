@@ -8,7 +8,7 @@ import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/screens/no_labels_screen.dart';
+import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
