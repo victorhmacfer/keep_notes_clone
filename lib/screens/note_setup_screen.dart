@@ -76,18 +76,14 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             if (notifier.canApplySetupModelToNote) {
-              print('canApplySetupModelToNote');
               if (notifier.notEditing) {
-                print('not editing');
                 noteBloc.onCreateNote(notifier.noteSetupModel);
               } else {
-                print('editing');
                 notifier.tryToUpdateLastEdited();
                 note.updateWith(notifier.noteSetupModel);
                 noteBloc.onNoteChanged(note);
               }
             }
-            print('final');
             notifier.closeLeftBottomSheet();
             notifier.closeRightBottomSheet();
             Navigator.pop(context);

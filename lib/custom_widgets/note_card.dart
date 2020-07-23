@@ -7,6 +7,7 @@ import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 import 'package:keep_notes_clone/screens/deleted_note_setup_screen.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class NoteCard extends StatelessWidget {
   final Note note;
 
   final String _title;
-  final String _text;
+  String _text;
   final NoteColor _color;
 
   static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;
@@ -23,7 +24,12 @@ class NoteCard extends StatelessWidget {
   NoteCard({@required this.note})
       : _title = note.title,
         _text = note.text,
-        _color = NoteColor.getNoteColorFromIndex(note.colorIndex);
+        _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {
+    if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
+      var instant = reminderNotificationDateText(note.reminderTime);
+      _text = 'Reminder at $instant';
+    }
+  }
 
   Widget _titleWidget(String theTitle) {
     return ((theTitle != null) && (theTitle.isNotEmpty))
