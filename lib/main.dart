@@ -1,26 +1,27 @@
-import 'dart:ui';
-import 'dart:isolate';
-
-import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-const String isolateName = 'isolate';
+Future selectNotification(String payload) async {
+  await Future.delayed(Duration(seconds: 2));
+  print('selecionei a notif');
+}
 
-final ReceivePort port = ReceivePort();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AndroidAlarmManager.initialize();
 
-  IsolateNameServer.registerPortWithName(
-    port.sendPort,
-    isolateName,
-  );
+  var initializationSettings = InitializationSettings(
+      AndroidInitializationSettings('app_icon'), IOSInitializationSettings());
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: selectNotification);
 
   runApp(MyApp());
 }

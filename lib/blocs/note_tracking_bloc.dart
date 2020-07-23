@@ -1,8 +1,4 @@
 import 'dart:async';
-import 'dart:isolate';
-import 'dart:ui';
-
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
@@ -18,8 +14,6 @@ import 'package:keep_notes_clone/viewmodels/search_landing_page_view_model.dart'
 import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
-
-import 'package:keep_notes_clone/main.dart';
 
 class NoteTrackingBloc {
   NoteRepository noteRepo;
@@ -42,17 +36,6 @@ class NoteTrackingBloc {
 
   final _searchLandingPageViewModelBS =
       BehaviorSubject<SearchLandingPageViewModel>();
-
-  static SendPort uiSendPort;
-
-  static void androidAlarmManagerCallback() {
-    FlutterRingtonePlayer.playNotification();
-
-    uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
-    uiSendPort?.send(null);
-  }
-
-  StreamSubscription _portSubscription;
 
   NoteTrackingBloc() {
     noteRepo = NoteRepository();
@@ -82,11 +65,6 @@ class NoteTrackingBloc {
 
     _searchScreenLabelRequestBS.stream
         .listen(_filterNotesWithLabelAndStreamSearchResult);
-
-    _portSubscription = port.listen((_) {
-      var lastNotesEmitted = _notesBS.value ?? [];
-      _notesBS.add(lastNotesEmitted);
-    });
   }
 
   StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
@@ -289,7 +267,6 @@ class NoteTrackingBloc {
     _labelScreenRequestBS.close();
     _searchScreenNoteColorRequestBS.close();
     _searchResultViewModelBS.close();
-    _portSubscription.cancel();
     _searchScreenLabelRequestBS.close();
   }
 }

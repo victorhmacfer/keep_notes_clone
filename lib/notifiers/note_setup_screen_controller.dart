@@ -1,6 +1,7 @@
-import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:keep_notes_clone/main.dart';
+// import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
@@ -70,10 +71,39 @@ class NoteSetupScreenController with ChangeNotifier {
   void saveReminderTime(int alarmId) async {
     _noteSetupModel.saveReminderTime(alarmId);
 
-    await AndroidAlarmManager.oneShotAt(_noteSetupModel.savedReminderTime,
-        alarmId, NoteTrackingBloc.androidAlarmManagerCallback);
+    // await AndroidAlarmManager.oneShotAt(_noteSetupModel.savedReminderTime,
+    //     alarmId, NoteTrackingBloc.androidAlarmManagerCallback);
+
+    await _scheduleReminderNotification(
+        id: alarmId,
+        noteTitle: _noteSetupModel.title,
+        noteText: _noteSetupModel.text,
+        scheduledNotificationDateTime: _noteSetupModel.savedReminderTime);
 
     notifyListeners();
+  }
+
+  Future<void> _scheduleReminderNotification(
+      {@required int id,
+      @required String noteTitle,
+      @required String noteText,
+      @required scheduledNotificationDateTime}) {
+    var androidNotifDetails = AndroidNotificationDetails(
+      'bla bla idk',
+      'Reminders',
+      '',
+      importance: Importance.High,
+    );
+
+    var notifDetails =
+        NotificationDetails(androidNotifDetails, IOSNotificationDetails());
+
+    return flutterLocalNotificationsPlugin.schedule(
+        id,
+        noteTitle,
+        noteText,
+        scheduledNotificationDateTime,
+        notifDetails);
   }
 
   void removeSavedReminder() async {
@@ -81,7 +111,7 @@ class NoteSetupScreenController with ChangeNotifier {
     _noteSetupModel.removeSavedReminder();
 
     if (alarmId != null) {
-      await AndroidAlarmManager.cancel(alarmId);
+      await flutterLocalNotificationsPlugin.cancel(alarmId);
     }
     notifyListeners();
   }

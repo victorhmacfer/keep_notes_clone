@@ -170,8 +170,11 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                           notifier.removeSavedReminder();
                         }
 
-                        var alarmId = await noteBloc.addReminderAlarm();
-                        notifier.saveReminderTime(alarmId);
+                        // I do this for grabbing an auto-incremented id
+                        // for scheduling the new reminder
+                        var newAlarmId = await noteBloc.addReminderAlarm();
+                        
+                        notifier.saveReminderTime(newAlarmId);
                         Navigator.pop(context);
                       }
                     },
