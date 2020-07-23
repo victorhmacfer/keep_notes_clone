@@ -92,3 +92,15 @@ String chipReminderText(DateTime dateTime) {
 
   return '$prefix, $hourZeroOrNothing${dateTime.hour}:$minuteZeroOrNothing${dateTime.minute}';
 }
+
+String reminderNotificationDateText(DateTime dateTime) {
+  String dayZeroOrNothing = (dateTime.day < 10) ? '0' : '';
+  String hourZeroOrNothing = (dateTime.hour < 10) ? '0' : '';
+  String minuteZeroOrNothing = (dateTime.minute < 10) ? '0' : '';
+  var month = _monthAbbreviations[dateTime.month];
+  var day = '$dayZeroOrNothing${dateTime.day}';
+  var hour = '$hourZeroOrNothing${dateTime.hour}';
+  var min = '$minuteZeroOrNothing${dateTime.minute}';
+
+  return '$month $day, $hour:$min';
+}

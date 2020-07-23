@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:keep_notes_clone/main.dart';
-// import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 class NoteSetupScreenController with ChangeNotifier {
   final NoteSetupModel _noteSetupModel;
@@ -71,9 +71,6 @@ class NoteSetupScreenController with ChangeNotifier {
   void saveReminderTime(int alarmId) async {
     _noteSetupModel.saveReminderTime(alarmId);
 
-    // await AndroidAlarmManager.oneShotAt(_noteSetupModel.savedReminderTime,
-    //     alarmId, NoteTrackingBloc.androidAlarmManagerCallback);
-
     await _scheduleReminderNotification(
         id: alarmId,
         noteTitle: _noteSetupModel.title,
@@ -87,7 +84,7 @@ class NoteSetupScreenController with ChangeNotifier {
       {@required int id,
       @required String noteTitle,
       @required String noteText,
-      @required scheduledNotificationDateTime}) {
+      @required DateTime scheduledNotificationDateTime}) {
     var androidNotifDetails = AndroidNotificationDetails(
       'bla bla idk',
       'Reminders',
@@ -98,12 +95,25 @@ class NoteSetupScreenController with ChangeNotifier {
     var notifDetails =
         NotificationDetails(androidNotifDetails, IOSNotificationDetails());
 
-    return flutterLocalNotificationsPlugin.schedule(
-        id,
-        noteTitle,
-        noteText,
-        scheduledNotificationDateTime,
-        notifDetails);
+    String notificationTitle;
+    String notificationText;
+    if (noteTitle.isNotEmpty && noteText.isNotEmpty) {
+      notificationTitle = noteTitle;
+      notificationText = noteText;
+    } else {
+      notificationText =
+          reminderNotificationDateText(scheduledNotificationDateTime);
+      if (noteTitle.isNotEmpty) {
+        notificationTitle = noteTitle;
+      } else if (noteText.isNotEmpty) {
+        notificationTitle = noteText;
+      } else {
+        notificationTitle = 'Untitled note';
+      }
+    }
+
+    return flutterLocalNotificationsPlugin.schedule(id, notificationTitle,
+        notificationText, scheduledNotificationDateTime, notifDetails);
   }
 
   void removeSavedReminder() async {
