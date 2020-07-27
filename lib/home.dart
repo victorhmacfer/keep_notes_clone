@@ -19,42 +19,20 @@ import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/models/note.dart';
 
 class HomeScreen extends StatelessWidget {
-  NoteTrackingBloc noteBloc;
-
-  HomeScreen({this.noteBloc});
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark));
 
-    if (noteBloc == null) {
-      return Provider<NoteTrackingBloc>(
-        create: (context) => NoteTrackingBloc(),
-        child: Scaffold(
-          backgroundColor: appWhite,
-          extendBody: true, // making the bottom bar notch transparent
-          floatingActionButton: MyCustomFab(),
-          floatingActionButtonLocation: MyCustomFabLocation(),
-          bottomNavigationBar: MyNotchedBottomAppBar(),
-          drawer: MyDrawer(),
-          body: _HomeBody(),
-        ),
-      );
-    }
-
-    return Provider<NoteTrackingBloc>.value(
-      value: noteBloc,
-      child: Scaffold(
-        backgroundColor: appWhite,
-        extendBody: true, // making the bottom bar notch transparent
-        floatingActionButton: MyCustomFab(),
-        floatingActionButtonLocation: MyCustomFabLocation(),
-        bottomNavigationBar: MyNotchedBottomAppBar(),
-        drawer: MyDrawer(),
-        body: _HomeBody(),
-      ),
+    return Scaffold(
+      backgroundColor: appWhite,
+      extendBody: true, // making the bottom bar notch transparent
+      floatingActionButton: MyCustomFab(),
+      floatingActionButtonLocation: MyCustomFabLocation(),
+      bottomNavigationBar: MyNotchedBottomAppBar(),
+      drawer: MyDrawer(),
+      body: _HomeBody(),
     );
   }
 }

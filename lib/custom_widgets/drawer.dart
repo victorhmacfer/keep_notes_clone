@@ -55,9 +55,7 @@ class MyDrawer extends StatelessWidget {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Provider<NoteTrackingBloc>.value(
-                        value: noteBloc,
-                        child: LabelScreen(labels[i]))));
+                    builder: (context) => LabelScreen(labels[i])));
           }
         },
       );
@@ -83,12 +81,8 @@ class MyDrawer extends StatelessWidget {
               if (drawerScreenSelection.selectedScreenIndex != 0) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
 
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HomeScreen(
-                              noteBloc: noteTrackingBloc,
-                            )));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
               }
             },
           ),
@@ -100,12 +94,8 @@ class MyDrawer extends StatelessWidget {
               if (drawerScreenSelection.selectedScreenIndex != 1) {
                 drawerScreenSelection.changeSelectedScreenToIndex(1);
 
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Provider<NoteTrackingBloc>.value(
-                            value: noteTrackingBloc,
-                            child: RemindersScreen())));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => RemindersScreen()));
               }
             },
           ),
@@ -127,12 +117,9 @@ class MyDrawer extends StatelessWidget {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            Provider<NoteTrackingBloc>.value(
-                                                value: noteTrackingBloc,
-                                                child: EditLabelsScreen(
-                                                  autoFocus: false,
-                                                ))));
+                                        builder: (context) => EditLabelsScreen(
+                                              autoFocus: false,
+                                            )));
                               },
                               child: Container(
                                 color: appWhite,
@@ -160,11 +147,7 @@ class MyDrawer extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Provider<NoteTrackingBloc>.value(
-                          value: noteTrackingBloc,
-                          child: EditLabelsScreen(
-                            autoFocus: true,
-                          ))));
+                      builder: (context) => EditLabelsScreen(autoFocus: true)));
             },
           ),
           _MyCustomDrawerDivider(),
@@ -176,11 +159,8 @@ class MyDrawer extends StatelessWidget {
               if (drawerScreenSelection.selectedScreenIndex != 2) {
                 drawerScreenSelection.changeSelectedScreenToIndex(2);
 
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Provider<NoteTrackingBloc>.value(
-                            value: noteTrackingBloc, child: ArchiveScreen())));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => ArchiveScreen()));
               }
             },
           ),
@@ -192,11 +172,8 @@ class MyDrawer extends StatelessWidget {
               if (drawerScreenSelection.selectedScreenIndex != 3) {
                 drawerScreenSelection.changeSelectedScreenToIndex(3);
 
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Provider<NoteTrackingBloc>.value(
-                            value: noteTrackingBloc, child: TrashScreen())));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => TrashScreen()));
               }
             },
           ),

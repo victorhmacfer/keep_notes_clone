@@ -116,16 +116,12 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               onTap: () {
                 showDialog(
-                    context: context,
-                    builder: (context) => MultiProvider(
-                          providers: [
-                            ChangeNotifierProvider<
-                                    NoteSetupScreenController>.value(
-                                value: notifier),
-                            Provider<NoteTrackingBloc>.value(value: noteBloc),
-                          ],
-                          child: ReminderSetupDialog(),
-                        ));
+                  context: context,
+                  builder: (context) =>
+                      ChangeNotifierProvider<NoteSetupScreenController>.value(
+                          value: notifier),
+                  child: ReminderSetupDialog(),
+                );
               }),
         ),
         Padding(
@@ -408,16 +404,12 @@ class _MyStickyBottomAppBar extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MultiProvider(
-                            providers: [
-                              ChangeNotifierProvider<
-                                  NoteSetupScreenController>.value(
-                                value: notifier,
-                              ),
-                              Provider<NoteTrackingBloc>.value(value: noteBloc),
-                            ],
-                            child: NoteLabelingScreen(),
-                          )));
+                    builder: (context) =>
+                        ChangeNotifierProvider<NoteSetupScreenController>.value(
+                      value: notifier,
+                      child: NoteLabelingScreen(),
+                    ),
+                  ));
             },
           ),
           _ColorSelectionList(),

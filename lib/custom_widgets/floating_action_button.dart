@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'dart:math' as math;
-
-import 'package:provider/provider.dart';
 
 class MyCustomFab extends StatelessWidget {
   final Label label;
@@ -16,8 +13,6 @@ class MyCustomFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteBloc = Provider.of<NoteTrackingBloc>(context);
-
     return SizedBox(
       height: 58,
       width: 58,
@@ -33,15 +28,10 @@ class MyCustomFab extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Provider<NoteTrackingBloc>.value(
-                        value: noteBloc,
-                        child: NoteSetupScreen(label: label))));
+                    builder: (context) => NoteSetupScreen(label: label)));
           } else {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Provider<NoteTrackingBloc>.value(
-                        value: noteBloc, child: NoteSetupScreen())));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => NoteSetupScreen()));
           }
         },
       ),

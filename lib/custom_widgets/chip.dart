@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -28,7 +27,6 @@ class NoteSetupLabelChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
-    final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return GestureDetector(
       onTap: () {
@@ -41,18 +39,14 @@ class NoteSetupLabelChip extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => MultiProvider(
-                        providers: [
-                          ChangeNotifierProvider<
-                              NoteSetupScreenController>.value(
-                            value: notifier,
-                          ),
-                          Provider<NoteTrackingBloc>.value(value: noteBloc),
-                        ],
+                  builder: (context) =>
+                      ChangeNotifierProvider<NoteSetupScreenController>.value(
+                        value: notifier,
                         child: NoteLabelingScreen(),
                       )));
         } else {
-          Scaffold.of(context).showSnackBar(SnackBar(content: Text("Can't edit in Trash")));
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text("Can't edit in Trash")));
         }
       },
       child: Container(
@@ -97,7 +91,6 @@ class NoteSetupReminderChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
-    final noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     Color textColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
     Color alarmIconColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
@@ -108,15 +101,12 @@ class NoteSetupReminderChip extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         showDialog(
-            context: context,
-            builder: (context) => MultiProvider(
-                  providers: [
-                    ChangeNotifierProvider<NoteSetupScreenController>.value(
-                        value: notifier),
-                    Provider<NoteTrackingBloc>.value(value: noteBloc),
-                  ],
-                  child: ReminderSetupDialog(),
-                ));
+          context: context,
+          builder: (context) =>
+              ChangeNotifierProvider<NoteSetupScreenController>.value(
+                  value: notifier),
+          child: ReminderSetupDialog(),
+        );
       },
       child: Container(
         padding: EdgeInsets.fromLTRB(8, 6, 14, 6),

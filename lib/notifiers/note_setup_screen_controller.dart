@@ -112,7 +112,7 @@ class NoteSetupScreenController with ChangeNotifier {
       }
     }
 
-    return flutterLocalNotificationsPlugin.schedule(id, notificationTitle,
+    return flnp.schedule(id, notificationTitle,
         notificationText, scheduledNotificationDateTime, notifDetails);
   }
 
@@ -121,7 +121,7 @@ class NoteSetupScreenController with ChangeNotifier {
     _noteSetupModel.removeSavedReminder();
 
     if (alarmId != null) {
-      await flutterLocalNotificationsPlugin.cancel(alarmId);
+      await flnp.cancel(alarmId);
     }
     notifyListeners();
   }
