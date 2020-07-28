@@ -67,6 +67,8 @@ class NoteTrackingBloc {
         .listen(_filterNotesWithLabelAndStreamSearchResult);
   }
 
+  Future<bool> get initialized async => !(await _notesBS.isEmpty);
+
   StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
 
   StreamSink<NoteColor> get searchByNoteColorSink =>
@@ -199,6 +201,13 @@ class NoteTrackingBloc {
 
       _searchResultViewModelBS.add(SearchResultViewModel(filteredNotes));
     }
+  }
+
+  // this method is expected to be called only after bloc has any notelist
+  // already streamed
+  Note getNoteWithAlarmId(int alarmId) {
+    var notes = _notesBS.value ?? [];
+    return notes.firstWhere((n) => n.reminderAlarmId == alarmId);
   }
 
   Stream<List<Note>> get _allNotesStream => _notesBS.stream;

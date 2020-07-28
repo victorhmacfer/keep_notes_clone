@@ -104,8 +104,9 @@ class NoteSetupReminderChip extends StatelessWidget {
           context: context,
           builder: (context) =>
               ChangeNotifierProvider<NoteSetupScreenController>.value(
-                  value: notifier),
-          child: ReminderSetupDialog(),
+            value: notifier,
+            child: ReminderSetupDialog(),
+          ),
         );
       },
       child: Container(

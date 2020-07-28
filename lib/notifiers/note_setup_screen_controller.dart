@@ -113,7 +113,7 @@ class NoteSetupScreenController with ChangeNotifier {
     }
 
     return flnp.schedule(id, notificationTitle,
-        notificationText, scheduledNotificationDateTime, notifDetails);
+        notificationText, scheduledNotificationDateTime, notifDetails, payload: id.toString());
   }
 
   void removeSavedReminder() async {

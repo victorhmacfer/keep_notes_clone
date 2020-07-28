@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
+import 'package:keep_notes_clone/screens/note_setup_screen.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -32,72 +34,43 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: appLightThemeData,
-        home: HomeScreen(),
+        home: PreHome(),
       ),
     );
   }
 }
 
-// class Blabla extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
+class PreHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
-//     return FutureBuilder<NotificationAppLaunchDetails>(
-//       future: flnp.getNotificationAppLaunchDetails(),
-//       builder: (context, snapshot) {
-//         bool launchedByNotif;
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           launchedByNotif = snapshot.data.didNotificationLaunchApp;
-//         } else {
-//           return CircularProgressIndicator();
-//         }
+    var initSettings = InitializationSettings(
+        AndroidInitializationSettings('app_icon'), IOSInitializationSettings());
 
-//         if (launchedByNotif) {
-//           print('APP LAUNCHED BY NOTIF');
-//           return MaterialApp(
-//             title: 'Flutter Demo',
-//             theme: appLightThemeData,
-//             home: HomeScreen(),
-//           );
-//         }
+    return FutureBuilder(
+        future: noteBloc.initialized,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            Future osn(String alarmId) async {
+              var theNote = noteBloc.getNoteWithAlarmId(int.parse(alarmId));
 
-//         print('APP NOOOOOOT  LAUNCHED BY NOTIF');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NoteSetupScreen(note: theNote)));
+            }
 
-//         return MaterialApp(
-//           title: 'Flutter Demo',
-//           theme: appLightThemeData,
-//           home: HomeScreen(),
-//         );
-//       },
-//     );
-//   }
-// }
+            flnp.initialize(initSettings, onSelectNotification: osn);
 
-// class PreHome extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-
-//     var initializationSettings = InitializationSettings(
-//         AndroidInitializationSettings('app_icon'), IOSInitializationSettings());
-
-//     flnp.initialize(initializationSettings,
-//         onSelectNotification: (payload) async {
-//       // pretending payload is id 1..
-//       // ignoring noteRepo for now
-
-//       var theNote = Note(
-//           id: 1, title: 'xablau vai funcionar', lastEdited: DateTime.now());
-
-//       Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//               builder: (context) => NoteSetupScreen(
-//                     note: theNote,
-//                   )));
-//     });
-
-//     return Container(
-
-//     );
-//   }
-// }
+            return HomeScreen();
+          }
+          return Container(
+            color: appWhite,
+            constraints: BoxConstraints.expand(),
+            alignment: Alignment.center,
+            child: Container(),
+          );
+        });
+  }
+}
