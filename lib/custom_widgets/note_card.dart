@@ -93,7 +93,6 @@ class NoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
-            
             ((note.labels?.isNotEmpty ?? false) || (note.reminderTime != null))
                 ? _ChipsContainer(
                     labels: note.labels,
@@ -147,7 +146,6 @@ class _ChipsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: FractionallySizedBox(
@@ -230,7 +228,7 @@ class CrazyGridNoteCard extends StatelessWidget {
 // screen width, paddings and margins used in the notecard,
 // real fontsizes (subject to system settings if phone uses smaller/larger fonts)...
 //FIXME: ASSUMES TWO COLUMN GRID FOR NOW
-  double estimateHeight(Note note) {
+  static double estimateHeight(Note note) {
     //TODO: comment about coupling to font style
     const titleCharsPerLine = 20;
     const titleFontHeight = 18;
@@ -252,8 +250,19 @@ class CrazyGridNoteCard extends StatelessWidget {
 
     var text = note.text;
     if (text.isNotEmpty) {
-      int textLineCount =
-          min(((text.length / textCharsPerLine).ceil()), _textMaxLines);
+      //account for new line characters.. single char that adds a whole line
+      // to the count !
+      int newLineCharacterCount = 0;
+      for (var codeUnit in text.codeUnits) {
+        if (String.fromCharCode(codeUnit) == '\n') {
+          newLineCharacterCount += 1;
+        }
+      }
+
+      int textLineCount = min(
+          ((text.length / textCharsPerLine).ceil() + newLineCharacterCount),
+          _textMaxLines);
+
       totalHeight += textLineCount * textFontHeight;
     }
 
@@ -305,15 +314,12 @@ class CrazyGridNoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
-
             ((note.labels?.isNotEmpty ?? false) || (note.reminderTime != null))
                 ? _ChipsContainer(
                     labels: note.labels,
                     reminderTime: note.reminderTime,
                   )
                 : Container(),
-
-
           ],
         ),
       ),

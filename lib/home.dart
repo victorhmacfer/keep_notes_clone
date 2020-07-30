@@ -67,62 +67,9 @@ class MeasuringBody extends StatelessWidget {
 }
 
 class BodyForTestingCrazyGrid extends StatelessWidget {
-  static const double _bottomPadding = 56;
-
   @override
   Widget build(BuildContext context) {
-    var now = DateTime.now();
-
-    var onlyTitle = Note(
-        title: 'pequeno titulo',
-        lastEdited: now,
-        colorIndex: NoteColor.red.index);
-
-    var titleAndSmallText = Note(
-        title: 'pequeno titulo',
-        text: 'queota xab',
-        lastEdited: now,
-        colorIndex: NoteColor.blue.index);
-
-    var onlySmallText = Note(
-        text: 'pequeno titulopequeno titulo',
-        lastEdited: now,
-        colorIndex: NoteColor.green.index);
-
-    var onlyDoubleLineTitle = Note(
-        title: 'titulo muito enorme vambora vamo nessa queota xab',
-        lastEdited: now,
-        colorIndex: NoteColor.purple.index);
-
-    var onlyHugeText = Note(
-        text:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget metus erat. In ornare tincidunt urna, et mattis mauris imperdiet non. Lorem ipsum dolor sit amet, consectetur adipiscing elit.  ',
-        lastEdited: now,
-        colorIndex: NoteColor.white.index);
-
-    var onlyTooBigText = Note(
-        text:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget metus erat. In ornare tincidunt urna, et mattis mauris imperdiet non.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget metus erat. In ornare tincidunt urna, et mattis mauris imperdiet non.',
-        lastEdited: now,
-        colorIndex: NoteColor.darkBlue.index);
-
-    var titleTextAndReminder = Note(
-      title: 'Lorem ipsum dolor',
-      text:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget metus erat. In ornare tincidunt urna, et mattis mauris imperdiet non.Lorem ipsum',
-      lastEdited: now,
-      colorIndex: NoteColor.pink.index,
-      reminderTime: now.add(Duration(minutes: 30)),
-    );
-
-    var everythingPossible = Note(
-      title: 'Lorem ipsum dolor',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget metus erat. In ornare tincidunt urna, et mattis mauris imperdietit amet, consectetur adipiscing elit. Mauris eget metus eit amet, consectetur adipiscing elit. Mauris eget metus e',
-      lastEdited: now,
-      colorIndex: NoteColor.brown.index,
-      reminderTime: now.add(Duration(minutes: 100)),
-      labels: [Label(name: 'queota'), Label(name: 'abc'), Label(name: 'pindamonhangaba'), Label(name: 'queota'),]
-    );
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return SafeArea(
       top: false,
@@ -132,42 +79,80 @@ class BodyForTestingCrazyGrid extends StatelessWidget {
           slivers: <Widget>[
             SearchAppBar(),
             SliverToBoxAdapter(
-              child: Container(
-                margin: EdgeInsets.only(left: 8, bottom: _bottomPadding),
-                color: Colors.grey,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          CrazyGridNoteCard(onlyTitle),
-                          CrazyGridNoteCard(titleAndSmallText),
-                          CrazyGridNoteCard(onlySmallText),
-                          CrazyGridNoteCard(onlyTooBigText),
-                          CrazyGridNoteCard(everythingPossible),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          CrazyGridNoteCard(onlyDoubleLineTitle),
-                          CrazyGridNoteCard(onlyHugeText),
-                          CrazyGridNoteCard(titleTextAndReminder),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              child: StreamBuilder<HomeViewModel>(
+                  stream: noteBloc.homeViewModelStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data.all.isNotEmpty) {
+                        return FluentGridBody(notes: snapshot.data.all);
+                      }
+                      return NoNotesScreen();
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class FluentGridBody extends StatelessWidget {
+  static const double _bottomPadding = 56;
+
+  final List<Note> notes;
+
+  FluentGridBody({this.notes});
+
+  void assignCardsToColumns(
+      List<Note> theNotes, List<Widget> first, List<Widget> second) {
+    double accumFirstHeight = 0;
+    double accumSecondHeight = 0;
+
+    for (var n in theNotes) {
+      var estimatedHeight = CrazyGridNoteCard.estimateHeight(n);
+      if ((accumFirstHeight == 0) ||
+          (accumFirstHeight + estimatedHeight <=
+              accumSecondHeight + estimatedHeight)) {
+        first.add(CrazyGridNoteCard(n));
+        accumFirstHeight += estimatedHeight;
+      } else {
+        second.add(CrazyGridNoteCard(n));
+        accumSecondHeight += estimatedHeight;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> c1 = [];
+    List<Widget> c2 = [];
+    assignCardsToColumns(notes, c1, c2);
+
+    return Container(
+      margin: EdgeInsets.only(left: 8, bottom: _bottomPadding),
+      // color: Colors.grey,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: c1,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: c2,
+            ),
+          ),
+        ],
       ),
     );
   }
