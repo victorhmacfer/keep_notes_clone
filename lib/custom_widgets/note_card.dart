@@ -93,8 +93,7 @@ class NoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
-            // (note.labels.isNotEmpty || (note.reminderTime != null))
-            //FIXME: should be line above not below !!!
+            
             ((note.labels?.isNotEmpty ?? false) || (note.reminderTime != null))
                 ? _ChipsContainer(
                     labels: note.labels,
@@ -148,12 +147,11 @@ class _ChipsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
-      child: SizedBox(
-        width: screenWidth * 0.85,
+      child: FractionallySizedBox(
+        widthFactor: 0.9,
         child: Container(
           child: Wrap(
             spacing: 4,
@@ -262,9 +260,18 @@ class CrazyGridNoteCard extends StatelessWidget {
     if (title.isNotEmpty && text.isNotEmpty) {
       totalHeight += _spacerHeight;
     }
-    var hasAnyChips = (note.reminderTime != null) || (note.labels.isNotEmpty);
-    if (hasAnyChips) {
+
+    var hasReminder = note.reminderTime != null;
+    if (hasReminder) {
       totalHeight += _chipHeight;
+    }
+
+    var hasAnyLabel = note.labels.isNotEmpty;
+    if (hasAnyLabel) {
+      totalHeight += _chipHeight;
+      if (note.labels.length >= 3) {
+        totalHeight += _chipHeight;
+      }
     }
 
     return totalHeight;
@@ -298,6 +305,15 @@ class CrazyGridNoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
+
+            ((note.labels?.isNotEmpty ?? false) || (note.reminderTime != null))
+                ? _ChipsContainer(
+                    labels: note.labels,
+                    reminderTime: note.reminderTime,
+                  )
+                : Container(),
+
+
           ],
         ),
       ),

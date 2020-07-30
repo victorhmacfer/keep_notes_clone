@@ -5,6 +5,7 @@ import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
+import 'package:keep_notes_clone/models/label.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
@@ -105,6 +106,24 @@ class BodyForTestingCrazyGrid extends StatelessWidget {
         lastEdited: now,
         colorIndex: NoteColor.darkBlue.index);
 
+    var titleTextAndReminder = Note(
+      title: 'Lorem ipsum dolor',
+      text:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget metus erat. In ornare tincidunt urna, et mattis mauris imperdiet non.Lorem ipsum',
+      lastEdited: now,
+      colorIndex: NoteColor.pink.index,
+      reminderTime: now.add(Duration(minutes: 30)),
+    );
+
+    var everythingPossible = Note(
+      title: 'Lorem ipsum dolor',
+      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget metus erat. In ornare tincidunt urna, et mattis mauris imperdietit amet, consectetur adipiscing elit. Mauris eget metus eit amet, consectetur adipiscing elit. Mauris eget metus e',
+      lastEdited: now,
+      colorIndex: NoteColor.brown.index,
+      reminderTime: now.add(Duration(minutes: 100)),
+      labels: [Label(name: 'queota'), Label(name: 'abc'), Label(name: 'pindamonhangaba'), Label(name: 'queota'),]
+    );
+
     return SafeArea(
       top: false,
       bottom: false,
@@ -128,6 +147,7 @@ class BodyForTestingCrazyGrid extends StatelessWidget {
                           CrazyGridNoteCard(titleAndSmallText),
                           CrazyGridNoteCard(onlySmallText),
                           CrazyGridNoteCard(onlyTooBigText),
+                          CrazyGridNoteCard(everythingPossible),
                         ],
                       ),
                     ),
@@ -138,6 +158,7 @@ class BodyForTestingCrazyGrid extends StatelessWidget {
                         children: <Widget>[
                           CrazyGridNoteCard(onlyDoubleLineTitle),
                           CrazyGridNoteCard(onlyHugeText),
+                          CrazyGridNoteCard(titleTextAndReminder),
                         ],
                       ),
                     ),
