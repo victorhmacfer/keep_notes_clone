@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/models/label.dart';
@@ -158,6 +160,145 @@ class _ChipsContainer extends StatelessWidget {
             runSpacing: 4,
             children: _chips(),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class CrazyGridNoteCard extends StatelessWidget {
+  final Note note;
+
+  final String _title;
+  String _text;
+  final NoteColor _color;
+
+  static const _maxTextLengthWithBigFontSize = 15;
+  static const _minHeightPercentageFactor = 20; // cannot be higher than 100
+  static const _maxHeightPercentageFactor = 40;
+
+  static const double _rightMargin = 8;
+  static const double _verticalMargin = 4;
+  static const double _padding = 16;
+  static const double _spacerHeight = 12;
+  static const double _chipHeight = 24;
+  static const int _titleMaxLines = 2;
+  static const int _textMaxLines = 10;
+
+  CrazyGridNoteCard(this.note)
+      : _title = note.title,
+        _text = note.text,
+        _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {
+    if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
+      var instant = reminderNotificationDateText(note.reminderTime);
+      _text = 'Reminder at $instant';
+    }
+  }
+
+  Widget _titleWidget(String theTitle) {
+    return ((theTitle != null) && (theTitle.isNotEmpty))
+        ? Text(
+            theTitle,
+            style: cardTitleStyle,
+            maxLines: _titleMaxLines,
+            overflow: TextOverflow.ellipsis,
+          )
+        : Container();
+  }
+
+  Widget _spacingWidget() {
+    if ((_title.isNotEmpty) && (_text.isNotEmpty)) {
+      return SizedBox(
+        height: _spacerHeight,
+      );
+    }
+    return Container();
+  }
+
+  Widget _textWidget(String theText) {
+    return ((theText != null) && (theText.isNotEmpty))
+        ? Text(
+            theText,
+            maxLines: _textMaxLines,
+            overflow: TextOverflow.ellipsis,
+            style: (theText.length <= _maxTextLengthWithBigFontSize)
+                ? cardBigTextStyle
+                : cardSmallTextStyle,
+          )
+        : Container();
+  }
+
+  //FIXME: this function is very tightly coupled to a lot of things, such as:
+// screen width, paddings and margins used in the notecard,
+// real fontsizes (subject to system settings if phone uses smaller/larger fonts)...
+//FIXME: ASSUMES TWO COLUMN GRID FOR NOW
+  double estimateHeight(Note note) {
+    //TODO: comment about coupling to font style
+    const titleCharsPerLine = 20;
+    const titleFontHeight = 18;
+
+    const textCharsPerLine = 22;
+    const textFontHeight = 16;
+
+    double totalHeight = 0;
+
+    totalHeight += 2 * _padding;
+    totalHeight += 2 * _verticalMargin;
+
+    var title = note.title;
+    if (title.isNotEmpty) {
+      int titleLineCount =
+          min(((title.length / titleCharsPerLine).ceil()), _titleMaxLines);
+      totalHeight += titleLineCount * titleFontHeight;
+    }
+
+    var text = note.text;
+    if (text.isNotEmpty) {
+      int textLineCount =
+          min(((text.length / textCharsPerLine).ceil()), _textMaxLines);
+      totalHeight += textLineCount * textFontHeight;
+    }
+
+    if (title.isNotEmpty && text.isNotEmpty) {
+      totalHeight += _spacerHeight;
+    }
+    var hasAnyChips = (note.reminderTime != null) || (note.labels.isNotEmpty);
+    if (hasAnyChips) {
+      totalHeight += _chipHeight;
+    }
+
+    return totalHeight;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var heightEstimation = estimateHeight(note);
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+          minWidth: 0,
+          maxWidth: double.infinity,
+          minHeight:
+              heightEstimation * (1 - (_minHeightPercentageFactor / 100)),
+          maxHeight:
+              heightEstimation * (1 + (_maxHeightPercentageFactor / 100))),
+      child: Container(
+        margin: EdgeInsets.fromLTRB(
+            0, _verticalMargin, _rightMargin, _verticalMargin),
+        padding: EdgeInsets.all(_padding),
+        decoration: BoxDecoration(
+          color: _color.getColor(),
+          border: Border.all(color: appCardBorderGrey),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _titleWidget(_title),
+            _spacingWidget(),
+            _textWidget(_text),
+          ],
         ),
       ),
     );
