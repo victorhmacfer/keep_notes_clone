@@ -106,6 +106,8 @@ class NoteCard extends StatelessWidget {
   }
 }
 
+const double _chipsContainerTopPadding = 12;
+
 class _ChipsContainer extends StatelessWidget {
   final List<Label> labels;
   final DateTime reminderTime;
@@ -147,7 +149,7 @@ class _ChipsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12.0),
+      padding: const EdgeInsets.only(top: _chipsContainerTopPadding),
       child: FractionallySizedBox(
         widthFactor: 0.9,
         child: Container(
@@ -170,14 +172,14 @@ class CrazyGridNoteCard extends StatelessWidget {
   final NoteColor _color;
 
   static const _maxTextLengthWithBigFontSize = 15;
-  static const _minHeightPercentageFactor = 20; // cannot be higher than 100
-  static const _maxHeightPercentageFactor = 40;
+  static const _minHeightPercentageFactor = 30; // cannot be higher than 100
+  static const _maxHeightPercentageFactor = 30;
 
   static const double _rightMargin = 8;
   static const double _verticalMargin = 4;
   static const double _padding = 16;
   static const double _spacerHeight = 12;
-  static const double _chipHeight = 24;
+  static const double _chipHeight = 36;
   static const int _titleMaxLines = 2;
   static const int _textMaxLines = 10;
 
@@ -225,16 +227,24 @@ class CrazyGridNoteCard extends StatelessWidget {
   }
 
   //FIXME: this function is very tightly coupled to a lot of things, such as:
-// screen width, paddings and margins used in the notecard,
-// real fontsizes (subject to system settings if phone uses smaller/larger fonts)...
-//FIXME: ASSUMES TWO COLUMN GRID FOR NOW
-  static double estimateHeight(Note note) {
-    //TODO: comment about coupling to font style
-    const titleCharsPerLine = 20;
-    const titleFontHeight = 18;
+  // screen width, paddings and margins used in the notecard,
+  // real fontsizes (subject to system settings if phone uses smaller/larger fonts)...
+  //FIXME: ASSUMES TWO COLUMN GRID FOR NOW
+  static double estimateHeight(Note note, double textScalingFactor) {
+    double systemFontSizeVariationFactor = 1;
+    if (textScalingFactor < 0.8) {
+      systemFontSizeVariationFactor = 0.85;
+    } else if (textScalingFactor > 1.1) {
+      systemFontSizeVariationFactor = 1.3;
+    } else if (textScalingFactor > 1.3) {
+      systemFontSizeVariationFactor = 1.5;
+    }
 
-    const textCharsPerLine = 22;
-    const textFontHeight = 16;
+    final double titleCharsPerLine = (textScalingFactor > 1.25) ? 12 : 20;
+    final double titleFontHeight = 20 * systemFontSizeVariationFactor;
+
+    final double textCharsPerLine = 22 * (1 / systemFontSizeVariationFactor);
+    final double textFontHeight = 18 * systemFontSizeVariationFactor;
 
     double totalHeight = 0;
 
@@ -271,16 +281,18 @@ class CrazyGridNoteCard extends StatelessWidget {
     }
 
     var hasReminder = note.reminderTime != null;
-    if (hasReminder) {
-      totalHeight += _chipHeight;
+    var hasAnyLabel = note.labels.isNotEmpty;
+
+    var hasAnyChip = hasReminder || hasAnyLabel;
+
+    if (hasAnyChip) {
+      totalHeight += _chipHeight + _chipsContainerTopPadding;
     }
 
-    var hasAnyLabel = note.labels.isNotEmpty;
-    if (hasAnyLabel) {
-      totalHeight += _chipHeight;
-      if (note.labels.length >= 3) {
-        totalHeight += _chipHeight;
-      }
+    var hasReminderAndManyLabels = (note.labels.length >= 2) && hasReminder;
+
+    if (hasReminderAndManyLabels) {
+      totalHeight += 2 * _chipHeight;
     }
 
     return totalHeight;
@@ -288,7 +300,9 @@ class CrazyGridNoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var heightEstimation = estimateHeight(note);
+    var mediaQuery = MediaQuery.of(context);
+
+    var heightEstimation = estimateHeight(note, mediaQuery.textScaleFactor);
 
     return ConstrainedBox(
       constraints: BoxConstraints(

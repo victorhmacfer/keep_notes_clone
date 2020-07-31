@@ -107,13 +107,13 @@ class FluentGridBody extends StatelessWidget {
 
   FluentGridBody({this.notes});
 
-  void assignCardsToColumns(
-      List<Note> theNotes, List<Widget> first, List<Widget> second) {
+  void assignCardsToColumns(List<Note> theNotes, List<Widget> first,
+      List<Widget> second, double textSF) {
     double accumFirstHeight = 0;
     double accumSecondHeight = 0;
 
     for (var n in theNotes) {
-      var estimatedHeight = CrazyGridNoteCard.estimateHeight(n);
+      var estimatedHeight = CrazyGridNoteCard.estimateHeight(n, textSF);
       if ((accumFirstHeight == 0) ||
           (accumFirstHeight + estimatedHeight <=
               accumSecondHeight + estimatedHeight)) {
@@ -128,9 +128,11 @@ class FluentGridBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var mq = MediaQuery.of(context);
+
     List<Widget> c1 = [];
     List<Widget> c2 = [];
-    assignCardsToColumns(notes, c1, c2);
+    assignCardsToColumns(notes, c1, c2, mq.textScaleFactor);
 
     return Container(
       margin: EdgeInsets.only(left: 8, bottom: _bottomPadding),

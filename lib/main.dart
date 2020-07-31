@@ -43,34 +43,42 @@ class MyApp extends StatelessWidget {
 class PreHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var mediaQueryData = MediaQuery.of(context);
+
+    double constrainedTextSF =
+        mediaQueryData.textScaleFactor.clamp(0.75, 1.3).toDouble();
+
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     var initSettings = InitializationSettings(
         AndroidInitializationSettings('app_icon'), IOSInitializationSettings());
 
-    return FutureBuilder(
-        future: noteBloc.initialized,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            Future osn(String alarmId) async {
-              var theNote = noteBloc.getNoteWithAlarmId(int.parse(alarmId));
+    return MediaQuery(
+      data: mediaQueryData.copyWith(textScaleFactor: constrainedTextSF),
+      child: FutureBuilder(
+          future: noteBloc.initialized,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              Future osn(String alarmId) async {
+                var theNote = noteBloc.getNoteWithAlarmId(int.parse(alarmId));
 
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => NoteSetupScreen(note: theNote)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NoteSetupScreen(note: theNote)));
+              }
+
+              flnp.initialize(initSettings, onSelectNotification: osn);
+
+              return HomeScreen();
             }
-
-            flnp.initialize(initSettings, onSelectNotification: osn);
-
-            return HomeScreen();
-          }
-          return Container(
-            color: appWhite,
-            constraints: BoxConstraints.expand(),
-            alignment: Alignment.center,
-            child: Container(),
-          );
-        });
+            return Container(
+              color: appWhite,
+              constraints: BoxConstraints.expand(),
+              alignment: Alignment.center,
+              child: Container(),
+            );
+          }),
+    );
   }
 }
