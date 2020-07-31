@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/note_search_screen.dart';
 
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 class SearchAppBar extends StatelessWidget {
   @override
@@ -28,9 +30,30 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant _MyCustomSearchAppBarDelegate oldDelegate) =>
       false;
 
+  Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
+    if (notifier.mode == NoteCardMode.extended) {
+      return PngIconButton(
+          pngIcon: PngIcon(
+            fileName: 'outline_dashboard_black_48.png',
+          ),
+          onTap: () {
+            notifier.switchTo(NoteCardMode.small);
+          });
+    }
+    return PngIconButton(
+        pngIcon: PngIcon(
+          fileName: 'outline_view_agenda_black_48.png',
+        ),
+        onTap: () {
+          notifier.switchTo(NoteCardMode.extended);
+        });
+  }
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    var noteCardModeNotifier = Provider.of<NoteCardModeSelection>(context);
+
     return Container(
       padding: EdgeInsets.only(bottom: 8, left: 16, right: 16),
       alignment: Alignment.bottomCenter,
@@ -74,11 +97,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    PngIconButton(
-                        pngIcon: PngIcon(
-                          fileName: 'outline_dashboard_black_48.png',
-                        ),
-                        onTap: () {}),
+                    _selectNoteCardModeButton(noteCardModeNotifier),
                     Padding(
                       padding: const EdgeInsets.only(right: 12, left: 20),
                       child: CircleAvatar(

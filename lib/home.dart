@@ -6,6 +6,7 @@ import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
@@ -21,6 +22,8 @@ import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 
 import 'package:keep_notes_clone/models/note.dart';
 
+const double _bottomPadding = 56;
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -35,42 +38,14 @@ class HomeScreen extends StatelessWidget {
       floatingActionButtonLocation: MyCustomFabLocation(),
       bottomNavigationBar: MyNotchedBottomAppBar(),
       drawer: MyDrawer(),
-      // body: _HomeBody(),
-      body: BodyForTestingCrazyGrid(),
+      body: _Body(),
     );
   }
 }
 
-class MeasuringBody extends StatelessWidget {
+class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints.expand(),
-      color: Colors.red[100],
-      alignment: Alignment.center,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-              color: Colors.green[200],
-              width: 100,
-              child: NoteCardLabelChip('primeira')),
-          Container(
-            height: 24,
-            width: 80,
-            color: Colors.blue[200],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class BodyForTestingCrazyGrid extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
-
     return SafeArea(
       top: false,
       bottom: false,
@@ -79,19 +54,7 @@ class BodyForTestingCrazyGrid extends StatelessWidget {
           slivers: <Widget>[
             SearchAppBar(),
             SliverToBoxAdapter(
-              child: StreamBuilder<HomeViewModel>(
-                  stream: noteBloc.homeViewModelStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data.all.isNotEmpty) {
-                        return FluentGridBody(notes: snapshot.data.all);
-                      }
-                      return NoNotesScreen();
-                    }
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }),
+              child: StreamBuilderBody(),
             ),
           ],
         ),
@@ -100,12 +63,10 @@ class BodyForTestingCrazyGrid extends StatelessWidget {
   }
 }
 
-class FluentGridBody extends StatelessWidget {
-  static const double _bottomPadding = 56;
-
+class FluidGrid extends StatelessWidget {
   final List<Note> notes;
 
-  FluentGridBody({this.notes});
+  FluidGrid(this.notes);
 
   void assignCardsToColumns(List<Note> theNotes, List<Widget> first,
       List<Widget> second, double textSF) {
@@ -135,7 +96,7 @@ class FluentGridBody extends StatelessWidget {
     assignCardsToColumns(notes, c1, c2, mq.textScaleFactor);
 
     return Container(
-      margin: EdgeInsets.only(left: 8, bottom: _bottomPadding),
+      margin: EdgeInsets.only(left: 8),
       // color: Colors.grey,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,93 +121,100 @@ class FluentGridBody extends StatelessWidget {
   }
 }
 
-// Widget _noteCardBuilder(Note note) => NoteCard(note: note);
+class ExtendedModeList extends StatelessWidget {
+  final List<Note> notes;
 
-// class _HomeBody extends StatelessWidget {
-//   static const double _bottomPadding = 56;
+  ExtendedModeList(this.notes);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     var noteBloc = Provider.of<NoteTrackingBloc>(context);
+  Widget _noteCardBuilder(Note note) => NoteCard(note: note);
 
-//     return SafeArea(
-//       // ignoring the bottom safearea is necessary for "extendBody" to work
-//       top: false,
-//       bottom: false,
-//       child: Container(
-//         child: CustomScrollView(
-//           slivers: <Widget>[
-//             SearchAppBar(),
-//             SliverToBoxAdapter(
-//               child: StreamBuilder<HomeViewModel>(
-//                 stream: noteBloc.homeViewModelStream,
-//                 builder: (context, snapshot) {
-//                   if (snapshot.hasData) {
-//                     var pinnedNotes = snapshot.data.pinned;
-//                     var unpinnedNotes = snapshot.data.unpinned;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: notes.map(_noteCardBuilder).toList(),
+    );
+  }
+}
 
-//                     if (pinnedNotes.isNotEmpty || unpinnedNotes.isNotEmpty) {
-//                       if (pinnedNotes.isEmpty) {
-//                         return Container(
-//                           margin: EdgeInsets.only(bottom: _bottomPadding),
-//                           child: Column(
-//                             children:
-//                                 unpinnedNotes.map(_noteCardBuilder).toList(),
-//                           ),
-//                         );
-//                       }
+class OptionalSection extends StatelessWidget {
+  final NoteCardMode mode;
 
-//                       return Container(
-//                         margin: EdgeInsets.only(bottom: _bottomPadding),
-//                         child: Column(
-//                           children: <Widget>[
-//                             CardTypeSectionTitle('PINNED'),
-//                             Column(
-//                               children:
-//                                   pinnedNotes.map(_noteCardBuilder).toList(),
-//                             ),
-//                             _OthersColumn(unpinnedNotes),
-//                           ],
-//                         ),
-//                       );
-//                     }
-//                     return NoNotesScreen();
-//                   }
+  final List<Note> notes;
 
-//                   return Center(
-//                     child: CircularProgressIndicator(),
-//                   );
-//                 },
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+  final String title;
 
-// class _OthersColumn extends StatelessWidget {
-//   final List<Note> unpinnedNotesList;
+  OptionalSection(
+      {@required this.mode, @required this.notes, @required this.title});
 
-//   _OthersColumn(this.unpinnedNotesList);
+  @override
+  Widget build(BuildContext context) {
+    if (notes.isEmpty) {
+      return Container();
+    }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     if (unpinnedNotesList.isEmpty) {
-//       return Container();
-//     }
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 24,
+        ),
+        CardTypeSectionTitle(title),
+        (mode == NoteCardMode.extended)
+            ? ExtendedModeList(notes)
+            : FluidGrid(notes),
+      ],
+    );
+  }
+}
 
-//     return Column(
-//       children: <Widget>[
-//         SizedBox(
-//           height: 24,
-//         ),
-//         CardTypeSectionTitle('OTHERS'),
-//         Column(
-//           children: unpinnedNotesList.map(_noteCardBuilder).toList(),
-//         ),
-//       ],
-//     );
-//   }
-// }
+class StreamBuilderBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+
+    var modeNotifier = Provider.of<NoteCardModeSelection>(context);
+
+    return StreamBuilder<HomeViewModel>(
+      stream: noteBloc.homeViewModelStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var pinnedNotes = snapshot.data.pinned;
+          var unpinnedNotes = snapshot.data.unpinned;
+          var hasAnyNote = snapshot.data.all.isNotEmpty;
+
+          if (hasAnyNote) {
+            if (pinnedNotes.isEmpty) {
+              return Container(
+                margin: EdgeInsets.only(bottom: _bottomPadding),
+                child: (modeNotifier.mode == NoteCardMode.extended)
+                    ? ExtendedModeList(unpinnedNotes)
+                    : FluidGrid(unpinnedNotes),
+              );
+            }
+
+            return Container(
+              margin: EdgeInsets.only(bottom: _bottomPadding),
+              child: Column(
+                children: <Widget>[
+                  CardTypeSectionTitle('PINNED'),
+                  (modeNotifier.mode == NoteCardMode.extended)
+                      ? ExtendedModeList(pinnedNotes)
+                      : FluidGrid(pinnedNotes),
+                  OptionalSection(
+                    title: 'OTHERS',
+                    mode: modeNotifier.mode,
+                    notes: unpinnedNotes,
+                  ),
+                ],
+              ),
+            );
+          }
+          return NoNotesScreen();
+        }
+
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+}

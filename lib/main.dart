@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
+import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<DrawerScreenSelection>(
           create: (context) => DrawerScreenSelection(),
+        ),
+        ChangeNotifierProvider<NoteCardModeSelection>(
+          create: (context) => NoteCardModeSelection(),
         ),
         Provider<NoteTrackingBloc>(
             create: (context) => NoteTrackingBloc(),
