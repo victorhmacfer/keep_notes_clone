@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
-import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
-import 'package:keep_notes_clone/custom_widgets/note_card.dart';
+import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
-import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -28,14 +27,31 @@ class RemindersScreen extends StatelessWidget {
   }
 }
 
-Widget _noteCardBuilder(Note note) => NoteCard(note: note);
+const double _bottomPadding = 56;
 
 class _Body extends StatelessWidget {
-  static const double _bottomPadding = 56;
+  Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
+    if (notifier.mode == NoteCardMode.extended) {
+      return PngIconButton(
+          pngIcon: PngIcon(
+            fileName: 'outline_dashboard_black_48.png',
+          ),
+          onTap: () {
+            notifier.switchTo(NoteCardMode.small);
+          });
+    }
+    return PngIconButton(
+        pngIcon: PngIcon(
+          fileName: 'outline_view_agenda_black_48.png',
+        ),
+        onTap: () {
+          notifier.switchTo(NoteCardMode.extended);
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var notifier = Provider.of<NoteCardModeSelection>(context);
 
     return SafeArea(
         bottom: false,
@@ -61,41 +77,12 @@ class _Body extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: PngIconButton(
-                        pngIcon:
-                            PngIcon(fileName: 'outline_dashboard_black_48.png'),
-                        onTap: () {}),
+                    child: _selectNoteCardModeButton(notifier),
                   ),
                 ],
               ),
               SliverToBoxAdapter(
-                child: StreamBuilder<RemindersViewModel>(
-                    stream: noteBloc.remindersViewModelStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        print('entrei no reminders has data..');
-                        var firedReminderNotes = snapshot.data.fired;
-                        var upcomingReminderNotes = snapshot.data.upcoming;
-
-                        if (firedReminderNotes.isNotEmpty ||
-                            upcomingReminderNotes.isNotEmpty) {
-                          return Container(
-                            margin: EdgeInsets.only(bottom: _bottomPadding),
-                            child: Column(
-                              children: <Widget>[
-                                _OptionalColumn('FIRED',
-                                    notes: firedReminderNotes),
-                                _OptionalColumn('UPCOMING',
-                                    notes: upcomingReminderNotes),
-                              ],
-                            ),
-                          );
-                        }
-
-                        return NoRemindersScreen();
-                      }
-                      return Container();
-                    }),
+                child: _StreamBuilderBody(),
               ),
             ],
           ),
@@ -103,28 +90,47 @@ class _Body extends StatelessWidget {
   }
 }
 
-class _OptionalColumn extends StatelessWidget {
-  final List<Note> notes;
-  final String title;
-
-  _OptionalColumn(this.title, {@required this.notes});
-
+class _StreamBuilderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (notes.isEmpty) {
-      return Container();
-    }
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var modeNotifier = Provider.of<NoteCardModeSelection>(context);
 
-    return Column(
-      children: <Widget>[
-        CardTypeSectionTitle(title),
-        Column(
-          children: notes.map(_noteCardBuilder).toList(),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-      ],
-    );
+    return StreamBuilder<RemindersViewModel>(
+        stream: noteBloc.remindersViewModelStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var firedReminderNotes = snapshot.data.fired;
+            var upcomingReminderNotes = snapshot.data.upcoming;
+
+            var hasAnyNote = firedReminderNotes.isNotEmpty ||
+                upcomingReminderNotes.isNotEmpty;
+
+            if (hasAnyNote) {
+              return Container(
+                margin: EdgeInsets.only(bottom: _bottomPadding),
+                child: Column(
+                  children: <Widget>[
+                    OptionalSection(
+                      title: 'FIRED',
+                      mode: modeNotifier.mode,
+                      notes: firedReminderNotes,
+                      spaceBelow: true,
+                    ),
+                    OptionalSection(
+                      title: 'UPCOMING',
+                      mode: modeNotifier.mode,
+                      notes: upcomingReminderNotes,
+                      spaceBelow: true,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return NoRemindersScreen();
+          }
+          return NoRemindersScreen();
+        });
   }
 }
