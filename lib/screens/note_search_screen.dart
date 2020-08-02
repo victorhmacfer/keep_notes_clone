@@ -161,7 +161,7 @@ class _SearchResultBody extends StatelessWidget {
   }
 }
 
-Widget _noteCardBuilder(Note note) => NoteCard(note: note);
+Widget _noteCardBuilder(Note note) => ExtendedNoteCard(note: note);
 
 class _OptionalSectionColumn extends StatelessWidget {
   final String title;

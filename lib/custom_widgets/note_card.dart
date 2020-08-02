@@ -12,7 +12,7 @@ import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 import 'package:keep_notes_clone/screens/deleted_note_setup_screen.dart';
 
-class NoteCard extends StatelessWidget {
+class ExtendedNoteCard extends StatelessWidget {
   final Note note;
 
   final String _title;
@@ -21,7 +21,7 @@ class NoteCard extends StatelessWidget {
 
   static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;
 
-  NoteCard({@required this.note})
+  ExtendedNoteCard({@required this.note})
       : _title = note.title,
         _text = note.text,
         _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {
@@ -164,7 +164,7 @@ class _ChipsContainer extends StatelessWidget {
   }
 }
 
-class CrazyGridNoteCard extends StatelessWidget {
+class SmallNoteCard extends StatelessWidget {
   final Note note;
 
   final String _title;
@@ -183,7 +183,7 @@ class CrazyGridNoteCard extends StatelessWidget {
   static const int _titleMaxLines = 2;
   static const int _textMaxLines = 10;
 
-  CrazyGridNoteCard(this.note)
+  SmallNoteCard(this.note)
       : _title = note.title,
         _text = note.text,
         _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {

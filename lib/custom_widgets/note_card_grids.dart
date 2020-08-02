@@ -9,12 +9,12 @@ class ExtendedModeList extends StatelessWidget {
 
   ExtendedModeList(this.notes);
 
-  Widget _noteCardBuilder(Note note) => NoteCard(note: note);
+  Widget _cardBuilder(Note note) => ExtendedNoteCard(note: note);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: notes.map(_noteCardBuilder).toList(),
+      children: notes.map(_cardBuilder).toList(),
     );
   }
 }
@@ -71,14 +71,14 @@ class SmallModeGrid extends StatelessWidget {
     double accumSecondHeight = 0;
 
     for (var n in theNotes) {
-      var estimatedHeight = CrazyGridNoteCard.estimateHeight(n, textSF);
+      var estimatedHeight = SmallNoteCard.estimateHeight(n, textSF);
       if ((accumFirstHeight == 0) ||
           (accumFirstHeight + estimatedHeight <=
               accumSecondHeight + estimatedHeight)) {
-        first.add(CrazyGridNoteCard(n));
+        first.add(SmallNoteCard(n));
         accumFirstHeight += estimatedHeight;
       } else {
-        second.add(CrazyGridNoteCard(n));
+        second.add(SmallNoteCard(n));
         accumSecondHeight += estimatedHeight;
       }
     }
