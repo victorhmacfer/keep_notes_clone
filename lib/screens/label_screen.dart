@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
-import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
-import 'package:keep_notes_clone/custom_widgets/note_card.dart';
+import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -33,18 +32,35 @@ class LabelScreen extends StatelessWidget {
   }
 }
 
-Widget _noteCardBuilder(Note note) => NoteCard(note: note);
+const double _bottomPadding = 56;
 
 class _Body extends StatelessWidget {
-  static const double _bottomPadding = 56;
-
   final Label label;
 
   _Body(this.label);
 
+  Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
+    if (notifier.mode == NoteCardMode.extended) {
+      return PngIconButton(
+          pngIcon: PngIcon(
+            fileName: 'outline_dashboard_black_48.png',
+          ),
+          onTap: () {
+            notifier.switchTo(NoteCardMode.small);
+          });
+    }
+    return PngIconButton(
+        pngIcon: PngIcon(
+          fileName: 'outline_view_agenda_black_48.png',
+        ),
+        onTap: () {
+          notifier.switchTo(NoteCardMode.extended);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var notifier = Provider.of<NoteCardModeSelection>(context);
 
     return SafeArea(
         bottom: false,
@@ -70,10 +86,7 @@ class _Body extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: PngIconButton(
-                        pngIcon:
-                            PngIcon(fileName: 'outline_dashboard_black_48.png'),
-                        onTap: () {}),
+                    child: _selectNoteCardModeButton(notifier),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
@@ -85,41 +98,7 @@ class _Body extends StatelessWidget {
                 ],
               ),
               SliverToBoxAdapter(
-                child: StreamBuilder<LabelViewModel>(
-                    stream: noteBloc.labelViewModelStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var pinnedNotes = snapshot.data.pinned;
-                        var unpinnedNotes = snapshot.data.unpinned;
-                        var archivedNotes = snapshot.data.archived;
-
-                        if (pinnedNotes.isEmpty && archivedNotes.isEmpty) {
-                          if (unpinnedNotes.isNotEmpty) {
-                            return Container(
-                              margin: EdgeInsets.only(bottom: _bottomPadding),
-                              child: Column(
-                                children: unpinnedNotes
-                                    .map(_noteCardBuilder)
-                                    .toList(),
-                              ),
-                            );
-                          }
-                          return NoLabelsScreen();
-                        }
-
-                        return Container(
-                          margin: EdgeInsets.only(bottom: _bottomPadding),
-                          child: Column(
-                            children: <Widget>[
-                              _OptionalColumn('PINNED', notes: pinnedNotes),
-                              _OptionalColumn('OTHERS', notes: unpinnedNotes),
-                              _OptionalColumn('ARCHIVED', notes: archivedNotes),
-                            ],
-                          ),
-                        );
-                      }
-                      return Container();
-                    }),
+                child: _StreamBuilderBody(),
               ),
             ],
           ),
@@ -127,29 +106,67 @@ class _Body extends StatelessWidget {
   }
 }
 
-
-class _OptionalColumn extends StatelessWidget {
-  final List<Note> notes;
-  final String title;
-
-  _OptionalColumn(this.title, {@required this.notes});
-
+class _StreamBuilderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (notes.isEmpty) {
-      return Container();
-    }
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var modeNotifier = Provider.of<NoteCardModeSelection>(context);
 
-    return Column(
-      children: <Widget>[
-        CardTypeSectionTitle(title),
-        Column(
-          children: notes.map(_noteCardBuilder).toList(),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-      ],
-    );
+    return StreamBuilder<LabelViewModel>(
+        stream: noteBloc.labelViewModelStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var pinnedNotes = snapshot.data.pinned;
+            var unpinnedNotes = snapshot.data.unpinned;
+            var archivedNotes = snapshot.data.archived;
+
+            var hasAnyNote = pinnedNotes.isNotEmpty ||
+                unpinnedNotes.isNotEmpty ||
+                archivedNotes.isNotEmpty;
+
+            var onlyHasUnpinnedNotes =
+                hasAnyNote && (pinnedNotes.isEmpty && archivedNotes.isEmpty);
+
+            if (hasAnyNote) {
+              if (onlyHasUnpinnedNotes) {
+                return Container(
+                  margin: EdgeInsets.only(bottom: _bottomPadding),
+                  child: OptionalSection(
+                    mode: modeNotifier.mode,
+                    noSpacer: true,
+                    notes: unpinnedNotes,
+                  ),
+                );
+              }
+              return Container(
+                margin: EdgeInsets.only(bottom: _bottomPadding),
+                child: Column(
+                  children: <Widget>[
+                    OptionalSection(
+                      title: 'PINNED',
+                      mode: modeNotifier.mode,
+                      spaceBelow: true,
+                      notes: pinnedNotes,
+                    ),
+                    OptionalSection(
+                      title: 'OTHERS',
+                      mode: modeNotifier.mode,
+                      spaceBelow: true,
+                      notes: unpinnedNotes,
+                    ),
+                    OptionalSection(
+                      title: 'ARCHIVED',
+                      mode: modeNotifier.mode,
+                      notes: archivedNotes,
+                      noSpacer: true,
+                    ),
+                  ],
+                ),
+              );
+            }
+            return NoLabelsScreen();
+          }
+          return Container();
+        });
   }
 }

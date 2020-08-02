@@ -28,10 +28,12 @@ class OptionalSection extends StatelessWidget {
 
   final bool spaceBelow;
 
+  final bool noSpacer;
+
   static const double _spacerHeight = 24;
 
   OptionalSection(
-      {@required this.mode, @required this.notes, @required this.title, this.spaceBelow = false});
+      {this.title = '', @required this.mode, @required this.notes, this.spaceBelow = false, this.noSpacer = false});
 
   @override
   Widget build(BuildContext context) {
@@ -39,17 +41,19 @@ class OptionalSection extends StatelessWidget {
       return Container();
     }
 
+    double spacerHeight = (noSpacer) ? 0 : _spacerHeight;
+
     return Column(
       children: <Widget>[
         SizedBox(
-          height: (spaceBelow) ? 0 : _spacerHeight,
+          height: (spaceBelow) ? 0 : spacerHeight,
         ),
-        CardTypeSectionTitle(title),
+        (title.isNotEmpty) ? CardTypeSectionTitle(title) : Container(),
         (mode == NoteCardMode.extended)
             ? ExtendedModeList(notes)
             : SmallModeGrid(notes),
         SizedBox(
-          height: (spaceBelow) ? _spacerHeight : 0,
+          height: (spaceBelow) ? spacerHeight : 0,
         ),
       ],
     );
