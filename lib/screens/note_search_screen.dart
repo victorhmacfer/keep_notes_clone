@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
-import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
-import 'package:keep_notes_clone/custom_widgets/note_card.dart';
+import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/notifiers/note_search_state.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -54,7 +53,8 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
             return;
           }
           notifier.showingResult = true;
-          noteBloc.searchNotesWithSubstring(value, notifier.lastResultViewModel);
+          noteBloc.searchNotesWithSubstring(
+              value, notifier.lastResultViewModel);
         },
         cursorWidth: 1,
         cursorColor: appSettingsBlue,
@@ -78,7 +78,6 @@ class _BodyPicker extends StatelessWidget {
   }
 }
 
-//FIXME: dummy implementation .. will have streambuilder later
 class _SearchLandingPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -119,7 +118,8 @@ class _SearchResultBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
-    var notifier = Provider.of<NoteSearchStateNotifier>(context);
+    var searchStateNotifier = Provider.of<NoteSearchStateNotifier>(context);
+    var modeNotifier = Provider.of<NoteCardModeSelection>(context);
 
     return Container(
       constraints: BoxConstraints.expand(),
@@ -133,20 +133,33 @@ class _SearchResultBody extends StatelessWidget {
               var archivedNotes = snapshot.data.archived;
               var deletedNotes = snapshot.data.deleted;
 
-              notifier.lastResultViewModel = snapshot.data;
+              searchStateNotifier.lastResultViewModel = snapshot.data;
 
               if (snapshot.data.isEmpty) {
                 return NoSearchResultScreen();
               }
 
               return Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 32),
+                padding: EdgeInsets.only(top: 8),
                 child: Column(
                   children: <Widget>[
-                    _OptionalSectionColumn(notes: regularNotes),
-                    _OptionalSectionColumn(
-                        title: 'ARCHIVE', notes: archivedNotes),
-                    _OptionalSectionColumn(title: 'TRASH', notes: deletedNotes),
+                    OptionalSection(
+                      mode: modeNotifier.mode,
+                      notes: regularNotes,
+                      spaceBelow: true,
+                    ),
+                    OptionalSection(
+                      title: 'ARCHIVE',
+                      mode: modeNotifier.mode,
+                      notes: archivedNotes,
+                      spaceBelow: true,
+                    ),
+                    OptionalSection(
+                      title: 'TRASH',
+                      mode: modeNotifier.mode,
+                      notes: deletedNotes,
+                      spaceBelow: true,
+                    ),
                   ],
                 ),
               );
@@ -157,33 +170,6 @@ class _SearchResultBody extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-Widget _noteCardBuilder(Note note) => ExtendedNoteCard(note: note);
-
-class _OptionalSectionColumn extends StatelessWidget {
-  final String title;
-
-  final List<Note> notes;
-
-  _OptionalSectionColumn({this.title, @required this.notes});
-
-  @override
-  Widget build(BuildContext context) {
-    if (notes.isEmpty) {
-      return Container();
-    }
-
-    return Column(
-      children: <Widget>[
-        (title != null)
-            ? CardTypeSectionTitle(title.toUpperCase())
-            : Container(),
-        Column(children: notes.map(_noteCardBuilder).toList()),
-        SizedBox(height: 16),
-      ],
     );
   }
 }

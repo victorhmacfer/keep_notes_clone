@@ -7,23 +7,27 @@ class SearchResultViewModel {
 
   final List<Note> _deleted;
 
+  final List<Note> _all;
+
   List<Note> get regular => List.unmodifiable(_regular);
 
   List<Note> get archived => List.unmodifiable(_archived);
 
   List<Note> get deleted => List.unmodifiable(_deleted);
 
-  List<Note> get all => List.unmodifiable(_regular + _archived + _deleted);
+  List<Note> get all => List.unmodifiable(_all);
 
-  bool get isEmpty => _regular.isEmpty && _archived.isEmpty && _deleted.isEmpty;
+  bool get isEmpty => _all.isEmpty;
 
   bool get isNotEmpty => !isEmpty;
 
   SearchResultViewModel(List<Note> notes)
       : _regular = [],
         _archived = [],
-        _deleted = [] {
+        _deleted = [],
+        _all = [] {
     for (var note in notes) {
+      _all.add(note);
       if (note.archived) {
         _archived.add(note);
       } else if (note.deleted) {
