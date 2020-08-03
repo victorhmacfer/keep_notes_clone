@@ -22,21 +22,25 @@ class MyNotchedBottomAppBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               PngIconButton(
+                backgroundColor: appTranslucentWhite,
                   pngIcon: PngIcon(
                     fileName: 'outline_check_box_black_48.png',
                   ),
                   onTap: () {}),
               PngIconButton(
+                backgroundColor: appTranslucentWhite,
                   pngIcon: PngIcon(
                     fileName: 'outline_brush_black_48.png',
                   ),
                   onTap: () {}),
               PngIconButton(
+                backgroundColor: appTranslucentWhite,
                   pngIcon: PngIcon(
                     fileName: 'outline_mic_none_black_48.png',
                   ),
                   onTap: () {}),
               PngIconButton(
+                backgroundColor: appTranslucentWhite,
                   pngIcon: PngIcon(
                     fileName: 'outline_photo_black_48.png',
                   ),

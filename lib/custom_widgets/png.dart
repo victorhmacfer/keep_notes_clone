@@ -32,10 +32,25 @@ class PngIconButton extends StatelessWidget {
 
   final void Function() onTap;
 
-  PngIconButton({@required this.pngIcon, @required this.onTap});
+  final EdgeInsetsGeometry padding;
+
+  final Color backgroundColor;
+
+  PngIconButton(
+      {@required this.pngIcon,
+      @required this.onTap,
+      @required this.backgroundColor,
+      this.padding = EdgeInsets.zero});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: onTap, child: pngIcon);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: padding,
+        color: backgroundColor,
+        child: pngIcon,
+      ),
+    );
   }
 }

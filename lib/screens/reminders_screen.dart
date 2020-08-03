@@ -33,6 +33,7 @@ class _Body extends StatelessWidget {
   Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
     if (notifier.mode == NoteCardMode.extended) {
       return PngIconButton(
+        backgroundColor: appWhite,
           pngIcon: PngIcon(
             fileName: 'outline_dashboard_black_48.png',
           ),
@@ -41,6 +42,7 @@ class _Body extends StatelessWidget {
           });
     }
     return PngIconButton(
+      backgroundColor: appWhite,
         pngIcon: PngIcon(
           fileName: 'outline_view_agenda_black_48.png',
         ),
@@ -71,6 +73,7 @@ class _Body extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: PngIconButton(
+                      backgroundColor: appWhite,
                         pngIcon:
                             PngIcon(fileName: 'baseline_search_black_48.png'),
                         onTap: () {}),

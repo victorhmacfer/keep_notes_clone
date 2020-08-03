@@ -3,10 +3,8 @@ import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
-import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 
-import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
@@ -52,6 +50,7 @@ class _TrashBody extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: PngIconButton(
+                      backgroundColor: appWhite,
                         pngIcon:
                             PngIcon(fileName: 'baseline_search_black_48.png'),
                         onTap: () {}),

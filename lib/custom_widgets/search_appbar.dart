@@ -33,6 +33,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
     if (notifier.mode == NoteCardMode.extended) {
       return PngIconButton(
+        backgroundColor: appWhite,
+        padding: EdgeInsets.all(8),
           pngIcon: PngIcon(
             fileName: 'outline_dashboard_black_48.png',
           ),
@@ -41,6 +43,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
           });
     }
     return PngIconButton(
+      backgroundColor: appWhite,
+      padding: EdgeInsets.all(8),
         pngIcon: PngIcon(
           fileName: 'outline_view_agenda_black_48.png',
         ),
@@ -55,6 +59,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
     var noteCardModeNotifier = Provider.of<NoteCardModeSelection>(context);
 
     return Container(
+      // color: Colors.red[100],
       padding: EdgeInsets.only(bottom: 8, left: 16, right: 16),
       alignment: Alignment.bottomCenter,
       child: SizedBox(
@@ -99,7 +104,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                   children: <Widget>[
                     _selectNoteCardModeButton(noteCardModeNotifier),
                     Padding(
-                      padding: const EdgeInsets.only(right: 12, left: 20),
+                      padding: const EdgeInsets.only(right: 12, left: 12),
                       child: CircleAvatar(
                         radius: 16,
                         child: Text(
