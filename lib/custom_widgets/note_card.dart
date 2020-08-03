@@ -8,7 +8,6 @@ import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
-import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 import 'package:keep_notes_clone/screens/deleted_note_setup_screen.dart';
 
@@ -25,10 +24,10 @@ class ExtendedNoteCard extends StatelessWidget {
       : _title = note.title,
         _text = note.text,
         _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {
-    if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
-      var instant = reminderNotificationDateText(note.reminderTime);
-      _text = 'Reminder at $instant';
-    }
+    // if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
+    //   var instant = reminderNotificationDateText(note.reminderTime);
+    //   _text = 'Reminder at $instant';
+    // }
   }
 
   Widget _titleWidget(String theTitle) {
@@ -187,10 +186,10 @@ class SmallNoteCard extends StatelessWidget {
       : _title = note.title,
         _text = note.text,
         _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {
-    if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
-      var instant = reminderNotificationDateText(note.reminderTime);
-      _text = 'Reminder at $instant';
-    }
+    // if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
+    //   var instant = reminderNotificationDateText(note.reminderTime);
+    //   _text = 'Reminder at $instant';
+    // }
   }
 
   Widget _titleWidget(String theTitle) {
@@ -226,24 +225,21 @@ class SmallNoteCard extends StatelessWidget {
         : Container();
   }
 
-  //FIXME: this function is very tightly coupled to a lot of things, such as:
-  // screen width, paddings and margins used in the notecard,
-  // real fontsizes (subject to system settings if phone uses smaller/larger fonts)...
   //FIXME: ASSUMES TWO COLUMN GRID FOR NOW
   static double estimateHeight(Note note, double textScalingFactor) {
     double systemFontSizeVariationFactor = 1;
     if (textScalingFactor < 0.8) {
       systemFontSizeVariationFactor = 0.85;
     } else if (textScalingFactor > 1.1) {
-      systemFontSizeVariationFactor = 1.3;
-    } else if (textScalingFactor > 1.3) {
       systemFontSizeVariationFactor = 1.5;
+    } else if (textScalingFactor > 1.2) {
+      systemFontSizeVariationFactor = 2;
     }
 
-    final double titleCharsPerLine = (textScalingFactor > 1.25) ? 12 : 20;
+    final double titleCharsPerLine = (textScalingFactor > 1.2) ? 12 : 18;
     final double titleFontHeight = 20 * systemFontSizeVariationFactor;
 
-    final double textCharsPerLine = 22 * (1 / systemFontSizeVariationFactor);
+    final double textCharsPerLine = 20 * (1 / systemFontSizeVariationFactor);
     final double textFontHeight = 18 * systemFontSizeVariationFactor;
 
     double totalHeight = 0;
@@ -303,6 +299,8 @@ class SmallNoteCard extends StatelessWidget {
     var mediaQuery = MediaQuery.of(context);
 
     var heightEstimation = estimateHeight(note, mediaQuery.textScaleFactor);
+
+    print(heightEstimation);
 
     return ConstrainedBox(
       constraints: BoxConstraints(
