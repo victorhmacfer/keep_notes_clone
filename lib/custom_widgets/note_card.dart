@@ -23,12 +23,7 @@ class ExtendedNoteCard extends StatelessWidget {
   ExtendedNoteCard({@required this.note})
       : _title = note.title,
         _text = note.text,
-        _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {
-    // if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
-    //   var instant = reminderNotificationDateText(note.reminderTime);
-    //   _text = 'Reminder at $instant';
-    // }
-  }
+        _color = NoteColor.getNoteColorFromIndex(note.colorIndex);
 
   Widget _titleWidget(String theTitle) {
     return ((theTitle != null) && (theTitle.isNotEmpty))
@@ -185,12 +180,7 @@ class SmallNoteCard extends StatelessWidget {
   SmallNoteCard(this.note)
       : _title = note.title,
         _text = note.text,
-        _color = NoteColor.getNoteColorFromIndex(note.colorIndex) {
-    // if (_title.isEmpty && _text.isEmpty && (note.reminderTime != null)) {
-    //   var instant = reminderNotificationDateText(note.reminderTime);
-    //   _text = 'Reminder at $instant';
-    // }
-  }
+        _color = NoteColor.getNoteColorFromIndex(note.colorIndex);
 
   Widget _titleWidget(String theTitle) {
     return ((theTitle != null) && (theTitle.isNotEmpty))
@@ -300,39 +290,53 @@ class SmallNoteCard extends StatelessWidget {
 
     var heightEstimation = estimateHeight(note, mediaQuery.textScaleFactor);
 
-    print(heightEstimation);
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-          minWidth: 0,
-          maxWidth: double.infinity,
-          minHeight:
-              heightEstimation * (1 - (_minHeightPercentageFactor / 100)),
-          maxHeight:
-              heightEstimation * (1 + (_maxHeightPercentageFactor / 100))),
-      child: Container(
-        margin: EdgeInsets.fromLTRB(
-            0, _verticalMargin, _rightMargin, _verticalMargin),
-        padding: EdgeInsets.all(_padding),
-        decoration: BoxDecoration(
-          color: _color.getColor(),
-          border: Border.all(color: appCardBorderGrey),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _titleWidget(_title),
-            _spacingWidget(),
-            _textWidget(_text),
-            ((note.labels?.isNotEmpty ?? false) || (note.reminderTime != null))
-                ? _ChipsContainer(
-                    labels: note.labels,
-                    reminderTime: note.reminderTime,
-                  )
-                : Container(),
-          ],
+    return GestureDetector(
+      onTap: () {
+        if (note.deleted) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DeletedNoteSetupScreen(note: note)));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => NoteSetupScreen(note: note)));
+        }
+      },
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+            minWidth: 0,
+            maxWidth: double.infinity,
+            minHeight:
+                heightEstimation * (1 - (_minHeightPercentageFactor / 100)),
+            maxHeight:
+                heightEstimation * (1 + (_maxHeightPercentageFactor / 100))),
+        child: Container(
+          margin: EdgeInsets.fromLTRB(
+              0, _verticalMargin, _rightMargin, _verticalMargin),
+          padding: EdgeInsets.all(_padding),
+          decoration: BoxDecoration(
+            color: _color.getColor(),
+            border: Border.all(color: appCardBorderGrey),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _titleWidget(_title),
+              _spacingWidget(),
+              _textWidget(_text),
+              ((note.labels?.isNotEmpty ?? false) ||
+                      (note.reminderTime != null))
+                  ? _ChipsContainer(
+                      labels: note.labels,
+                      reminderTime: note.reminderTime,
+                    )
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );
