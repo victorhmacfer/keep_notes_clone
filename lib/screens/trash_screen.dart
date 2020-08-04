@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
+import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
-import 'package:keep_notes_clone/custom_widgets/png.dart';
 
 import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -25,7 +25,11 @@ class TrashScreen extends StatelessWidget {
 
 const double _bottomPadding = 56;
 
+enum TrashMenuAction { emptyTrash }
+
 class _TrashBody extends StatelessWidget {
+  List<Note> _trashNotes = [];
+
   @override
   Widget build(BuildContext context) {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
@@ -47,13 +51,54 @@ class _TrashBody extends StatelessWidget {
                       drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
                 ),
                 actions: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: PngIconButton(
-                      backgroundColor: appWhite,
-                        pngIcon:
-                            PngIcon(fileName: 'baseline_search_black_48.png'),
-                        onTap: () {}),
+                  PopupMenuButton<TrashMenuAction>(
+                    onSelected: (action) {
+                      if (action == TrashMenuAction.emptyTrash) {
+                        showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Empty Trash?',
+                                  style: cardTitleStyle,
+                                ),
+                                content: Text(
+                                    'All notes in Trash will be permanently deleted.'),
+                                titlePadding:
+                                    EdgeInsets.only(top: 24, left: 24),
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(24, 12, 24, 8),
+                                actionsPadding: EdgeInsets.zero,
+                                buttonPadding: EdgeInsets.only(right: 16),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Cancel',
+                                        style: dialogFlatButtonTextStyle),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      noteBloc.emptyTrash(_trashNotes);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Empty Trash',
+                                        style: dialogFlatButtonTextStyle),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+                    },
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => <PopupMenuEntry<TrashMenuAction>>[
+                      PopupMenuItem<TrashMenuAction>(
+                        value: TrashMenuAction.emptyTrash,
+                        child: Text('Empty Trash'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -62,6 +107,7 @@ class _TrashBody extends StatelessWidget {
                     stream: noteBloc.trashViewModelStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
+                        _trashNotes = snapshot.data.notes;
                         if (snapshot.data.notes.isNotEmpty) {
                           return Container(
                             margin: EdgeInsets.only(bottom: _bottomPadding),

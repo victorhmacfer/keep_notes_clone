@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -173,7 +170,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                         // I do this for grabbing an auto-incremented id
                         // for scheduling the new reminder
                         var newAlarmId = await noteBloc.addReminderAlarm();
-                        
+
                         notifier.saveReminderTime(newAlarmId);
                         Navigator.pop(context);
                       }

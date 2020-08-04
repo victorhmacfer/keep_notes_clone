@@ -96,6 +96,17 @@ class NoteRepository {
     dbHandler.deleteNote(note);
   }
 
+  void deleteManyNotes(List<Note> notes) {
+    List<Note> currentNotes = _notesBS.value;
+
+    for (var note in notes) {
+      var index = currentNotes.indexWhere((n) => n.id == note.id);
+      currentNotes.removeAt(index);
+      dbHandler.deleteNote(note);
+    }
+    _notesBS.add(currentNotes);
+  }
+
   Future<int> addReminderAlarm() async {
     return dbHandler.insertReminderAlarm();
   }

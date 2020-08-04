@@ -141,6 +141,10 @@ class NoteTrackingBloc {
     noteRepo.deleteNote(noteForPermanentDeletion);
   }
 
+  void emptyTrash(List<Note> trashNotes) {
+    noteRepo.deleteManyNotes(trashNotes);
+  }
+
   Future<bool> _labelAlreadyExists(String text) async {
     var lastLabelsEmitted = _sortedLabelsBS.value ?? [];
     if (lastLabelsEmitted.isEmpty) return false;
