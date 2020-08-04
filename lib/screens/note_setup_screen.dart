@@ -204,76 +204,81 @@ class _NoteSetupBody extends StatelessWidget {
 
     var noteLabels = notifier.futureLabels;
 
-    return Container(
-      color: notifier.selectedColor.getColor(),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: Container(
-                padding:
-                    EdgeInsets.only(top: 24, bottom: 72, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    TextField(
-                      controller: notifier.titleController,
-                      focusNode: notifier.titleFocusNode,
-                      onTap: () {
-                        notifier.closeLeftBottomSheet();
-                        notifier.closeRightBottomSheet();
-                      },
-                      onChanged: (text) {
-                        notifier.markNoteAsDirty();
-                      },
-                      keyboardType: TextInputType.text,
-                      minLines: 1,
-                      maxLines: 10,
-                      cursorWidth: 1,
-                      cursorColor: appIconGrey,
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: -0.5),
-                      decoration: InputDecoration.collapsed(
-                        hintText: 'Title',
-                        hintStyle:
-                            TextStyle(color: appGreyForColoredBg, fontSize: 23),
+    return GestureDetector(
+      onTap: () {
+        notifier.textFocusNode.requestFocus();
+      },
+          child: Container(
+        color: notifier.selectedColor.getColor(),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: Container(
+                  padding:
+                      EdgeInsets.only(top: 24, bottom: 72, left: 20, right: 20),
+                  child: Column(
+                    children: <Widget>[
+                      TextField(
+                        controller: notifier.titleController,
+                        focusNode: notifier.titleFocusNode,
+                        onTap: () {
+                          notifier.closeLeftBottomSheet();
+                          notifier.closeRightBottomSheet();
+                        },
+                        onChanged: (text) {
+                          notifier.markNoteAsDirty();
+                        },
+                        keyboardType: TextInputType.text,
+                        minLines: 1,
+                        maxLines: 10,
+                        cursorWidth: 1,
+                        cursorColor: appIconGrey,
+                        style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: -0.5),
+                        decoration: InputDecoration.collapsed(
+                          hintText: 'Title',
+                          hintStyle:
+                              TextStyle(color: appGreyForColoredBg, fontSize: 23),
+                        ),
                       ),
-                    ),
-                    TextField(
-                      controller: notifier.textController,
-                      focusNode: notifier.textFocusNode,
-                      autofocus: notifier.notEditing,
-                      scrollPadding: const EdgeInsets.all(56),
-                      onTap: () {
-                        notifier.closeLeftBottomSheet();
-                        notifier.closeRightBottomSheet();
-                      },
-                      onChanged: (text) {
-                        notifier.markNoteAsDirty();
-                      },
-                      keyboardType: TextInputType.multiline,
-                      minLines: 1,
-                      maxLines: 2000,
-                      cursorWidth: 1,
-                      cursorColor: appIconGrey,
-                      style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: -0.5),
-                      decoration: InputDecoration.collapsed(
-                        hintText: 'Note',
-                        hintStyle:
-                            TextStyle(color: appGreyForColoredBg, fontSize: 15),
+                      TextField(
+                        controller: notifier.textController,
+                        focusNode: notifier.textFocusNode,
+                        autofocus: notifier.notEditing,
+                        scrollPadding: const EdgeInsets.all(56),
+                        onTap: () {
+                          notifier.closeLeftBottomSheet();
+                          notifier.closeRightBottomSheet();
+                        },
+                        onChanged: (text) {
+                          notifier.markNoteAsDirty();
+                        },
+                        keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 2000,
+                        cursorWidth: 1,
+                        cursorColor: appIconGrey,
+                        style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: -0.5),
+                        decoration: InputDecoration.collapsed(
+                          hintText: 'Note',
+                          hintStyle:
+                              TextStyle(color: appGreyForColoredBg, fontSize: 15),
+                        ),
                       ),
-                    ),
-                    _noteChips(notifier.savedReminderTime,
-                        notifier.reminderExpired, noteLabels),
-                  ],
-                )),
-          )
-        ],
+                      _noteChips(notifier.savedReminderTime,
+                          notifier.reminderExpired, noteLabels),
+                    ],
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }
