@@ -430,7 +430,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    var lastEditedText = translateLastEdited(notifier.noteLastEdited);
+    var lastEditedText = noteSetupLastEditedText(notifier.noteLastEdited);
 
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
-import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 class Note {
   int id;
@@ -53,8 +52,7 @@ class Note {
     lastEdited = setupModel.noteLastEdited;
     reminderTime = setupModel.savedReminderTime;
     if (title.isEmpty && text.isEmpty && (reminderTime != null)) {
-      var instant = reminderNotificationDateText(reminderTime);
-      text = 'Reminder at $instant';
+      text = 'Empty reminder';
     }
     reminderAlarmId = setupModel.savedReminderAlarmId;
     labels = setupModel.labels ?? [];

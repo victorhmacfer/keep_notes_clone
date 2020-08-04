@@ -28,7 +28,7 @@ const _monthNames = {
   12: 'December',
 };
 
-String translateLastEdited(DateTime lastEdited) {
+String noteSetupLastEditedText(DateTime lastEdited) {
   var now = DateTime.now();
   var dayToday = now.day;
   var monthToday = now.month;
@@ -89,8 +89,9 @@ String chipReminderText(DateTime dateTime) {
     prefix =
         '${_monthAbbreviations[dateTime.month]} $dayZeroOrNothing${dateTime.day}';
   }
+  var yearInfix = (dateTime.year > today.year) ? ' ${dateTime.year},' : '';
 
-  return '$prefix, $hourZeroOrNothing${dateTime.hour}:$minuteZeroOrNothing${dateTime.minute}';
+  return '$prefix,$yearInfix $hourZeroOrNothing${dateTime.hour}:$minuteZeroOrNothing${dateTime.minute}';
 }
 
 String reminderNotificationDateText(DateTime dateTime) {
