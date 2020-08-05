@@ -7,6 +7,7 @@ import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
+import 'package:keep_notes_clone/screens/note_search_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
@@ -33,7 +34,8 @@ class _Body extends StatelessWidget {
   Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
     if (notifier.mode == NoteCardMode.extended) {
       return PngIconButton(
-        backgroundColor: appWhite,
+          backgroundColor: appWhite,
+          padding: EdgeInsets.symmetric(horizontal: 8),
           pngIcon: PngIcon(
             fileName: 'outline_dashboard_black_48.png',
           ),
@@ -42,7 +44,8 @@ class _Body extends StatelessWidget {
           });
     }
     return PngIconButton(
-      backgroundColor: appWhite,
+        backgroundColor: appWhite,
+        padding: EdgeInsets.symmetric(horizontal: 8),
         pngIcon: PngIcon(
           fileName: 'outline_view_agenda_black_48.png',
         ),
@@ -71,15 +74,21 @@ class _Body extends StatelessWidget {
                 ),
                 actions: <Widget>[
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 4),
                     child: PngIconButton(
-                      backgroundColor: appWhite,
+                        backgroundColor: appWhite,
+                        padding: EdgeInsets.symmetric(horizontal: 8),
                         pngIcon:
                             PngIcon(fileName: 'baseline_search_black_48.png'),
-                        onTap: () {}),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NoteSearchScreen()));
+                        }),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 4),
                     child: _selectNoteCardModeButton(notifier),
                   ),
                 ],
