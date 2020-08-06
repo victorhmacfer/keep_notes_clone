@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/custom_widgets/label_delete_confirmation.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
@@ -214,7 +215,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                 barrierDismissible:
                     true, // "shouldDelete" might be null as well.
                 context: context,
-                builder: _deleteConfirmationDialog,
+                builder: deleteConfirmationDialog,
               );
               if (shouldDelete) {
                 noteBloc.onDeleteLabel(widget.label);
@@ -274,48 +275,6 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                     Icons.create,
                     color: appIconGrey,
                   )),
-      ),
-    );
-  }
-}
-
-Widget _deleteConfirmationDialog(BuildContext context) {
-  return AlertDialog(
-    title: Text('Delete label?'),
-    titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
-    titleTextStyle: cardTitleStyle,
-    content: Text(
-        "We'll delete this label and remove it from all of your Keep notes. Your notes won't be deleted."),
-    contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-    actions: <Widget>[
-      _CustomFlatButton('Cancel', onTap: () {
-        Navigator.pop<bool>(context, false);
-      }),
-      _CustomFlatButton('Delete', onTap: () {
-        Navigator.pop<bool>(context, true);
-      }),
-    ],
-  );
-}
-
-class _CustomFlatButton extends StatelessWidget {
-  final String text;
-
-  final void Function() onTap;
-
-  _CustomFlatButton(this.text, {@required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.fromLTRB(0, 12, 12, 12),
-        color: appWhite,
-        child: Text(
-          text,
-          style: dialogFlatButtonTextStyle,
-        ),
       ),
     );
   }

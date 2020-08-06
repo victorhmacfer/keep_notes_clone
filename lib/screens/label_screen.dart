@@ -3,9 +3,12 @@ import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
+import 'package:keep_notes_clone/custom_widgets/label_delete_confirmation.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/screens/note_search_screen.dart';
@@ -35,10 +38,85 @@ class LabelScreen extends StatelessWidget {
 
 const double _bottomPadding = 56;
 
-class _Body extends StatelessWidget {
+enum LabelMenuAction { renameLabel, deleteLabel }
+
+class _Body extends StatefulWidget {
   final Label label;
 
-  _Body(this.label);
+  final TextEditingController labelRenamingController;
+
+  _Body(this.label)
+      : labelRenamingController = TextEditingController(text: label.name);
+
+  @override
+  __BodyState createState() => __BodyState();
+}
+
+class __BodyState extends State<_Body> {
+  String labelName;
+
+  @override
+  void initState() {
+    super.initState();
+    labelName = widget.label.name;
+  }
+
+  Widget _labelRenameDialog(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+
+    return AlertDialog(
+      insetPadding: EdgeInsets.zero,
+      title: Text('Rename label'),
+      titleTextStyle: cardTitleStyle,
+      content: SizedBox(
+        width: screenWidth * 0.7,
+        child: TextField(
+          controller: widget.labelRenamingController,
+          textAlignVertical: TextAlignVertical.center,
+          autofocus: true,
+          cursorColor: NoteColor.orange.getColor(),
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(bottom: 4),
+            enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: appDividerGrey, width: 2)),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: appDividerGrey, width: 2)),
+            errorBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 2)),
+          ),
+        ),
+      ),
+      titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
+      contentPadding: EdgeInsets.fromLTRB(24, 0, 24, 16),
+      actionsPadding: EdgeInsets.fromLTRB(0, 16, 4, 0),
+      buttonPadding: EdgeInsets.symmetric(horizontal: 8),
+      actions: <Widget>[
+        FlatButton(
+          color: appWhite,
+          onPressed: () {
+            widget.labelRenamingController.text = labelName;
+            Navigator.pop(context);
+          },
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Cancel',
+            style: cardTitleStyle.copyWith(fontSize: 14),
+          ),
+        ),
+        FlatButton(
+          color: NoteColor.orange.getColor(),
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          onPressed: () {
+            Navigator.pop<String>(context, widget.labelRenamingController.text);
+          },
+          child: Text(
+            'Rename',
+            style: cardTitleStyle.copyWith(fontSize: 14),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
     if (notifier.mode == NoteCardMode.extended) {
@@ -66,6 +144,8 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var notifier = Provider.of<NoteCardModeSelection>(context);
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
 
     return SafeArea(
         bottom: false,
@@ -77,13 +157,13 @@ class _Body extends StatelessWidget {
                 backgroundColor: appWhite,
                 iconTheme: IconThemeData(color: appIconGrey),
                 title: Text(
-                  label.name,
+                  widget.label.name,
                   style:
                       drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
                 ),
                 actions: <Widget>[
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    padding: EdgeInsets.only(right: 4),
                     child: PngIconButton(
                         backgroundColor: appWhite,
                         padding: EdgeInsets.symmetric(horizontal: 8),
@@ -96,18 +176,52 @@ class _Body extends StatelessWidget {
                                   builder: (context) => NoteSearchScreen()));
                         }),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: _selectNoteCardModeButton(notifier),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: PngIconButton(
-                        backgroundColor: appWhite,
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        pngIcon:
-                            PngIcon(fileName: 'outline_more_vert_black_48.png'),
-                        onTap: () {}),
+                  _selectNoteCardModeButton(notifier),
+                  PopupMenuButton<LabelMenuAction>(
+                    onSelected: (action) async {
+                      if (action == LabelMenuAction.renameLabel) {
+                        var newName = await showDialog<String>(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: _labelRenameDialog,
+                        );
+                        if (newName?.isNotEmpty ?? false) {
+                          widget.label.name = newName;
+                          noteBloc.onLabelEdited(widget.label);
+                          setState(() {
+                            labelName = newName;
+                          });
+                        }
+                      } else if (action == LabelMenuAction.deleteLabel) {
+                        var shouldDelete = await showDialog<bool>(
+                          barrierDismissible:
+                              true, // "shouldDelete" might be null as well.
+                          context: context,
+                          builder: deleteConfirmationDialog,
+                        );
+                        if (shouldDelete) {
+                          drawerScreenSelection.changeSelectedScreenToIndex(0);
+
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
+
+                          noteBloc.onDeleteLabel(widget.label);
+                        }
+                      }
+                    },
+                    icon: Icon(Icons.more_vert),
+                    itemBuilder: (context) => <PopupMenuEntry<LabelMenuAction>>[
+                      PopupMenuItem<LabelMenuAction>(
+                        value: LabelMenuAction.renameLabel,
+                        child: Text('Rename label'),
+                      ),
+                      PopupMenuItem<LabelMenuAction>(
+                        value: LabelMenuAction.deleteLabel,
+                        child: Text('Delete label'),
+                      ),
+                    ],
                   ),
                 ],
               ),
