@@ -55,6 +55,8 @@ class _Body extends StatefulWidget {
 class __BodyState extends State<_Body> {
   String labelName;
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +65,7 @@ class __BodyState extends State<_Body> {
 
   Widget _labelRenameDialog(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return AlertDialog(
       insetPadding: EdgeInsets.zero,
@@ -70,19 +73,32 @@ class __BodyState extends State<_Body> {
       titleTextStyle: cardTitleStyle,
       content: SizedBox(
         width: screenWidth * 0.7,
-        child: TextField(
-          controller: widget.labelRenamingController,
-          textAlignVertical: TextAlignVertical.center,
-          autofocus: true,
-          cursorColor: NoteColor.orange.getColor(),
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.only(bottom: 4),
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: appDividerGrey, width: 2)),
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: appDividerGrey, width: 2)),
-            errorBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.red, width: 2)),
+        child: Form(
+          key: _formKey,
+          child: TextFormField(
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Label name cannot be empty';
+              }
+
+              if (noteBloc.renameLabel(widget.label, value) == false) {
+                return 'This label name is already in use';
+              }
+              return null;
+            },
+            controller: widget.labelRenamingController,
+            textAlignVertical: TextAlignVertical.center,
+            autofocus: true,
+            cursorColor: NoteColor.orange.getColor(),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(bottom: 4),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: appDividerGrey, width: 2)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: appDividerGrey, width: 2)),
+              errorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red, width: 2)),
+            ),
           ),
         ),
       ),
@@ -107,7 +123,10 @@ class __BodyState extends State<_Body> {
           color: NoteColor.orange.getColor(),
           padding: EdgeInsets.symmetric(horizontal: 16),
           onPressed: () {
-            Navigator.pop<String>(context, widget.labelRenamingController.text);
+            if (_formKey.currentState.validate()) {
+              Navigator.pop<String>(
+                  context, widget.labelRenamingController.text);
+            }
           },
           child: Text(
             'Rename',
@@ -157,7 +176,7 @@ class __BodyState extends State<_Body> {
                 backgroundColor: appWhite,
                 iconTheme: IconThemeData(color: appIconGrey),
                 title: Text(
-                  widget.label.name,
+                  labelName,
                   style:
                       drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
                 ),
@@ -180,14 +199,12 @@ class __BodyState extends State<_Body> {
                   PopupMenuButton<LabelMenuAction>(
                     onSelected: (action) async {
                       if (action == LabelMenuAction.renameLabel) {
-                        var newName = await showDialog<String>(
+                        var newName = await showDialog(
                           barrierDismissible: false,
                           context: context,
                           builder: _labelRenameDialog,
                         );
                         if (newName?.isNotEmpty ?? false) {
-                          widget.label.name = newName;
-                          noteBloc.onLabelEdited(widget.label);
                           setState(() {
                             labelName = newName;
                           });

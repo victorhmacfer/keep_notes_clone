@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 // a Label object without an id.. since the id is used in equality comparison
 class Label extends Equatable {
   int id;
-  String name;
+  final String name;
 
   Label({this.id, this.name});
 

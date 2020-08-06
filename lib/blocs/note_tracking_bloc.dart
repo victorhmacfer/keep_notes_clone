@@ -80,7 +80,7 @@ class NoteTrackingBloc {
       _searchResultViewModelBS.stream;
 
   Stream<List<Label>> get sortedLabelsStream =>
-      noteRepo.allLabels.map(_sortLabelsAlphabetically);
+      _sortedLabelsBS.stream;
 
   Stream<NoteLabelingViewModel> get noteLabelingViewModelStream =>
       _noteLabelingViewModelBS.stream;
@@ -129,8 +129,22 @@ class NoteTrackingBloc {
     }
   }
 
-  void onLabelEdited(Label changedLabel) {
-    noteRepo.updateLabel(changedLabel);
+  bool renameLabel(Label label, String newName) {
+    var currentLabels = _sortedLabelsBS.value ?? [];
+
+    if (newName?.isEmpty ?? true) {
+      return false;
+    }
+
+    for (var lab in currentLabels) {
+      if (lab.name == newName) {
+        return false;
+      }
+    }
+    var renamedLabel = Label(id: label.id, name: newName);
+
+    noteRepo.updateLabel(renamedLabel);
+    return true;
   }
 
   void onDeleteLabel(Label label) {

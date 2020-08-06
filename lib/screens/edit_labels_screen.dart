@@ -264,10 +264,8 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                     icon: Icon(Icons.check),
                     color: appSettingsBlue,
                     onPressed: () {
-                      if (itemTextController.text.isNotEmpty) {
-                        widget.label.name = itemTextController.text;
-                        noteBloc.onLabelEdited(widget.label);
-                      }
+                      noteBloc.renameLabel(
+                          widget.label, itemTextController.text);
                       itemFocusNode.unfocus();
                     },
                   )

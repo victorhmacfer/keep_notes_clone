@@ -71,7 +71,11 @@ class NoteRepository {
     dbHandler.updateLabel(label);
 
     List<Label> currentLabels = _labelsBS.value;
+    var index = currentLabels.indexWhere((lab) => lab.id == label.id);
+    currentLabels[index] = label;
     _labelsBS.add(currentLabels);
+
+    _fetchNotes();
   }
 
   void deleteLabel(Label label) async {
