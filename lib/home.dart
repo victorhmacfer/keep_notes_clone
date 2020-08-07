@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
+import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
+import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -26,14 +28,17 @@ class HomeScreen extends StatelessWidget {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark));
 
-    return Scaffold(
-      backgroundColor: appWhite,
-      extendBody: true, // making the bottom bar notch transparent
-      floatingActionButton: MyCustomFab(),
-      floatingActionButtonLocation: MyCustomFabLocation(),
-      bottomNavigationBar: MyNotchedBottomAppBar(),
-      drawer: MyDrawer(),
-      body: _Body(),
+    return ChangeNotifierProvider<MultiNoteSelection>(
+      create: (context) => MultiNoteSelection(),
+      child: Scaffold(
+        backgroundColor: appWhite,
+        extendBody: true, // making the bottom bar notch transparent
+        floatingActionButton: MyCustomFab(),
+        floatingActionButtonLocation: MyCustomFabLocation(),
+        bottomNavigationBar: MyNotchedBottomAppBar(),
+        drawer: MyDrawer(),
+        body: _Body(),
+      ),
     );
   }
 }
@@ -41,13 +46,17 @@ class HomeScreen extends StatelessWidget {
 class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
+
     return SafeArea(
       top: false,
       bottom: false,
       child: Container(
         child: CustomScrollView(
           slivers: <Widget>[
-            SearchAppBar(),
+            (multiNoteSelection.inactive)
+                ? SearchAppBar()
+                : MultiNoteSelectionAppBar(multiNoteSelection),
             SliverToBoxAdapter(
               child: _StreamBuilderBody(),
             ),

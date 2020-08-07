@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
+import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/note_search_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -16,10 +18,13 @@ import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 class ArchiveScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: appWhite,
-      drawer: MyDrawer(),
-      body: _ArchiveBody(),
+    return ChangeNotifierProvider<MultiNoteSelection>(
+      create: (context) => MultiNoteSelection(),
+      child: Scaffold(
+        backgroundColor: appWhite,
+        drawer: MyDrawer(),
+        body: _ArchiveBody(),
+      ),
     );
   }
 }
@@ -27,6 +32,28 @@ class ArchiveScreen extends StatelessWidget {
 const double _bottomPadding = 56;
 
 class _ArchiveBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
+
+    return SafeArea(
+        top: false,
+        child: Container(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              (multiNoteSelection.inactive)
+                  ? _SliverAppBar()
+                  : MultiNoteSelectionAppBar(multiNoteSelection),
+              SliverToBoxAdapter(
+                child: _StreamBuilderBody(),
+              ),
+            ],
+          ),
+        ));
+  }
+}
+
+class _SliverAppBar extends StatelessWidget {
   Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
     if (notifier.mode == NoteCardMode.extended) {
       return PngIconButton(
@@ -54,48 +81,35 @@ class _ArchiveBody extends StatelessWidget {
   Widget build(BuildContext context) {
     var notifier = Provider.of<NoteCardModeSelection>(context);
 
-    return SafeArea(
-        top: false,
-        child: Container(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                brightness: Brightness.light,
-                floating: true,
-                backgroundColor: appWhite,
-                iconTheme: IconThemeData(color: appIconGrey),
-                title: Text(
-                  'Archive',
-                  style:
-                      drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
-                ),
-                actions: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: PngIconButton(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        backgroundColor: appWhite,
-                        pngIcon:
-                            PngIcon(fileName: 'baseline_search_black_48.png'),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NoteSearchScreen()));
-                        }),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: _selectNoteCardModeButton(notifier),
-                  ),
-                ],
-              ),
-              SliverToBoxAdapter(
-                child: _StreamBuilderBody(),
-              ),
-            ],
-          ),
-        ));
+    return SliverAppBar(
+      brightness: Brightness.light,
+      floating: true,
+      backgroundColor: appWhite,
+      iconTheme: IconThemeData(color: appIconGrey),
+      title: Text(
+        'Archive',
+        style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              backgroundColor: appWhite,
+              pngIcon: PngIcon(fileName: 'baseline_search_black_48.png'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NoteSearchScreen()));
+              }),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4),
+          child: _selectNoteCardModeButton(notifier),
+        ),
+      ],
+    );
   }
 }
 

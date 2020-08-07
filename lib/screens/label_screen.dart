@@ -4,11 +4,13 @@ import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 import 'package:keep_notes_clone/custom_widgets/label_delete_confirmation.dart';
+import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
+import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/screens/note_search_screen.dart';
@@ -24,14 +26,17 @@ class LabelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: appWhite,
-      extendBody: true,
-      floatingActionButton: MyCustomFab(label: label),
-      floatingActionButtonLocation: MyCustomFabLocation(),
-      bottomNavigationBar: MyNotchedBottomAppBar(),
-      drawer: MyDrawer(),
-      body: _Body(label),
+    return ChangeNotifierProvider<MultiNoteSelection>(
+      create: (context) => MultiNoteSelection(),
+      child: Scaffold(
+        backgroundColor: appWhite,
+        extendBody: true,
+        floatingActionButton: MyCustomFab(label: label),
+        floatingActionButtonLocation: MyCustomFabLocation(),
+        bottomNavigationBar: MyNotchedBottomAppBar(),
+        drawer: MyDrawer(),
+        body: _Body(label),
+      ),
     );
   }
 }
@@ -160,88 +165,98 @@ class __BodyState extends State<_Body> {
         });
   }
 
+  Widget _sliverAppBar(
+      {@required NoteTrackingBloc noteBloc,
+      @required NoteCardModeSelection cardModeNotifier,
+      @required DrawerScreenSelection drawerScreenSelection}) {
+    return SliverAppBar(
+      floating: true,
+      backgroundColor: appWhite,
+      iconTheme: IconThemeData(color: appIconGrey),
+      title: Text(
+        labelName,
+        style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 4),
+          child: PngIconButton(
+              backgroundColor: appWhite,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              pngIcon: PngIcon(fileName: 'baseline_search_black_48.png'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NoteSearchScreen()));
+              }),
+        ),
+        _selectNoteCardModeButton(cardModeNotifier),
+        PopupMenuButton<LabelMenuAction>(
+          onSelected: (action) async {
+            if (action == LabelMenuAction.renameLabel) {
+              var newName = await showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: _labelRenameDialog,
+              );
+              if (newName?.isNotEmpty ?? false) {
+                setState(() {
+                  labelName = newName;
+                });
+              }
+            } else if (action == LabelMenuAction.deleteLabel) {
+              var shouldDelete = await showDialog<bool>(
+                barrierDismissible:
+                    true, // "shouldDelete" might be null as well.
+                context: context,
+                builder: deleteConfirmationDialog,
+              );
+              if (shouldDelete) {
+                drawerScreenSelection.changeSelectedScreenToIndex(0);
+
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+
+                noteBloc.onDeleteLabel(widget.label);
+              }
+            }
+          },
+          icon: Icon(Icons.more_vert),
+          itemBuilder: (context) => <PopupMenuEntry<LabelMenuAction>>[
+            PopupMenuItem<LabelMenuAction>(
+              value: LabelMenuAction.renameLabel,
+              child: Text('Rename label'),
+            ),
+            PopupMenuItem<LabelMenuAction>(
+              value: LabelMenuAction.deleteLabel,
+              child: Text('Delete label'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    var notifier = Provider.of<NoteCardModeSelection>(context);
+    var noteCardModeNotifier = Provider.of<NoteCardModeSelection>(context);
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
     var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
+
+    var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
 
     return SafeArea(
         bottom: false,
         child: Container(
           child: CustomScrollView(
             slivers: <Widget>[
-              SliverAppBar(
-                floating: true,
-                backgroundColor: appWhite,
-                iconTheme: IconThemeData(color: appIconGrey),
-                title: Text(
-                  labelName,
-                  style:
-                      drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
-                ),
-                actions: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(right: 4),
-                    child: PngIconButton(
-                        backgroundColor: appWhite,
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        pngIcon:
-                            PngIcon(fileName: 'baseline_search_black_48.png'),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NoteSearchScreen()));
-                        }),
-                  ),
-                  _selectNoteCardModeButton(notifier),
-                  PopupMenuButton<LabelMenuAction>(
-                    onSelected: (action) async {
-                      if (action == LabelMenuAction.renameLabel) {
-                        var newName = await showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: _labelRenameDialog,
-                        );
-                        if (newName?.isNotEmpty ?? false) {
-                          setState(() {
-                            labelName = newName;
-                          });
-                        }
-                      } else if (action == LabelMenuAction.deleteLabel) {
-                        var shouldDelete = await showDialog<bool>(
-                          barrierDismissible:
-                              true, // "shouldDelete" might be null as well.
-                          context: context,
-                          builder: deleteConfirmationDialog,
-                        );
-                        if (shouldDelete) {
-                          drawerScreenSelection.changeSelectedScreenToIndex(0);
-
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen()));
-
-                          noteBloc.onDeleteLabel(widget.label);
-                        }
-                      }
-                    },
-                    icon: Icon(Icons.more_vert),
-                    itemBuilder: (context) => <PopupMenuEntry<LabelMenuAction>>[
-                      PopupMenuItem<LabelMenuAction>(
-                        value: LabelMenuAction.renameLabel,
-                        child: Text('Rename label'),
-                      ),
-                      PopupMenuItem<LabelMenuAction>(
-                        value: LabelMenuAction.deleteLabel,
-                        child: Text('Delete label'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              (multiNoteSelection.inactive)
+                  ? _sliverAppBar(
+                      noteBloc: noteBloc,
+                      cardModeNotifier: noteCardModeNotifier,
+                      drawerScreenSelection: drawerScreenSelection)
+                  : MultiNoteSelectionAppBar(multiNoteSelection),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),
               ),

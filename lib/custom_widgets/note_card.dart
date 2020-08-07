@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'package:keep_notes_clone/screens/deleted_note_setup_screen.dart';
+import 'package:provider/provider.dart';
 
 class ExtendedNoteCard extends StatelessWidget {
   final Note note;
@@ -58,18 +60,35 @@ class ExtendedNoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
+
+    var cardBorder = (multiNoteSelection.isSelected(note))
+        ? Border.all(color: appBlack, width: 2)
+        : Border.all(color: appCardBorderGrey, width: 1);
+
     return GestureDetector(
       onTap: () {
-        if (note.deleted) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DeletedNoteSetupScreen(note: note)));
+        if (multiNoteSelection.active) {
+          multiNoteSelection.toggleNote(note);
         } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => NoteSetupScreen(note: note)));
+          if (note.deleted) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DeletedNoteSetupScreen(note: note)));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NoteSetupScreen(note: note)));
+          }
+        }
+      },
+      onLongPress: () {
+        if (multiNoteSelection.inactive) {
+          multiNoteSelection.addNote(note);
+        } else {
+          multiNoteSelection.toggleNote(note);
         }
       },
       child: Container(
@@ -78,7 +97,7 @@ class ExtendedNoteCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: _color.getColor(),
-          border: Border.all(color: appCardBorderGrey),
+          border: cardBorder,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -288,20 +307,37 @@ class SmallNoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
 
+    var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
+
     var heightEstimation = estimateHeight(note, mediaQuery.textScaleFactor);
+
+    var cardBorder = (multiNoteSelection.isSelected(note))
+        ? Border.all(color: appBlack, width: 2)
+        : Border.all(color: appCardBorderGrey, width: 1);
 
     return GestureDetector(
       onTap: () {
-        if (note.deleted) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DeletedNoteSetupScreen(note: note)));
+        if (multiNoteSelection.active) {
+          multiNoteSelection.toggleNote(note);
         } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => NoteSetupScreen(note: note)));
+          if (note.deleted) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DeletedNoteSetupScreen(note: note)));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NoteSetupScreen(note: note)));
+          }
+        }
+      },
+      onLongPress: () {
+        if (multiNoteSelection.inactive) {
+          multiNoteSelection.addNote(note);
+        } else {
+          multiNoteSelection.toggleNote(note);
         }
       },
       child: ConstrainedBox(
@@ -318,7 +354,7 @@ class SmallNoteCard extends StatelessWidget {
           padding: EdgeInsets.all(_padding),
           decoration: BoxDecoration(
             color: _color.getColor(),
-            border: Border.all(color: appCardBorderGrey),
+            border: cardBorder,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
