@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 
 class MultiNoteSelection with ChangeNotifier {
   bool active = false;
@@ -67,5 +68,11 @@ class MultiNoteSelection with ChangeNotifier {
     } else {
       addNote(note);
     }
+  }
+
+  void changeColorTo(NoteColor newColor) {
+    _selectedNotes.forEach((note) {
+      note.colorIndex = newColor.index;
+    });
   }
 }
