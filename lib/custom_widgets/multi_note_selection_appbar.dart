@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -24,6 +25,69 @@ class MultiNoteSelectionAppBar extends StatelessWidget {
         notifier.selectedCount.toString(),
         style: cardTitleStyle.copyWith(fontSize: 19, color: appSettingsBlue),
       ),
+      actionsIconTheme: IconThemeData(color: appSettingsBlue),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_push_pin_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_add_alert_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_palette_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_label_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_more_vert_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+      ],
     );
   }
 }
