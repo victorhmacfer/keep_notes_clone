@@ -112,6 +112,7 @@ class _DeletedNoteSetupBody extends StatelessWidget {
                             TextStyle(color: appGreyForColoredBg, fontSize: 23),
                       ),
                     ),
+                    SizedBox(height: 12),
                     TextField(
                       readOnly: true,
                       controller: notifier.textController,
@@ -206,14 +207,14 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 PngIconButton(
-                  backgroundColor: notifier.selectedColor.getColor(),
+                    backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
                       fileName: 'outline_add_box_black_48.png',
                       iconColor: appGreyForColoredBg,
                     ),
                     onTap: () {}),
                 PngIconButton(
-                  backgroundColor: notifier.selectedColor.getColor(),
+                    backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
                       iconColor: appIconGreyForColoredBg,

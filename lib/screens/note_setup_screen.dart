@@ -92,7 +92,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
-            backgroundColor: notifier.selectedColor.getColor(),
+              backgroundColor: notifier.selectedColor.getColor(),
               pngIcon: (notifier.isPinned)
                   ? PngIcon(
                       fileName: 'baseline_push_pin_black_48.png',
@@ -111,7 +111,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
-            backgroundColor: notifier.selectedColor.getColor(),
+              backgroundColor: notifier.selectedColor.getColor(),
               pngIcon: PngIcon(
                 fileName: 'outline_add_alert_black_48.png',
                 iconColor: appIconGreyForColoredBg,
@@ -121,15 +121,14 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                   context: context,
                   builder: (context) =>
                       ChangeNotifierProvider<NoteSetupScreenController>.value(
-                          value: notifier,
-                          child: ReminderSetupDialog()),
+                          value: notifier, child: ReminderSetupDialog()),
                 );
               }),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
-            backgroundColor: notifier.selectedColor.getColor(),
+              backgroundColor: notifier.selectedColor.getColor(),
               pngIcon: (shouldUnarchive)
                   ? PngIcon(
                       fileName: 'outline_unarchive_black_48.png',
@@ -208,7 +207,7 @@ class _NoteSetupBody extends StatelessWidget {
       onTap: () {
         notifier.textFocusNode.requestFocus();
       },
-          child: Container(
+      child: Container(
         color: notifier.selectedColor.getColor(),
         child: CustomScrollView(
           slivers: <Widget>[
@@ -240,10 +239,11 @@ class _NoteSetupBody extends StatelessWidget {
                             letterSpacing: -0.5),
                         decoration: InputDecoration.collapsed(
                           hintText: 'Title',
-                          hintStyle:
-                              TextStyle(color: appGreyForColoredBg, fontSize: 23),
+                          hintStyle: TextStyle(
+                              color: appGreyForColoredBg, fontSize: 23),
                         ),
                       ),
+                      SizedBox(height: 12),
                       TextField(
                         controller: notifier.textController,
                         focusNode: notifier.textFocusNode,
@@ -268,8 +268,8 @@ class _NoteSetupBody extends StatelessWidget {
                             letterSpacing: -0.5),
                         decoration: InputDecoration.collapsed(
                           hintText: 'Note',
-                          hintStyle:
-                              TextStyle(color: appGreyForColoredBg, fontSize: 15),
+                          hintStyle: TextStyle(
+                              color: appGreyForColoredBg, fontSize: 15),
                         ),
                       ),
                       _noteChips(notifier.savedReminderTime,
@@ -443,7 +443,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 PngIconButton(
-                  backgroundColor: notifier.selectedColor.getColor(),
+                    backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
                       fileName: 'outline_add_box_black_48.png',
                       iconColor: appIconGreyForColoredBg,
@@ -470,7 +470,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                   style: TextStyle(color: appVeryDarkGreyForColoredBg),
                 ),
                 PngIconButton(
-                  backgroundColor: notifier.selectedColor.getColor(),
+                    backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
                       iconColor: appIconGreyForColoredBg,
