@@ -35,6 +35,7 @@ class _ArchiveBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return SafeArea(
         top: false,
@@ -43,7 +44,7 @@ class _ArchiveBody extends StatelessWidget {
             slivers: <Widget>[
               (multiNoteSelection.inactive)
                   ? _SliverAppBar()
-                  : MultiNoteSelectionAppBar(multiNoteSelection),
+                  : MultiNoteSelectionAppBar(notifier: multiNoteSelection, noteBloc: noteBloc,),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),
               ),

@@ -39,6 +39,7 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
 
     return SafeArea(
         bottom: false,
@@ -47,7 +48,10 @@ class _Body extends StatelessWidget {
             slivers: <Widget>[
               (multiNoteSelection.inactive)
                   ? _RemindersAppBar()
-                  : MultiNoteSelectionAppBar(multiNoteSelection),
+                  : MultiNoteSelectionAppBar(
+                      notifier: multiNoteSelection,
+                      noteBloc: noteBloc,
+                    ),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),
               ),

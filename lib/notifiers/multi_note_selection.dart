@@ -8,9 +8,34 @@ class MultiNoteSelection with ChangeNotifier {
 
   int get selectedCount => _selectedNotes.length;
 
+  List<Note> get selectedNotes => List.unmodifiable(_selectedNotes);
+
   bool get inactive => !active;
 
   bool isSelected(Note note) => _selectedNotes.contains(note);
+
+  void Function() get pinOrUnpin => (willPin) ? _pin : _unpin;
+
+  bool get willPin {
+    for (var note in _selectedNotes) {
+      if (note.pinned == false) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void _pin() {
+    _selectedNotes.forEach((n) {
+      n.pinned = true;
+    });
+  }
+
+  void _unpin() {
+    _selectedNotes.forEach((n) {
+      n.pinned = false;
+    });
+  }
 
   void cancel() {
     active = false;

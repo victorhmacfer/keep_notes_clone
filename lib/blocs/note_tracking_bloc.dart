@@ -122,6 +122,10 @@ class NoteTrackingBloc {
     noteRepo.updateNote(changedNote);
   }
 
+  void manyNotesChanged(List<Note> changedNotes) {
+    noteRepo.updateManyNotes(changedNotes);
+  }
+
   void onCreateNewLabel(String text) async {
     var labelExists = await _labelAlreadyExists(text);
     if (labelExists == false) {

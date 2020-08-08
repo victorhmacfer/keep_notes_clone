@@ -111,6 +111,15 @@ class NoteRepository {
     _notesBS.add(currentNotes);
   }
 
+  void updateManyNotes(List<Note> notes) {
+    List<Note> currentNotes = _notesBS.value;
+
+    for (var note in notes) {
+      dbHandler.updateNote(note);
+    }
+    _notesBS.add(currentNotes);
+  }
+
   Future<int> addReminderAlarm() async {
     return dbHandler.insertReminderAlarm();
   }

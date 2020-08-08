@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -6,8 +7,9 @@ import 'package:keep_notes_clone/utils/styles.dart';
 
 class MultiNoteSelectionAppBar extends StatelessWidget {
   final MultiNoteSelection notifier;
+  final NoteTrackingBloc noteBloc;
 
-  MultiNoteSelectionAppBar(this.notifier);
+  MultiNoteSelectionAppBar({@required this.notifier, @required this.noteBloc});
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +33,18 @@ class MultiNoteSelectionAppBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: PngIconButton(
             pngIcon: PngIcon(
-              fileName: 'outline_push_pin_black_48.png',
+              fileName: (notifier.willPin)
+                  ? 'outline_push_pin_black_48.png'
+                  : 'baseline_push_pin_black_48.png',
               iconColor: appSettingsBlue,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 7),
-            onTap: () {},
+            onTap: () {
+              notifier.pinOrUnpin();
+              var changedNotes = notifier.selectedNotes;
+              noteBloc.manyNotesChanged(changedNotes);
+              notifier.cancel();
+            },
             backgroundColor: appWhite,
           ),
         ),
