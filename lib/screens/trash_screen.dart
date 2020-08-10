@@ -112,7 +112,7 @@ class _TrashBody extends StatelessWidget {
             slivers: <Widget>[
               (multiNoteSelection.inactive)
                   ? _sliverAppBar(noteBloc: noteBloc, context: context)
-                  : MultiNoteSelectionAppBar(
+                  : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
                       noteBloc: noteBloc,
                     ),

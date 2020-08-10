@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/notifiers/note_search_state.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
@@ -18,12 +20,34 @@ var _decorationWithGreyUpperBorder = BoxDecoration(
 class NoteSearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NoteSearchStateNotifier>(
-      create: (context) => NoteSearchStateNotifier(),
-      child: Scaffold(
-        appBar: _NoteSearchAppBar(),
-        body: _BodyPicker(),
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NoteSearchStateNotifier>(
+          create: (context) => NoteSearchStateNotifier(),
+        ),
+        ChangeNotifierProvider<MultiNoteSelection>(
+          create: (context) => MultiNoteSelection(),
+        ),
+      ],
+      child: _SearchScaffold(),
+    );
+  }
+}
+
+class _SearchScaffold extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
+    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+
+    return Scaffold(
+      appBar: (multiNoteSelection.inactive)
+          ? _NoteSearchAppBar()
+          : BoxMultiNoteSelectionAppBar(
+              notifier: multiNoteSelection,
+              noteBloc: noteBloc,
+            ),
+      body: _BodyPicker(),
     );
   }
 }

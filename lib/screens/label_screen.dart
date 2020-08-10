@@ -256,7 +256,7 @@ class __BodyState extends State<_Body> {
                       noteBloc: noteBloc,
                       cardModeNotifier: noteCardModeNotifier,
                       drawerScreenSelection: drawerScreenSelection)
-                  : MultiNoteSelectionAppBar(
+                  : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
                       noteBloc: noteBloc,
                     ),

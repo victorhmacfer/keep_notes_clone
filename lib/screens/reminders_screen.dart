@@ -48,7 +48,7 @@ class _Body extends StatelessWidget {
             slivers: <Widget>[
               (multiNoteSelection.inactive)
                   ? _RemindersAppBar()
-                  : MultiNoteSelectionAppBar(
+                  : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
                       noteBloc: noteBloc,
                     ),

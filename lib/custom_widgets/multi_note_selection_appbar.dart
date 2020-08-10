@@ -5,16 +5,133 @@ import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
-class MultiNoteSelectionAppBar extends StatelessWidget {
+//FIXME: the appbars are DUPLICATED !!! fix later
+
+class SliverMultiNoteSelectionAppBar extends StatelessWidget {
   final MultiNoteSelection notifier;
   final NoteTrackingBloc noteBloc;
 
-  MultiNoteSelectionAppBar({@required this.notifier, @required this.noteBloc});
+  SliverMultiNoteSelectionAppBar(
+      {@required this.notifier, @required this.noteBloc});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       pinned: true,
+      brightness: Brightness.light,
+      backgroundColor: appWhite,
+      leading: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            notifier.cancel();
+          }),
+      iconTheme: IconThemeData(color: appSettingsBlue),
+      title: Text(
+        notifier.selectedCount.toString(),
+        style: cardTitleStyle.copyWith(fontSize: 19, color: appSettingsBlue),
+      ),
+      actionsIconTheme: IconThemeData(color: appSettingsBlue),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: (notifier.willPin)
+                  ? 'outline_push_pin_black_48.png'
+                  : 'baseline_push_pin_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {
+              notifier.pinOrUnpin();
+              var changedNotes = notifier.selectedNotes;
+              noteBloc.manyNotesChanged(changedNotes);
+              notifier.cancel();
+            },
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_add_alert_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_palette_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () async {
+              var newColor = await showDialog<NoteColor>(
+                context: context,
+                builder: _changeColorDialog,
+                barrierDismissible: true,
+              );
+              if (newColor != null) {
+                notifier.changeColorTo(newColor);
+                var changedNotes = notifier.selectedNotes;
+                noteBloc.manyNotesChanged(changedNotes);
+                notifier.cancel();
+              }
+            },
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_label_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: PngIconButton(
+            pngIcon: PngIcon(
+              fileName: 'outline_more_vert_black_48.png',
+              iconColor: appSettingsBlue,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
+            onTap: () {},
+            backgroundColor: appWhite,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+//FIXME: the appbars are DUPLICATED !!! fix later
+
+class BoxMultiNoteSelectionAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final MultiNoteSelection notifier;
+  final NoteTrackingBloc noteBloc;
+
+  BoxMultiNoteSelectionAppBar(
+      {@required this.notifier, @required this.noteBloc});
+
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
       brightness: Brightness.light,
       backgroundColor: appWhite,
       leading: IconButton(
