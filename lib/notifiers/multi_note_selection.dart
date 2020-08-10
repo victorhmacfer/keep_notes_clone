@@ -44,6 +44,18 @@ class MultiNoteSelection with ChangeNotifier {
     notifyListeners();
   }
 
+  void archive() {
+    _selectedNotes.forEach((n) {
+      n.archived = true;
+    });
+  }
+
+  void delete() {
+    _selectedNotes.forEach((n) {
+      n.delete();
+    });
+  }
+
   void addNote(Note note) {
     if (inactive) {
       assert(selectedCount == 0);

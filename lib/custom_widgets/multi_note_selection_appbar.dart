@@ -7,6 +7,8 @@ import 'package:keep_notes_clone/utils/styles.dart';
 
 //FIXME: the appbars are DUPLICATED !!! fix later
 
+enum _MultiNoteMenuAction { archive, delete }
+
 class SliverMultiNoteSelectionAppBar extends StatelessWidget {
   final MultiNoteSelection notifier;
   final NoteTrackingBloc noteBloc;
@@ -99,17 +101,34 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
             backgroundColor: appWhite,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: PngIconButton(
-            pngIcon: PngIcon(
-              fileName: 'outline_more_vert_black_48.png',
-              iconColor: appSettingsBlue,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 7),
-            onTap: () {},
-            backgroundColor: appWhite,
+        PopupMenuButton<_MultiNoteMenuAction>(
+          icon: Icon(
+            Icons.more_vert,
+            color: appSettingsBlue,
           ),
+          onSelected: (action) {
+            if (action == _MultiNoteMenuAction.archive) {
+              notifier.archive();
+              var changedNotes = notifier.selectedNotes;
+              noteBloc.manyNotesChanged(changedNotes);
+              notifier.cancel();
+            } else if (action == _MultiNoteMenuAction.delete) {
+              notifier.delete();
+              var changedNotes = notifier.selectedNotes;
+              noteBloc.manyNotesChanged(changedNotes);
+              notifier.cancel();
+            }
+          },
+          itemBuilder: (context) => <PopupMenuEntry<_MultiNoteMenuAction>>[
+            PopupMenuItem<_MultiNoteMenuAction>(
+              value: _MultiNoteMenuAction.archive,
+              child: Text('Archive'),
+            ),
+            PopupMenuItem<_MultiNoteMenuAction>(
+              value: _MultiNoteMenuAction.delete,
+              child: Text('Delete'),
+            ),
+          ],
         ),
       ],
     );
@@ -118,13 +137,13 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
 
 //FIXME: the appbars are DUPLICATED !!! fix later
 
-class BoxMultiNoteSelectionAppBar extends StatelessWidget implements PreferredSizeWidget {
+class BoxMultiNoteSelectionAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final MultiNoteSelection notifier;
   final NoteTrackingBloc noteBloc;
 
   BoxMultiNoteSelectionAppBar(
       {@required this.notifier, @required this.noteBloc});
-
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -213,17 +232,34 @@ class BoxMultiNoteSelectionAppBar extends StatelessWidget implements PreferredSi
             backgroundColor: appWhite,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: PngIconButton(
-            pngIcon: PngIcon(
-              fileName: 'outline_more_vert_black_48.png',
-              iconColor: appSettingsBlue,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 7),
-            onTap: () {},
-            backgroundColor: appWhite,
+        PopupMenuButton<_MultiNoteMenuAction>(
+          icon: Icon(
+            Icons.more_vert,
+            color: appSettingsBlue,
           ),
+          onSelected: (action) {
+            if (action == _MultiNoteMenuAction.archive) {
+              notifier.archive();
+              var changedNotes = notifier.selectedNotes;
+              noteBloc.manyNotesChanged(changedNotes);
+              notifier.cancel();
+            } else if (action == _MultiNoteMenuAction.delete) {
+              notifier.delete();
+              var changedNotes = notifier.selectedNotes;
+              noteBloc.manyNotesChanged(changedNotes);
+              notifier.cancel();
+            }
+          },
+          itemBuilder: (context) => <PopupMenuEntry<_MultiNoteMenuAction>>[
+            PopupMenuItem<_MultiNoteMenuAction>(
+              value: _MultiNoteMenuAction.archive,
+              child: Text('Archive'),
+            ),
+            PopupMenuItem<_MultiNoteMenuAction>(
+              value: _MultiNoteMenuAction.delete,
+              child: Text('Delete'),
+            ),
+          ],
         ),
       ],
     );
