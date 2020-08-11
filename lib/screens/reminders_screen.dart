@@ -50,7 +50,7 @@ class _Body extends StatelessWidget {
                   ? _RemindersAppBar()
                   : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
-                      noteBloc: noteBloc,
+                      noteChangerBloc: noteBloc,
                     ),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),

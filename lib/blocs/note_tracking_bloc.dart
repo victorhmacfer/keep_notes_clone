@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:keep_notes_clone/blocs/bloc_base.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
@@ -15,8 +16,8 @@ import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
-class NoteTrackingBloc {
-  NoteRepository noteRepo;
+class NoteTrackingBloc implements NoteChangerBloc{
+  final NoteRepository noteRepo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
@@ -37,9 +38,7 @@ class NoteTrackingBloc {
   final _searchLandingPageViewModelBS =
       BehaviorSubject<SearchLandingPageViewModel>();
 
-  NoteTrackingBloc() {
-    noteRepo = NoteRepository();
-
+  NoteTrackingBloc(this.noteRepo) {
     noteRepo.allLabels.listen((labelList) {
       _sortedLabelsBS.add(_sortLabelsAlphabetically(labelList));
     });
@@ -79,8 +78,7 @@ class NoteTrackingBloc {
   Stream<SearchResultViewModel> get searchResultViewModelStream =>
       _searchResultViewModelBS.stream;
 
-  Stream<List<Label>> get sortedLabelsStream =>
-      _sortedLabelsBS.stream;
+  Stream<List<Label>> get sortedLabelsStream => _sortedLabelsBS.stream;
 
   Stream<NoteLabelingViewModel> get noteLabelingViewModelStream =>
       _noteLabelingViewModelBS.stream;

@@ -44,7 +44,10 @@ class _ArchiveBody extends StatelessWidget {
             slivers: <Widget>[
               (multiNoteSelection.inactive)
                   ? _SliverAppBar()
-                  : SliverMultiNoteSelectionAppBar(notifier: multiNoteSelection, noteBloc: noteBloc,),
+                  : SliverMultiNoteSelectionAppBar(
+                      notifier: multiNoteSelection,
+                      noteChangerBloc: noteBloc,
+                    ),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),
               ),

@@ -258,7 +258,7 @@ class __BodyState extends State<_Body> {
                       drawerScreenSelection: drawerScreenSelection)
                   : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
-                      noteBloc: noteBloc,
+                      noteChangerBloc: noteBloc,
                     ),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),

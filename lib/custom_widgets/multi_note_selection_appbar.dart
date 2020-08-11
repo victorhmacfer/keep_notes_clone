@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/bloc_base.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -11,10 +11,10 @@ enum _MultiNoteMenuAction { archive, delete }
 
 class SliverMultiNoteSelectionAppBar extends StatelessWidget {
   final MultiNoteSelection notifier;
-  final NoteTrackingBloc noteBloc;
+  final NoteChangerBloc noteChangerBloc;
 
   SliverMultiNoteSelectionAppBar(
-      {@required this.notifier, @required this.noteBloc});
+      {@required this.notifier, @required this.noteChangerBloc});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
             onTap: () {
               notifier.pinOrUnpin();
               var changedNotes = notifier.selectedNotes;
-              noteBloc.manyNotesChanged(changedNotes);
+              noteChangerBloc.manyNotesChanged(changedNotes);
               notifier.cancel();
             },
             backgroundColor: appWhite,
@@ -82,7 +82,7 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
               if (newColor != null) {
                 notifier.changeColorTo(newColor);
                 var changedNotes = notifier.selectedNotes;
-                noteBloc.manyNotesChanged(changedNotes);
+                noteChangerBloc.manyNotesChanged(changedNotes);
                 notifier.cancel();
               }
             },
@@ -110,12 +110,12 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
             if (action == _MultiNoteMenuAction.archive) {
               notifier.archive();
               var changedNotes = notifier.selectedNotes;
-              noteBloc.manyNotesChanged(changedNotes);
+              noteChangerBloc.manyNotesChanged(changedNotes);
               notifier.cancel();
             } else if (action == _MultiNoteMenuAction.delete) {
               notifier.delete();
               var changedNotes = notifier.selectedNotes;
-              noteBloc.manyNotesChanged(changedNotes);
+              noteChangerBloc.manyNotesChanged(changedNotes);
               notifier.cancel();
             }
           },
@@ -140,10 +140,10 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
 class BoxMultiNoteSelectionAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final MultiNoteSelection notifier;
-  final NoteTrackingBloc noteBloc;
+  final NoteChangerBloc noteChangerBloc;
 
   BoxMultiNoteSelectionAppBar(
-      {@required this.notifier, @required this.noteBloc});
+      {@required this.notifier, @required this.noteChangerBloc});
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -178,7 +178,7 @@ class BoxMultiNoteSelectionAppBar extends StatelessWidget
             onTap: () {
               notifier.pinOrUnpin();
               var changedNotes = notifier.selectedNotes;
-              noteBloc.manyNotesChanged(changedNotes);
+              noteChangerBloc.manyNotesChanged(changedNotes);
               notifier.cancel();
             },
             backgroundColor: appWhite,
@@ -213,7 +213,7 @@ class BoxMultiNoteSelectionAppBar extends StatelessWidget
               if (newColor != null) {
                 notifier.changeColorTo(newColor);
                 var changedNotes = notifier.selectedNotes;
-                noteBloc.manyNotesChanged(changedNotes);
+                noteChangerBloc.manyNotesChanged(changedNotes);
                 notifier.cancel();
               }
             },
@@ -241,12 +241,12 @@ class BoxMultiNoteSelectionAppBar extends StatelessWidget
             if (action == _MultiNoteMenuAction.archive) {
               notifier.archive();
               var changedNotes = notifier.selectedNotes;
-              noteBloc.manyNotesChanged(changedNotes);
+              noteChangerBloc.manyNotesChanged(changedNotes);
               notifier.cancel();
             } else if (action == _MultiNoteMenuAction.delete) {
               notifier.delete();
               var changedNotes = notifier.selectedNotes;
-              noteBloc.manyNotesChanged(changedNotes);
+              noteChangerBloc.manyNotesChanged(changedNotes);
               notifier.cancel();
             }
           },

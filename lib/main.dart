@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keep_notes_clone/blocs/home_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
+import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -23,8 +25,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+    var noteRepo = NoteRepository();
+
     return MultiProvider(
       providers: [
+        Provider<HomeBloc>(
+          create: (context) => HomeBloc(noteRepo),
+        ),
         ChangeNotifierProvider<DrawerScreenSelection>(
           create: (context) => DrawerScreenSelection(),
         ),
@@ -32,7 +39,7 @@ class MyApp extends StatelessWidget {
           create: (context) => NoteCardModeSelection(),
         ),
         Provider<NoteTrackingBloc>(
-            create: (context) => NoteTrackingBloc(),
+            create: (context) => NoteTrackingBloc(noteRepo),
             dispose: (context, theBloc) => theBloc.dispose()),
       ],
       child: MaterialApp(
@@ -52,7 +59,7 @@ class PreHome extends StatelessWidget {
     double constrainedTextSF =
         mediaQueryData.textScaleFactor.clamp(0.75, 1.3).toDouble();
 
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var homeBloc = Provider.of<HomeBloc>(context);
 
     var initSettings = InitializationSettings(
         AndroidInitializationSettings('app_icon'), IOSInitializationSettings());
@@ -60,11 +67,11 @@ class PreHome extends StatelessWidget {
     return MediaQuery(
       data: mediaQueryData.copyWith(textScaleFactor: constrainedTextSF),
       child: FutureBuilder(
-          future: noteBloc.initialized,
+          future: homeBloc.initialized,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               Future osn(String alarmId) async {
-                var theNote = noteBloc.getNoteWithAlarmId(int.parse(alarmId));
+                var theNote = homeBloc.getNoteWithAlarmId(int.parse(alarmId));
 
                 Navigator.push(
                     context,
@@ -76,13 +83,20 @@ class PreHome extends StatelessWidget {
 
               return HomeScreen();
             }
-            return Container(
-              color: appWhite,
-              constraints: BoxConstraints.expand(),
-              alignment: Alignment.center,
-              child: Container(),
-            );
+            return _WhiteScreen();
           }),
+    );
+  }
+}
+
+class _WhiteScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: appWhite,
+      constraints: BoxConstraints.expand(),
+      alignment: Alignment.center,
+      child: Container(),
     );
   }
 }

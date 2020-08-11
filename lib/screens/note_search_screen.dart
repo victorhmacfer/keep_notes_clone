@@ -45,7 +45,7 @@ class _SearchScaffold extends StatelessWidget {
           ? _NoteSearchAppBar()
           : BoxMultiNoteSelectionAppBar(
               notifier: multiNoteSelection,
-              noteBloc: noteBloc,
+              noteChangerBloc: noteBloc,
             ),
       body: _BodyPicker(),
     );
@@ -144,6 +144,8 @@ class _SearchResultBody extends StatelessWidget {
     var noteBloc = Provider.of<NoteTrackingBloc>(context);
     var searchStateNotifier = Provider.of<NoteSearchStateNotifier>(context);
     var modeNotifier = Provider.of<NoteCardModeSelection>(context);
+
+    print('Im inside the build of searchresultBody');
 
     return Container(
       constraints: BoxConstraints.expand(),
