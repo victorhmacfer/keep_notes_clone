@@ -7,8 +7,8 @@ import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
-import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
-import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
+// import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
+// import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/reminders_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/search_landing_page_view_model.dart';
@@ -16,7 +16,7 @@ import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
-class NoteTrackingBloc implements NoteChangerBloc{
+class NoteTrackingBloc implements NoteChangerBloc {
   final NoteRepository noteRepo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
@@ -25,9 +25,9 @@ class NoteTrackingBloc implements NoteChangerBloc{
 
   final _noteLabelingViewModelBS = BehaviorSubject<NoteLabelingViewModel>();
 
-  final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
+  // final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
-  final _labelScreenRequestBS = BehaviorSubject<Label>();
+  // final _labelScreenRequestBS = BehaviorSubject<Label>();
 
   final _searchScreenNoteColorRequestBS = BehaviorSubject<NoteColor>();
 
@@ -52,12 +52,12 @@ class NoteTrackingBloc implements NoteChangerBloc{
     });
 
     _notesBS.listen((allNotes) {
-      _updateDrawerLabelFilterStream(allNotes);
+      // _updateDrawerLabelFilterStream(allNotes);
       _tryToRefreshNoteColorSearchRequest();
       _searchLandingPageViewModelBS.add(SearchLandingPageViewModel(allNotes));
     });
 
-    _labelScreenRequestBS.stream.listen(_applyDrawerLabelFilterWithNewLabel);
+    // _labelScreenRequestBS.stream.listen(_applyDrawerLabelFilterWithNewLabel);
 
     _searchScreenNoteColorRequestBS.stream
         .listen(_filterNotesWithNoteColorAndStreamSearchResult);
@@ -68,7 +68,7 @@ class NoteTrackingBloc implements NoteChangerBloc{
 
   Future<bool> get initialized async => !(await _notesBS.isEmpty);
 
-  StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
+  // StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
 
   StreamSink<NoteColor> get searchByNoteColorSink =>
       _searchScreenNoteColorRequestBS.sink;
@@ -83,8 +83,8 @@ class NoteTrackingBloc implements NoteChangerBloc{
   Stream<NoteLabelingViewModel> get noteLabelingViewModelStream =>
       _noteLabelingViewModelBS.stream;
 
-  Stream<HomeViewModel> get homeViewModelStream =>
-      _allNotesStream.map((notes) => HomeViewModel(notes));
+  // Stream<HomeViewModel> get homeViewModelStream =>
+  //     _allNotesStream.map((notes) => HomeViewModel(notes));
 
   Stream<RemindersViewModel> get remindersViewModelStream =>
       _allNotesStream.map((notes) => RemindersViewModel(notes));
@@ -95,8 +95,8 @@ class NoteTrackingBloc implements NoteChangerBloc{
   Stream<TrashViewModel> get trashViewModelStream =>
       _allNotesStream.map((notes) => TrashViewModel(notes));
 
-  Stream<LabelViewModel> get labelViewModelStream =>
-      _labelFilteredNotesBS.stream.map((notes) => LabelViewModel(notes));
+  // Stream<LabelViewModel> get labelViewModelStream =>
+  //     _labelFilteredNotesBS.stream.map((notes) => LabelViewModel(notes));
 
   Stream<SearchLandingPageViewModel> get searchLandingPageViewModelStream =>
       _searchLandingPageViewModelBS.stream;
@@ -232,22 +232,22 @@ class NoteTrackingBloc implements NoteChangerBloc{
 
   Stream<List<Note>> get _allNotesStream => _notesBS.stream;
 
-  void _applyDrawerLabelFilterWithNewLabel(Label theLabel) {
-    var lastNotesEmitted = _notesBS.value ?? [];
-    var filteredNotes = _filterNotesWithLabel(theLabel, lastNotesEmitted);
+  // void _applyDrawerLabelFilterWithNewLabel(Label theLabel) {
+  //   var lastNotesEmitted = _notesBS.value ?? [];
+  //   var filteredNotes = _filterNotesWithLabel(theLabel, lastNotesEmitted);
 
-    _labelFilteredNotesBS.add(filteredNotes);
-  }
+  //   _labelFilteredNotesBS.add(filteredNotes);
+  // }
 
-  void _updateDrawerLabelFilterStream(List<Note> allNotes) {
-    var hasEverFilteredByThisLabelInDrawer = _labelScreenRequestBS.hasValue;
+  // void _updateDrawerLabelFilterStream(List<Note> allNotes) {
+  //   var hasEverFilteredByThisLabelInDrawer = _labelScreenRequestBS.hasValue;
 
-    if (hasEverFilteredByThisLabelInDrawer) {
-      var filteredNotes =
-          _filterNotesWithLabel(_labelScreenRequestBS.value, allNotes);
-      _labelFilteredNotesBS.add(filteredNotes);
-    }
-  }
+  //   if (hasEverFilteredByThisLabelInDrawer) {
+  //     var filteredNotes =
+  //         _filterNotesWithLabel(_labelScreenRequestBS.value, allNotes);
+  //     _labelFilteredNotesBS.add(filteredNotes);
+  //   }
+  // }
 
   List<Note> _filterNotesWithLabel(Label theLabel, List<Note> input) {
     return input
@@ -292,8 +292,8 @@ class NoteTrackingBloc implements NoteChangerBloc{
   void dispose() {
     _notesBS.close();
     _noteLabelingViewModelBS.close();
-    _labelFilteredNotesBS.close();
-    _labelScreenRequestBS.close();
+    // _labelFilteredNotesBS.close();
+    // _labelScreenRequestBS.close();
     _searchScreenNoteColorRequestBS.close();
     _searchResultViewModelBS.close();
     _searchScreenLabelRequestBS.close();

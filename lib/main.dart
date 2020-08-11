@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
+import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
@@ -31,6 +33,12 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<HomeBloc>(
           create: (context) => HomeBloc(noteRepo),
+        ),
+        Provider<DrawerBloc>(
+          create: (context) => DrawerBloc(noteRepo),
+        ),
+        Provider<LabelScreenBloc>(
+          create: (context) => LabelScreenBloc(noteRepo),
         ),
         ChangeNotifierProvider<DrawerScreenSelection>(
           create: (context) => DrawerScreenSelection(),

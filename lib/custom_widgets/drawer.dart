@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
+import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/screens/archive_screen.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/screens/label_screen.dart';
 import 'package:keep_notes_clone/screens/reminders_screen.dart';
@@ -38,7 +39,7 @@ class MyDrawer extends StatelessWidget {
 
   List<Widget> _labelList(List<Label> labels,
       DrawerScreenSelection drawerScreenSelection, BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var labelScreenBloc = Provider.of<LabelScreenBloc>(context);
     List<Widget> theList = [];
 
     for (int i = 0; i < labels.length; i++) {
@@ -50,7 +51,7 @@ class MyDrawer extends StatelessWidget {
         onPressed: () {
           if (drawerScreenSelection.selectedScreenIndex != i + 4) {
             drawerScreenSelection.changeSelectedScreenToIndex(i + 4);
-            noteBloc.labelScreenRequestSink.add(labels[i]);
+            labelScreenBloc.labelScreenRequestSink.add(labels[i]);
 
             Navigator.pushReplacement(
                 context,
@@ -66,7 +67,7 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var drawerBloc = Provider.of<DrawerBloc>(context);
     var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
 
     return Drawer(
@@ -100,7 +101,7 @@ class MyDrawer extends StatelessWidget {
             },
           ),
           StreamBuilder<List<Label>>(
-              stream: noteTrackingBloc.sortedLabelsStream,
+              stream: drawerBloc.sortedLabelsStream,
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data.isNotEmpty) {
                   return Column(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/bloc_base.dart';
+import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
@@ -166,7 +168,7 @@ class __BodyState extends State<_Body> {
   }
 
   Widget _sliverAppBar(
-      {@required NoteTrackingBloc noteBloc,
+      {@required LabelDeleterBloc labelDeleterBloc,
       @required NoteCardModeSelection cardModeNotifier,
       @required DrawerScreenSelection drawerScreenSelection}) {
     return SliverAppBar(
@@ -218,7 +220,7 @@ class __BodyState extends State<_Body> {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => HomeScreen()));
 
-                noteBloc.onDeleteLabel(widget.label);
+                labelDeleterBloc.onDeleteLabel(widget.label);
               }
             }
           },
@@ -241,7 +243,7 @@ class __BodyState extends State<_Body> {
   @override
   Widget build(BuildContext context) {
     var noteCardModeNotifier = Provider.of<NoteCardModeSelection>(context);
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var labelScreenBloc = Provider.of<LabelScreenBloc>(context);
     var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
 
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
@@ -253,12 +255,12 @@ class __BodyState extends State<_Body> {
             slivers: <Widget>[
               (multiNoteSelection.inactive)
                   ? _sliverAppBar(
-                      noteBloc: noteBloc,
+                      labelDeleterBloc: labelScreenBloc,
                       cardModeNotifier: noteCardModeNotifier,
                       drawerScreenSelection: drawerScreenSelection)
                   : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
-                      noteChangerBloc: noteBloc,
+                      noteChangerBloc: labelScreenBloc,
                     ),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),
@@ -272,11 +274,11 @@ class __BodyState extends State<_Body> {
 class _StreamBuilderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var labelScreenBloc = Provider.of<LabelScreenBloc>(context);
     var modeNotifier = Provider.of<NoteCardModeSelection>(context);
 
     return StreamBuilder<LabelViewModel>(
-        stream: noteBloc.labelViewModelStream,
+        stream: labelScreenBloc.labelViewModelStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var pinnedNotes = snapshot.data.pinned;
