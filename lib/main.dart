@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
 import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
+import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
@@ -37,6 +38,9 @@ class MyApp extends StatelessWidget {
         ),
         Provider<NoteSetupBloc>(
           create: (context) => NoteSetupBloc(noteRepo),
+        ),
+        Provider<NoteLabelingBloc>(
+          create: (context) => NoteLabelingBloc(noteRepo),
         ),
         Provider<DrawerBloc>(
           create: (context) => DrawerBloc(noteRepo),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -16,10 +16,10 @@ final _labelSearchFocusNode = FocusNode();
 class NoteLabelingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var noteLabelingBloc = Provider.of<NoteLabelingBloc>(context);
 
     _labelSearchController.clear();
-    noteTrackingBloc.resetLabelNameSearch();
+    noteLabelingBloc.resetLabelNameSearch();
 
     return Scaffold(
       appBar: AppBar(
@@ -29,7 +29,7 @@ class NoteLabelingScreen extends StatelessWidget {
           focusNode: _labelSearchFocusNode,
           cursorWidth: 1,
           onChanged: (text) {
-            noteTrackingBloc.onSearchLabelName(text);
+            noteLabelingBloc.onSearchLabelName(text);
           },
           cursorColor: appIconGrey,
           decoration: InputDecoration.collapsed(hintText: 'Enter label name'),
@@ -41,7 +41,7 @@ class NoteLabelingScreen extends StatelessWidget {
         constraints: BoxConstraints.expand(),
         color: appWhite,
         child: StreamBuilder<NoteLabelingViewModel>(
-            stream: noteTrackingBloc.noteLabelingViewModelStream,
+            stream: noteLabelingBloc.noteLabelingViewModelStream,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var showCreateButton = !snapshot.data.foundExactMatch &&
@@ -131,12 +131,13 @@ class _CreateLabelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var noteLabelingBloc = Provider.of<NoteLabelingBloc>(context);
     var notifier = Provider.of<NoteSetupScreenController>(context);
 
     return GestureDetector(
       onTap: () async {
-        var createdLabel = await noteTrackingBloc.onCreateLabelInsideNote(labelText);
+        var createdLabel =
+            await noteLabelingBloc.onCreateLabelInsideNote(labelText);
         notifier.checkLabel(createdLabel);
         _labelSearchController.clear();
         _labelSearchFocusNode.unfocus();
