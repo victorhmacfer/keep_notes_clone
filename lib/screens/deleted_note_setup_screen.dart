@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottomsheet_tile.dart';
 import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/models/label.dart';
@@ -140,7 +140,7 @@ class _DeletedNoteSetupBody extends StatelessWidget {
 class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
   Widget _rightBottomSheetBuilder(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
-    final noteBloc = Provider.of<NoteTrackingBloc>(context);
+    final noteSetupBloc = Provider.of<NoteSetupBloc>(context);
 
     return Container(
       color: notifier.selectedColor.getColor(),
@@ -157,7 +157,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
             onTap: () {
               var noteToBeRestored = notifier.noteBeingEdited;
               noteToBeRestored.restore();
-              noteBloc.onNoteChanged(noteToBeRestored);
+              noteSetupBloc.onNoteChanged(noteToBeRestored);
 
               notifier.closeRightBottomSheet();
               Navigator.pop(context);
@@ -180,7 +180,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
 
               if (shouldDelete) {
                 var noteForPermanentDeletion = notifier.noteBeingEdited;
-                noteBloc.onDeleteNoteForever(noteForPermanentDeletion);
+                noteSetupBloc.onDeleteNoteForever(noteForPermanentDeletion);
               }
 
               notifier.closeRightBottomSheet();

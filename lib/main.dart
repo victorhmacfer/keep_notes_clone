@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
 import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
+import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         Provider<HomeBloc>(
           create: (context) => HomeBloc(noteRepo),
         ),
+        Provider<NoteSetupBloc>(
+          create: (context) => NoteSetupBloc(noteRepo),
+        ),
         Provider<DrawerBloc>(
           create: (context) => DrawerBloc(noteRepo),
         ),
@@ -46,9 +50,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<NoteCardModeSelection>(
           create: (context) => NoteCardModeSelection(),
         ),
-        Provider<NoteTrackingBloc>(
-            create: (context) => NoteTrackingBloc(noteRepo),
-            dispose: (context, theBloc) => theBloc.dispose()),
+        // Provider<NoteTrackingBloc>(
+        //     create: (context) => NoteTrackingBloc(noteRepo),
+        //     dispose: (context, theBloc) => theBloc.dispose()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

@@ -101,11 +101,11 @@ class NoteTrackingBloc implements NoteChangerBloc {
   Stream<SearchLandingPageViewModel> get searchLandingPageViewModelStream =>
       _searchLandingPageViewModelBS.stream;
 
-  void onCreateNote(NoteSetupModel noteSetupModel,
-      {bool createArchived = false}) {
-    var newNote = Note.fromSetupModel(noteSetupModel, archived: createArchived);
-    noteRepo.addNote(newNote);
-  }
+  // void onCreateNote(NoteSetupModel noteSetupModel,
+  //     {bool createArchived = false}) {
+  //   var newNote = Note.fromSetupModel(noteSetupModel, archived: createArchived);
+  //   noteRepo.addNote(newNote);
+  // }
 
   // Will reference a stand-alone table that stores only ids.
   // This is just for storing the AUTO INCREMENTED (therefore unused) id
@@ -153,9 +153,9 @@ class NoteTrackingBloc implements NoteChangerBloc {
     noteRepo.deleteLabel(label);
   }
 
-  void onDeleteNoteForever(Note noteForPermanentDeletion) {
-    noteRepo.deleteNote(noteForPermanentDeletion);
-  }
+  // void onDeleteNoteForever(Note noteForPermanentDeletion) {
+  //   noteRepo.deleteNote(noteForPermanentDeletion);
+  // }
 
   void emptyTrash(List<Note> trashNotes) {
     noteRepo.deleteManyNotes(trashNotes);

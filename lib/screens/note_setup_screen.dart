@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -64,7 +64,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
-    final noteBloc = Provider.of<NoteTrackingBloc>(context);
+    final noteSetupBloc = Provider.of<NoteSetupBloc>(context);
 
     bool shouldUnarchive = note?.archived ?? false;
 
@@ -77,11 +77,11 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             if (notifier.canApplySetupModelToNote) {
               if (notifier.notEditing) {
-                noteBloc.onCreateNote(notifier.noteSetupModel);
+                noteSetupBloc.onCreateNote(notifier.noteSetupModel);
               } else {
                 notifier.tryToUpdateLastEdited();
                 note.updateWith(notifier.noteSetupModel);
-                noteBloc.onNoteChanged(note);
+                noteSetupBloc.onNoteChanged(note);
               }
             }
             notifier.closeLeftBottomSheet();
@@ -141,7 +141,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
               onTap: () {
                 if (notifier.canApplySetupModelToNote) {
                   if (notifier.notEditing) {
-                    noteBloc.onCreateNote(notifier.noteSetupModel,
+                    noteSetupBloc.onCreateNote(notifier.noteSetupModel,
                         createArchived: true);
                   } else {
                     notifier.tryToUpdateLastEdited();
@@ -154,7 +154,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     } else {
                       note.archived = true;
                     }
-                    noteBloc.onNoteChanged(note);
+                    noteSetupBloc.onNoteChanged(note);
                   }
                 }
                 notifier.closeLeftBottomSheet();
@@ -345,7 +345,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
 
   Widget _rightBottomSheetBuilder(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
-    final noteBloc = Provider.of<NoteTrackingBloc>(context);
+    final noteSetupBloc = Provider.of<NoteSetupBloc>(context);
 
     return Container(
       color: notifier.selectedColor.getColor(),
@@ -364,7 +364,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
               if (noteForDeletion != null) {
                 noteForDeletion.delete();
                 notifier.removeSavedReminder();
-                noteBloc.onNoteChanged(noteForDeletion);
+                noteSetupBloc.onNoteChanged(noteForDeletion);
               }
 
               notifier.closeLeftBottomSheet();
