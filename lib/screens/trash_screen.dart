@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/trash_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/models/note.dart';
@@ -36,7 +36,7 @@ class _TrashBody extends StatelessWidget {
   List<Note> _trashNotes = [];
 
   Widget _sliverAppBar(
-      {@required NoteTrackingBloc noteBloc, @required BuildContext context}) {
+      {@required TrashBloc trashBloc, @required BuildContext context}) {
     return SliverAppBar(
       brightness: Brightness.light,
       floating: true,
@@ -75,7 +75,7 @@ class _TrashBody extends StatelessWidget {
                         ),
                         FlatButton(
                           onPressed: () {
-                            noteBloc.emptyTrash(_trashNotes);
+                            trashBloc.emptyTrash(_trashNotes);
                             Navigator.pop(context);
                           },
                           child: Text('Empty Trash',
@@ -100,7 +100,7 @@ class _TrashBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var trashBloc = Provider.of<TrashBloc>(context);
     var notifier = Provider.of<NoteCardModeSelection>(context);
 
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
@@ -111,14 +111,14 @@ class _TrashBody extends StatelessWidget {
           child: CustomScrollView(
             slivers: <Widget>[
               (multiNoteSelection.inactive)
-                  ? _sliverAppBar(noteBloc: noteBloc, context: context)
+                  ? _sliverAppBar(trashBloc: trashBloc, context: context)
                   : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
-                      noteChangerBloc: noteBloc,
+                      noteChangerBloc: trashBloc,
                     ),
               SliverToBoxAdapter(
                 child: StreamBuilder<TrashViewModel>(
-                    stream: noteBloc.trashViewModelStream,
+                    stream: trashBloc.trashViewModelStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         _trashNotes = snapshot.data.notes;

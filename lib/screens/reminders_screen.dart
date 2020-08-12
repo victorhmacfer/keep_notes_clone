@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/reminders_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
@@ -39,7 +40,7 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var remindersBloc = Provider.of<RemindersBloc>(context);
 
     return SafeArea(
         bottom: false,
@@ -50,7 +51,7 @@ class _Body extends StatelessWidget {
                   ? _RemindersAppBar()
                   : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
-                      noteChangerBloc: noteBloc,
+                      noteChangerBloc: remindersBloc,
                     ),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),
@@ -123,11 +124,11 @@ class _RemindersAppBar extends StatelessWidget {
 class _StreamBuilderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var remindersBloc = Provider.of<RemindersBloc>(context);
     var modeNotifier = Provider.of<NoteCardModeSelection>(context);
 
     return StreamBuilder<RemindersViewModel>(
-        stream: noteBloc.remindersViewModelStream,
+        stream: remindersBloc.remindersViewModelStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var firedReminderNotes = snapshot.data.fired;

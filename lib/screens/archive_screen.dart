@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/archive_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
@@ -35,7 +35,7 @@ class _ArchiveBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var archiveBloc = Provider.of<ArchiveBloc>(context);
 
     return SafeArea(
         top: false,
@@ -46,7 +46,7 @@ class _ArchiveBody extends StatelessWidget {
                   ? _SliverAppBar()
                   : SliverMultiNoteSelectionAppBar(
                       notifier: multiNoteSelection,
-                      noteChangerBloc: noteBloc,
+                      noteChangerBloc: archiveBloc,
                     ),
               SliverToBoxAdapter(
                 child: _StreamBuilderBody(),
@@ -120,12 +120,12 @@ class _SliverAppBar extends StatelessWidget {
 class _StreamBuilderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var archiveBloc = Provider.of<ArchiveBloc>(context);
 
     var modeNotifier = Provider.of<NoteCardModeSelection>(context);
 
     return StreamBuilder<ArchiveViewModel>(
-      stream: noteBloc.archiveViewModelStream,
+      stream: archiveBloc.archiveViewModelStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var hasAnyNote = snapshot.data.notes.isNotEmpty;

@@ -13,10 +13,6 @@ class HomeBloc implements NoteChangerBloc {
     noteRepo.notes.listen((notes) {
       _notesBS.add(notes);
     });
-
-    _notesBS.listen((value) {
-      // bla
-    });
   }
 
   Future<bool> get initialized async => !(await _notesBS.isEmpty);
