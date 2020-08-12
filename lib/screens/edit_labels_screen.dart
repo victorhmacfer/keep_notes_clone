@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/edit_labels_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/label_delete_confirmation.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -22,7 +22,7 @@ class EditLabelsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var editLabelsBloc = Provider.of<EditLabelsBloc>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +46,7 @@ class EditLabelsScreen extends StatelessWidget {
             )),
             SliverToBoxAdapter(
               child: StreamBuilder<List<Label>>(
-                  stream: noteTrackingBloc.sortedLabelsStream,
+                  stream: editLabelsBloc.sortedLabelsStream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data.isNotEmpty) {
                       return Column(
@@ -93,7 +93,7 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
 
   @override
   Widget build(BuildContext context) {
-    var noteTrackingBloc = Provider.of<NoteTrackingBloc>(context);
+    var editLabelsBloc = Provider.of<EditLabelsBloc>(context);
 
     var fakeBorderColor = (isFocused) ? appDividerGrey : appWhite;
 
@@ -158,7 +158,7 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
                     onPressed: () {
                       var newLabelText = newLabelTextController.text;
                       if (newLabelText.isNotEmpty) {
-                        noteTrackingBloc
+                        editLabelsBloc
                             .onCreateNewLabel(newLabelTextController.text);
                         newLabelTextController.clear();
                       }
@@ -204,7 +204,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
 
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var editLabelsBloc = Provider.of<EditLabelsBloc>(context);
 
     var fakeBorderColor = (isFocused) ? appDividerGrey : appWhite;
 
@@ -218,7 +218,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                 builder: deleteConfirmationDialog,
               );
               if (shouldDelete) {
-                noteBloc.onDeleteLabel(widget.label);
+                editLabelsBloc.onDeleteLabel(widget.label);
               }
             },
             icon: Icon(
@@ -264,7 +264,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                     icon: Icon(Icons.check),
                     color: appSettingsBlue,
                     onPressed: () {
-                      noteBloc.renameLabel(
+                      editLabelsBloc.renameLabel(
                           widget.label, itemTextController.text);
                       itemFocusNode.unfocus();
                     },

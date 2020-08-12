@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
+import 'package:keep_notes_clone/blocs/edit_labels_bloc.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
 import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
@@ -44,6 +45,9 @@ class MyApp extends StatelessWidget {
         ),
         Provider<DrawerBloc>(
           create: (context) => DrawerBloc(noteRepo),
+        ),
+        Provider<EditLabelsBloc>(
+          create: (context) => EditLabelsBloc(noteRepo),
         ),
         Provider<LabelScreenBloc>(
           create: (context) => LabelScreenBloc(noteRepo),
