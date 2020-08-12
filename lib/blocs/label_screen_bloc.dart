@@ -11,12 +11,17 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
   final NoteRepository noteRepo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
+  List<Label> _currentLabelsSorted = [];
   final _labelScreenRequestBS = BehaviorSubject<Label>();
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
   LabelScreenBloc(this.noteRepo) {
     noteRepo.notes.listen((noteList) {
       _notesBS.add(noteList);
+    });
+
+    noteRepo.allLabels.listen((labelList) {
+      _currentLabelsSorted = _sortLabelsAlphabetically(labelList);
     });
 
     _notesBS.listen((notes) {
@@ -37,6 +42,22 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
 
   void onDeleteLabel(Label label) {
     noteRepo.deleteLabel(label);
+  }
+
+  bool renameLabel(Label label, String newName) {
+    if (newName?.isEmpty ?? true) {
+      return false;
+    }
+
+    for (var lab in _currentLabelsSorted) {
+      if (lab.name == newName) {
+        return false;
+      }
+    }
+    var renamedLabel = Label(id: label.id, name: newName);
+
+    noteRepo.updateLabel(renamedLabel);
+    return true;
   }
 
   void _filterWithNewLabelAndStream(Label theLabel) {
@@ -62,12 +83,16 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
         .toList();
   }
 
+  List<Label> _sortLabelsAlphabetically(List<Label> input) {
+    var sorted = List<Label>.from(input)
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+    return sorted;
+  }
+
   void dispose() {
     _labelScreenRequestBS.close();
     _labelFilteredNotesBS.close();
     _notesBS.close();
   }
-
-  
-
 }

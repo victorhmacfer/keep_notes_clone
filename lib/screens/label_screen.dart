@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/bloc_base.dart';
 import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
@@ -72,7 +71,7 @@ class __BodyState extends State<_Body> {
 
   Widget _labelRenameDialog(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var labelScreenBloc = Provider.of<LabelScreenBloc>(context);
 
     return AlertDialog(
       insetPadding: EdgeInsets.zero,
@@ -88,7 +87,7 @@ class __BodyState extends State<_Body> {
                 return 'Label name cannot be empty';
               }
 
-              if (noteBloc.renameLabel(widget.label, value) == false) {
+              if (labelScreenBloc.renameLabel(widget.label, value) == false) {
                 return 'This label name is already in use';
               }
               return null;
