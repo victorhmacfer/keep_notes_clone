@@ -53,18 +53,18 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
             backgroundColor: appWhite,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: PngIconButton(
-            pngIcon: PngIcon(
-              fileName: 'outline_add_alert_black_48.png',
-              iconColor: appSettingsBlue,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 7),
-            onTap: () {},
-            backgroundColor: appWhite,
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 4),
+        //   child: PngIconButton(
+        //     pngIcon: PngIcon(
+        //       fileName: 'outline_add_alert_black_48.png',
+        //       iconColor: appSettingsBlue,
+        //     ),
+        //     padding: const EdgeInsets.symmetric(horizontal: 7),
+        //     onTap: () {},
+        //     backgroundColor: appWhite,
+        //   ),
+        // ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: PngIconButton(
@@ -89,18 +89,18 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
             backgroundColor: appWhite,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: PngIconButton(
-            pngIcon: PngIcon(
-              fileName: 'outline_label_black_48.png',
-              iconColor: appSettingsBlue,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 7),
-            onTap: () {},
-            backgroundColor: appWhite,
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 4),
+        //   child: PngIconButton(
+        //     pngIcon: PngIcon(
+        //       fileName: 'outline_label_black_48.png',
+        //       iconColor: appSettingsBlue,
+        //     ),
+        //     padding: const EdgeInsets.symmetric(horizontal: 7),
+        //     onTap: () {},
+        //     backgroundColor: appWhite,
+        //   ),
+        // ),
         PopupMenuButton<_MultiNoteMenuAction>(
           icon: Icon(
             Icons.more_vert,

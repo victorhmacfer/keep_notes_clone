@@ -381,24 +381,24 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             text: 'Make a copy',
             onTap: () {},
           ),
-          BottomSheetTile(
-            noteSetupController: notifier,
-            pngIcon: PngIcon(
-              fileName: 'outline_share_black_48.png',
-              iconColor: appIconGreyForColoredBg,
-            ),
-            text: 'Send',
-            onTap: () {},
-          ),
-          BottomSheetTile(
-            noteSetupController: notifier,
-            pngIcon: PngIcon(
-              fileName: 'outline_person_add_black_48.png',
-              iconColor: appIconGreyForColoredBg,
-            ),
-            text: 'Collaborator',
-            onTap: () {},
-          ),
+          // BottomSheetTile(
+          //   noteSetupController: notifier,
+          //   pngIcon: PngIcon(
+          //     fileName: 'outline_share_black_48.png',
+          //     iconColor: appIconGreyForColoredBg,
+          //   ),
+          //   text: 'Send',
+          //   onTap: () {},
+          // ),
+          // BottomSheetTile(
+          //   noteSetupController: notifier,
+          //   pngIcon: PngIcon(
+          //     fileName: 'outline_person_add_black_48.png',
+          //     iconColor: appIconGreyForColoredBg,
+          //   ),
+          //   text: 'Collaborator',
+          //   onTap: () {},
+          // ),
           BottomSheetTile(
             noteSetupController: notifier,
             pngIcon: PngIcon(
