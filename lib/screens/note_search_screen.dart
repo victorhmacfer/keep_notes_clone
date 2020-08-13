@@ -11,6 +11,7 @@ import 'package:keep_notes_clone/screens/no_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/search_landing_page_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/search_request_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -365,7 +366,7 @@ class _LabelGridItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        searchBloc.searchByLabelSink.add(label);
+        searchBloc.searchRequestSink.add(LabelSearchRequestViewModel(label));
         searchNotifier.setResultCategoryFromLabel(label);
         searchNotifier.showingResult = true;
       },
@@ -436,7 +437,8 @@ class _ColorCircle extends StatelessWidget {
       heightFactor: 0.75,
       child: GestureDetector(
         onTap: () {
-          noteBloc.searchByNoteColorSink.add(noteColor);
+          noteBloc.searchRequestSink
+              .add(NoteColorSearchRequestViewModel(noteColor));
           searchNotifier.setResultCategoryFromNoteColor(noteColor);
           searchNotifier.showingResult = true;
         },

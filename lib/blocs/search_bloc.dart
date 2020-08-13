@@ -6,6 +6,7 @@ import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/viewmodels/search_landing_page_view_model.dart';
+import 'package:keep_notes_clone/viewmodels/search_request_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -18,9 +19,7 @@ class SearchBloc implements NoteChangerBloc {
 
   final _searchResultViewModelBS = BehaviorSubject<SearchResultViewModel>();
 
-  final _labelSearchRequestBS = BehaviorSubject<Label>();
-
-  final _noteColorSearchRequestBS = BehaviorSubject<NoteColor>();
+  final _searchRequestBS = BehaviorSubject<SearchRequestViewModel>();
 
   SearchBloc(this.noteRepo) {
     noteRepo.notes.listen((notes) {
@@ -28,15 +27,17 @@ class SearchBloc implements NoteChangerBloc {
     });
 
     _notesBS.listen((notes) {
-      _refreshNoteColorSearchRequest(); // FIXME: this call creates a bug
+      _remakeLastSearchRequest();
       _landingPageViewModelBS.add(SearchLandingPageViewModel(notes));
     });
 
-    _noteColorSearchRequestBS.stream
-        .listen(_filterNotesWithNoteColorAndStreamSearchResult);
-
-    _labelSearchRequestBS.stream
-        .listen(_filterNotesWithLabelAndStreamSearchResult);
+    _searchRequestBS.stream.listen((requestVM) {
+      if (requestVM.type == SearchRequestType.label) {
+        _filterNotesWithLabelAndStreamSearchResult(requestVM.label);
+      } else if (requestVM.type == SearchRequestType.noteColor) {
+        _filterNotesWithNoteColorAndStreamSearchResult(requestVM.noteColor);
+      }
+    });
   }
 
   Stream<SearchLandingPageViewModel> get searchLandingPageViewModelStream =>
@@ -45,10 +46,8 @@ class SearchBloc implements NoteChangerBloc {
   Stream<SearchResultViewModel> get searchResultViewModelStream =>
       _searchResultViewModelBS.stream;
 
-  StreamSink<Label> get searchByLabelSink => _labelSearchRequestBS.sink;
-
-  StreamSink<NoteColor> get searchByNoteColorSink =>
-      _noteColorSearchRequestBS.sink;
+  StreamSink<SearchRequestViewModel> get searchRequestSink =>
+      _searchRequestBS.sink;
 
   void searchNotesWithSubstring(
       String substring, SearchResultViewModel categoryResult) {
@@ -71,9 +70,9 @@ class SearchBloc implements NoteChangerBloc {
     noteRepo.updateManyNotes(changedNotes);
   }
 
-  void _refreshNoteColorSearchRequest() {
-    if (_noteColorSearchRequestBS.hasValue) {
-      _noteColorSearchRequestBS.add(_noteColorSearchRequestBS.value);
+  void _remakeLastSearchRequest() {
+    if (_searchRequestBS.hasValue) {
+      _searchRequestBS.add(_searchRequestBS.value);
     }
   }
 
@@ -103,7 +102,6 @@ class SearchBloc implements NoteChangerBloc {
     _notesBS.close();
     _landingPageViewModelBS.close();
     _searchResultViewModelBS.close();
-    _labelSearchRequestBS.close();
-    _noteColorSearchRequestBS.close();
+    _searchRequestBS.close();
   }
 }
