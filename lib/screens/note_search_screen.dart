@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/note_tracking_bloc.dart';
+import 'package:keep_notes_clone/blocs/search_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
@@ -38,14 +38,14 @@ class _SearchScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var searchBloc = Provider.of<SearchBloc>(context);
 
     return Scaffold(
       appBar: (multiNoteSelection.inactive)
           ? _NoteSearchAppBar()
           : BoxMultiNoteSelectionAppBar(
               notifier: multiNoteSelection,
-              noteChangerBloc: noteBloc,
+              noteChangerBloc: searchBloc,
             ),
       body: _BodyPicker(),
     );
@@ -59,7 +59,7 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var searchBloc = Provider.of<SearchBloc>(context);
     var notifier = Provider.of<NoteSearchStateNotifier>(context);
 
     var hintText = (notifier.showingResult)
@@ -77,7 +77,7 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
             return;
           }
           notifier.showingResult = true;
-          noteBloc.searchNotesWithSubstring(
+          searchBloc.searchNotesWithSubstring(
               value, notifier.lastResultViewModel);
         },
         cursorWidth: 1,
@@ -105,13 +105,13 @@ class _BodyPicker extends StatelessWidget {
 class _SearchLandingPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var searchBloc = Provider.of<SearchBloc>(context);
 
     return Container(
       constraints: BoxConstraints.expand(),
       decoration: _decorationWithGreyUpperBorder,
       child: StreamBuilder<SearchLandingPageViewModel>(
-          stream: noteBloc.searchLandingPageViewModelStream,
+          stream: searchBloc.searchLandingPageViewModelStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return SingleChildScrollView(
@@ -141,18 +141,16 @@ class _SearchLandingPageBody extends StatelessWidget {
 class _SearchResultBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var searchBloc = Provider.of<SearchBloc>(context);
     var searchStateNotifier = Provider.of<NoteSearchStateNotifier>(context);
     var modeNotifier = Provider.of<NoteCardModeSelection>(context);
-
-    print('Im inside the build of searchresultBody');
 
     return Container(
       constraints: BoxConstraints.expand(),
       decoration: _decorationWithGreyUpperBorder,
       child: SingleChildScrollView(
         child: StreamBuilder<SearchResultViewModel>(
-          stream: noteBloc.searchResultViewModelStream,
+          stream: searchBloc.searchResultViewModelStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var regularNotes = snapshot.data.regular;
@@ -362,12 +360,12 @@ class _LabelGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var searchBloc = Provider.of<SearchBloc>(context);
     var searchNotifier = Provider.of<NoteSearchStateNotifier>(context);
 
     return GestureDetector(
       onTap: () {
-        noteBloc.searchByLabelSink.add(label);
+        searchBloc.searchByLabelSink.add(label);
         searchNotifier.setResultCategoryFromLabel(label);
         searchNotifier.showingResult = true;
       },
@@ -430,7 +428,7 @@ class _ColorCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var noteBloc = Provider.of<NoteTrackingBloc>(context);
+    var noteBloc = Provider.of<SearchBloc>(context);
     var searchNotifier = Provider.of<NoteSearchStateNotifier>(context);
 
     return FractionallySizedBox(
