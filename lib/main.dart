@@ -13,8 +13,6 @@ import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
-import 'package:keep_notes_clone/screens/note_setup_screen.dart';
-import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -36,9 +34,6 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        Provider<HomeBloc>(
-          create: (context) => HomeBloc(globalNoteRepo),
-        ),
         Provider<SearchBloc>(
           create: (context) => SearchBloc(globalNoteRepo),
         ),
@@ -73,58 +68,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: appLightThemeData,
-        home: PreHome(),
+        home: Provider<HomeBloc>(
+          create: (context) => HomeBloc(globalNoteRepo),
+          child: PreHome(),
+        ),
       ),
-    );
-  }
-}
-
-class PreHome extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var mediaQueryData = MediaQuery.of(context);
-
-    double constrainedTextSF =
-        mediaQueryData.textScaleFactor.clamp(0.75, 1.3).toDouble();
-
-    var homeBloc = Provider.of<HomeBloc>(context);
-
-    var initSettings = InitializationSettings(
-        AndroidInitializationSettings('app_icon'), IOSInitializationSettings());
-
-    return MediaQuery(
-      data: mediaQueryData.copyWith(textScaleFactor: constrainedTextSF),
-      child: FutureBuilder(
-          future: homeBloc.initialized,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              Future osn(String alarmId) async {
-                var theNote = homeBloc.getNoteWithAlarmId(int.parse(alarmId));
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => NoteSetupScreen(note: theNote)));
-              }
-
-              flnp.initialize(initSettings, onSelectNotification: osn);
-
-              return HomeScreen();
-            }
-            return _WhiteScreen();
-          }),
-    );
-  }
-}
-
-class _WhiteScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: appWhite,
-      constraints: BoxConstraints.expand(),
-      alignment: Alignment.center,
-      child: Container(),
     );
   }
 }
