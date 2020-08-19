@@ -10,6 +10,8 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
+import 'package:keep_notes_clone/main.dart';
+
 import 'package:provider/provider.dart';
 
 class DeletedNoteSetupScreen extends StatelessWidget {
@@ -19,8 +21,15 @@ class DeletedNoteSetupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NoteSetupScreenController>(
-      create: (context) => NoteSetupScreenController.fromNote(note),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NoteSetupScreenController>(
+          create: (context) => NoteSetupScreenController.fromNote(note),
+        ),
+        Provider<NoteSetupBloc>(
+          create: (context) => NoteSetupBloc(globalNoteRepo),
+        ),
+      ],
       child: Scaffold(
           appBar: _DeletedNoteSetupAppBar(note: note),
           body: _DeletedNoteSetupBody(),

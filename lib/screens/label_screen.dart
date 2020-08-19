@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/bloc_base.dart';
+import 'package:keep_notes_clone/blocs/home_bloc.dart';
 import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
@@ -9,6 +10,7 @@ import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/home.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
@@ -216,8 +218,13 @@ class __BodyState extends State<_Body> {
               if (shouldDelete) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
 
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Provider<HomeBloc>(
+                              create: (context) => HomeBloc(globalNoteRepo),
+                              child: HomeScreen(),
+                            )));
 
                 labelDeleterBloc.onDeleteLabel(widget.label);
               }

@@ -17,6 +17,8 @@ import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
+import 'package:keep_notes_clone/main.dart';
+
 class NoteSetupScreen extends StatelessWidget {
   final Note note;
 
@@ -41,8 +43,14 @@ class NoteSetupScreen extends StatelessWidget {
       theAppBar = _NoteSetupAppBar(note: note);
     }
 
-    return ChangeNotifierProvider<NoteSetupScreenController>.value(
-      value: controller,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NoteSetupScreenController>.value(
+            value: controller),
+        Provider<NoteSetupBloc>(
+          create: (context) => NoteSetupBloc(globalNoteRepo),
+        ),
+      ],
       child: Scaffold(
           appBar: theAppBar,
           body: _NoteSetupBody(),
@@ -119,9 +127,15 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (context) =>
+                  builder: (context) => MultiProvider(
+                    providers: [
                       ChangeNotifierProvider<NoteSetupScreenController>.value(
-                          value: notifier, child: ReminderSetupDialog()),
+                          value: notifier),
+                      Provider(
+                          create: (context) => NoteSetupBloc(globalNoteRepo)),
+                    ],
+                    child: ReminderSetupDialog(),
+                  ),
                 );
               }),
         ),

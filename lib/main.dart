@@ -34,12 +34,6 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        Provider<SearchBloc>(
-          create: (context) => SearchBloc(globalNoteRepo),
-        ),
-        Provider<NoteSetupBloc>(
-          create: (context) => NoteSetupBloc(globalNoteRepo),
-        ),
         Provider<NoteLabelingBloc>(
           create: (context) => NoteLabelingBloc(globalNoteRepo),
         ),

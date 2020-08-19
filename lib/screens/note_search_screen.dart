@@ -15,6 +15,8 @@ import 'package:keep_notes_clone/viewmodels/search_request_view_model.dart';
 import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:provider/provider.dart';
 
+import 'package:keep_notes_clone/main.dart';
+
 var _decorationWithGreyUpperBorder = BoxDecoration(
     color: appWhite, border: Border(top: BorderSide(color: appDividerGrey)));
 
@@ -28,6 +30,9 @@ class NoteSearchScreen extends StatelessWidget {
         ),
         ChangeNotifierProvider<MultiNoteSelection>(
           create: (context) => MultiNoteSelection(),
+        ),
+        Provider<SearchBloc>(
+          create: (context) => SearchBloc(globalNoteRepo),
         ),
       ],
       child: _SearchScaffold(),

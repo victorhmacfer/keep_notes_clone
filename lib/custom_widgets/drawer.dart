@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
+import 'package:keep_notes_clone/blocs/home_bloc.dart';
 import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/screens/archive_screen.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
@@ -86,8 +87,13 @@ class MyDrawer extends StatelessWidget {
               if (drawerScreenSelection.selectedScreenIndex != 0) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
 
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Provider<HomeBloc>(
+                              create: (context) => HomeBloc(globalNoteRepo),
+                              child: HomeScreen(),
+                            )));
               }
             },
           ),
