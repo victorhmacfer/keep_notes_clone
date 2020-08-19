@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
 import 'package:provider/provider.dart';
@@ -426,12 +427,18 @@ class _MyStickyBottomAppBar extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        ChangeNotifierProvider<NoteSetupScreenController>.value(
-                      value: notifier,
-                      child: NoteLabelingScreen(),
-                    ),
-                  ));
+                      builder: (context) => MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider<
+                                      NoteSetupScreenController>.value(
+                                  value: notifier),
+                              Provider<NoteLabelingBloc>(
+                                create: (context) =>
+                                    NoteLabelingBloc(globalNoteRepo),
+                              ),
+                            ],
+                            child: NoteLabelingScreen(),
+                          )));
             },
           ),
           _ColorSelectionList(),

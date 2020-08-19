@@ -34,9 +34,6 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        Provider<NoteLabelingBloc>(
-          create: (context) => NoteLabelingBloc(globalNoteRepo),
-        ),
         Provider<DrawerBloc>(
           create: (context) => DrawerBloc(globalNoteRepo),
         ),

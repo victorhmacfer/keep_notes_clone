@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -7,6 +8,8 @@ import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/utils/datetime_translation.dart';
 import 'package:provider/provider.dart';
+
+import 'package:keep_notes_clone/main.dart';
 
 var _noteSetupChipDecoration = BoxDecoration(
   borderRadius: BorderRadius.circular(32),
@@ -39,9 +42,15 @@ class NoteSetupLabelChip extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      ChangeNotifierProvider<NoteSetupScreenController>.value(
-                        value: notifier,
+                  builder: (context) => MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider<
+                              NoteSetupScreenController>.value(value: notifier),
+                          Provider<NoteLabelingBloc>(
+                            create: (context) =>
+                                NoteLabelingBloc(globalNoteRepo),
+                          ),
+                        ],
                         child: NoteLabelingScreen(),
                       )));
         } else {
