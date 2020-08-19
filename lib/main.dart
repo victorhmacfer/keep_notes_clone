@@ -4,7 +4,6 @@ import 'package:keep_notes_clone/blocs/archive_bloc.dart';
 import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
 import 'package:keep_notes_clone/blocs/edit_labels_bloc.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
-import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/blocs/reminders_bloc.dart';
@@ -22,6 +21,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final flnp = FlutterLocalNotificationsPlugin();
 
+NoteRepository globalNoteRepo = NoteRepository();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,39 +34,34 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    var noteRepo = NoteRepository();
-
     return MultiProvider(
       providers: [
         Provider<HomeBloc>(
-          create: (context) => HomeBloc(noteRepo),
+          create: (context) => HomeBloc(globalNoteRepo),
         ),
         Provider<SearchBloc>(
-          create: (context) => SearchBloc(noteRepo),
+          create: (context) => SearchBloc(globalNoteRepo),
         ),
         Provider<NoteSetupBloc>(
-          create: (context) => NoteSetupBloc(noteRepo),
+          create: (context) => NoteSetupBloc(globalNoteRepo),
         ),
         Provider<NoteLabelingBloc>(
-          create: (context) => NoteLabelingBloc(noteRepo),
+          create: (context) => NoteLabelingBloc(globalNoteRepo),
         ),
         Provider<DrawerBloc>(
-          create: (context) => DrawerBloc(noteRepo),
+          create: (context) => DrawerBloc(globalNoteRepo),
         ),
         Provider<RemindersBloc>(
-          create: (context) => RemindersBloc(noteRepo),
+          create: (context) => RemindersBloc(globalNoteRepo),
         ),
         Provider<ArchiveBloc>(
-          create: (context) => ArchiveBloc(noteRepo),
+          create: (context) => ArchiveBloc(globalNoteRepo),
         ),
         Provider<TrashBloc>(
-          create: (context) => TrashBloc(noteRepo),
+          create: (context) => TrashBloc(globalNoteRepo),
         ),
         Provider<EditLabelsBloc>(
-          create: (context) => EditLabelsBloc(noteRepo),
-        ),
-        Provider<LabelScreenBloc>(
-          create: (context) => LabelScreenBloc(noteRepo),
+          create: (context) => EditLabelsBloc(globalNoteRepo),
         ),
         ChangeNotifierProvider<DrawerScreenSelection>(
           create: (context) => DrawerScreenSelection(),

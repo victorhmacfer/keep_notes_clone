@@ -6,10 +6,10 @@ import 'package:rxdart/rxdart.dart';
 class NoteRepository {
   SQLiteHandler dbHandler;
 
-  final _notesBS = BehaviorSubject<List<Note>>();
+  final notesBS = BehaviorSubject<List<Note>>();
   final _labelsBS = BehaviorSubject<List<Label>>();
 
-  Stream<List<Note>> get notes => _notesBS.stream;
+  Stream<List<Note>> get notes => notesBS.stream;
   Stream<List<Label>> get allLabels => _labelsBS.stream;
 
   NoteRepository() {
@@ -24,7 +24,7 @@ class NoteRepository {
 
     var notes = await dbHandler.readAllNotes();
 
-    _notesBS.add(notes);
+    notesBS.add(notes);
   }
 
   void _fetchLabels() async {
@@ -38,13 +38,13 @@ class NoteRepository {
   }
 
   Future<int> addNote(Note note) async {
-    List<Note> currentNotes = (_notesBS.hasValue) ? _notesBS.value : [];
+    List<Note> currentNotes = (notesBS.hasValue) ? notesBS.value : [];
 
     var insertedNoteId = await dbHandler.insertNote(note);
 
     note.id = insertedNoteId;
     currentNotes.add(note);
-    _notesBS.add(currentNotes);
+    notesBS.add(currentNotes);
     return insertedNoteId;
   }
 
@@ -63,8 +63,8 @@ class NoteRepository {
   void updateNote(Note note) async {
     await dbHandler.updateNote(note);
 
-    List<Note> currentNotes = _notesBS.value;
-    _notesBS.add(currentNotes);
+    List<Note> currentNotes = notesBS.value;
+    notesBS.add(currentNotes);
   }
 
   void updateLabel(Label label) async {
@@ -91,33 +91,33 @@ class NoteRepository {
   }
 
   void deleteNote(Note note) {
-    List<Note> currentNotes = _notesBS.value;
+    List<Note> currentNotes = notesBS.value;
 
     var index = currentNotes.indexWhere((n) => n.id == note.id);
     currentNotes.removeAt(index);
-    _notesBS.add(currentNotes);
+    notesBS.add(currentNotes);
 
     dbHandler.deleteNote(note);
   }
 
   void deleteManyNotes(List<Note> notes) {
-    List<Note> currentNotes = _notesBS.value;
+    List<Note> currentNotes = notesBS.value;
 
     for (var note in notes) {
       var index = currentNotes.indexWhere((n) => n.id == note.id);
       currentNotes.removeAt(index);
       dbHandler.deleteNote(note);
     }
-    _notesBS.add(currentNotes);
+    notesBS.add(currentNotes);
   }
 
   void updateManyNotes(List<Note> notes) {
-    List<Note> currentNotes = _notesBS.value;
+    List<Note> currentNotes = notesBS.value;
 
     for (var note in notes) {
       dbHandler.updateNote(note);
     }
-    _notesBS.add(currentNotes);
+    notesBS.add(currentNotes);
   }
 
   Future<int> addReminderAlarm() async {

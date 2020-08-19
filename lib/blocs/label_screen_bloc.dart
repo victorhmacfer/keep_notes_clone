@@ -9,13 +9,15 @@ import 'package:rxdart/subjects.dart';
 
 class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
   final NoteRepository noteRepo;
+  final Label label;
 
   final _notesBS = BehaviorSubject<List<Note>>();
   List<Label> _currentLabelsSorted = [];
-  final _labelScreenRequestBS = BehaviorSubject<Label>();
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
-  LabelScreenBloc(this.noteRepo) {
+  LabelScreenBloc(this.noteRepo, this.label) {
+    _filterWithLabelAndStream();
+
     noteRepo.notes.listen((noteList) {
       _notesBS.add(noteList);
     });
@@ -27,11 +29,7 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
     _notesBS.listen((notes) {
       _updateLabelFilteredNotesAfterChange(notes);
     });
-
-    _labelScreenRequestBS.stream.listen(_filterWithNewLabelAndStream);
   }
-
-  StreamSink<Label> get labelScreenRequestSink => _labelScreenRequestBS.sink;
 
   Stream<LabelViewModel> get labelViewModelStream =>
       _labelFilteredNotesBS.stream.map((notes) => LabelViewModel(notes));
@@ -60,21 +58,16 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
     return true;
   }
 
-  void _filterWithNewLabelAndStream(Label theLabel) {
-    var lastNotesEmitted = _notesBS.value ?? [];
-    var filteredNotes = _filterNotesWithLabel(theLabel, lastNotesEmitted);
+  void _filterWithLabelAndStream() {
+    var lastNotesEmitted = noteRepo.notesBS.value ?? [];
+    var filteredNotes = _filterNotesWithLabel(label, lastNotesEmitted);
 
     _labelFilteredNotesBS.add(filteredNotes);
   }
 
   void _updateLabelFilteredNotesAfterChange(List<Note> allNotes) {
-    var hasEverFilteredByThisLabelInDrawer = _labelScreenRequestBS.hasValue;
-
-    if (hasEverFilteredByThisLabelInDrawer) {
-      var filteredNotes =
-          _filterNotesWithLabel(_labelScreenRequestBS.value, allNotes);
-      _labelFilteredNotesBS.add(filteredNotes);
-    }
+    var filteredNotes = _filterNotesWithLabel(label, allNotes);
+    _labelFilteredNotesBS.add(filteredNotes);
   }
 
   List<Note> _filterNotesWithLabel(Label theLabel, List<Note> input) {
@@ -91,7 +84,6 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
   }
 
   void dispose() {
-    _labelScreenRequestBS.close();
     _labelFilteredNotesBS.close();
     _notesBS.close();
   }

@@ -17,6 +17,8 @@ import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/screens/trash_screen.dart';
 import 'package:provider/provider.dart';
 
+import 'package:keep_notes_clone/main.dart';
+
 final _selectedBorderRadius = BorderRadius.only(
     topRight: Radius.circular(48), bottomRight: Radius.circular(48));
 
@@ -39,7 +41,6 @@ class MyDrawer extends StatelessWidget {
 
   List<Widget> _labelList(List<Label> labels,
       DrawerScreenSelection drawerScreenSelection, BuildContext context) {
-    var labelScreenBloc = Provider.of<LabelScreenBloc>(context);
     List<Widget> theList = [];
 
     for (int i = 0; i < labels.length; i++) {
@@ -51,12 +52,15 @@ class MyDrawer extends StatelessWidget {
         onPressed: () {
           if (drawerScreenSelection.selectedScreenIndex != i + 4) {
             drawerScreenSelection.changeSelectedScreenToIndex(i + 4);
-            labelScreenBloc.labelScreenRequestSink.add(labels[i]);
 
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => LabelScreen(labels[i])));
+                    builder: (context) => Provider<LabelScreenBloc>(
+                          create: (context) =>
+                              LabelScreenBloc(globalNoteRepo, labels[i]),
+                          child: LabelScreen(labels[i]),
+                        )));
           }
         },
       );
