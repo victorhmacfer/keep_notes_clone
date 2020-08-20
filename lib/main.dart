@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:keep_notes_clone/blocs/archive_bloc.dart';
-import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
-import 'package:keep_notes_clone/blocs/edit_labels_bloc.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
-import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
-import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
-import 'package:keep_notes_clone/blocs/reminders_bloc.dart';
-import 'package:keep_notes_clone/blocs/search_bloc.dart';
-import 'package:keep_notes_clone/blocs/trash_bloc.dart';
 import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
@@ -34,21 +26,6 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        Provider<DrawerBloc>(
-          create: (context) => DrawerBloc(globalNoteRepo),
-        ),
-        Provider<RemindersBloc>(
-          create: (context) => RemindersBloc(globalNoteRepo),
-        ),
-        Provider<ArchiveBloc>(
-          create: (context) => ArchiveBloc(globalNoteRepo),
-        ),
-        Provider<TrashBloc>(
-          create: (context) => TrashBloc(globalNoteRepo),
-        ),
-        Provider<EditLabelsBloc>(
-          create: (context) => EditLabelsBloc(globalNoteRepo),
-        ),
         ChangeNotifierProvider<DrawerScreenSelection>(
           create: (context) => DrawerScreenSelection(),
         ),

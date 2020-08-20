@@ -30,6 +30,16 @@ const double _drawerItemHeight = 48;
 const double _iconToTextSpacing = 16;
 
 class MyDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Provider<DrawerBloc>(
+      create: (context) => DrawerBloc(globalNoteRepo),
+      child: _MyDrawer(),
+    );
+  }
+}
+
+class _MyDrawer extends StatelessWidget {
   // this drawer item indexes (for the notifier to track the selected item) are:
   // 'Notes' item         index 0
   // 'Reminders' item     index 1

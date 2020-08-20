@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/trash_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
@@ -17,8 +18,13 @@ import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 class TrashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MultiNoteSelection>(
-      create: (context) => MultiNoteSelection(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<MultiNoteSelection>(
+          create: (context) => MultiNoteSelection(),
+        ),
+        Provider<TrashBloc>(create: (context) => TrashBloc(globalNoteRepo)),
+      ],
       child: Scaffold(
         backgroundColor: appWhite,
         drawer: MyDrawer(),

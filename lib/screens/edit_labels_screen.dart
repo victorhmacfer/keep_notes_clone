@@ -7,10 +7,26 @@ import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
 
+import 'package:keep_notes_clone/main.dart';
+
 class EditLabelsScreen extends StatelessWidget {
   final bool autoFocus;
 
   EditLabelsScreen({@required this.autoFocus});
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider<EditLabelsBloc>(
+      create: (context) => EditLabelsBloc(globalNoteRepo),
+      child: _EditLabelsScreen(autoFocus: autoFocus),
+    );
+  }
+}
+
+class _EditLabelsScreen extends StatelessWidget {
+  final bool autoFocus;
+
+  _EditLabelsScreen({@required this.autoFocus});
 
   List<Widget> _labelList(List<Label> labels) {
     return labels

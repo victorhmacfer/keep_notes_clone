@@ -15,11 +15,18 @@ import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/custom_widgets/drawer.dart';
 
+import 'package:keep_notes_clone/main.dart';
+
 class ArchiveScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MultiNoteSelection>(
-      create: (context) => MultiNoteSelection(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<MultiNoteSelection>(
+          create: (context) => MultiNoteSelection(),
+        ),
+        Provider<ArchiveBloc>(create: (context) => ArchiveBloc(globalNoteRepo)),
+      ],
       child: Scaffold(
         backgroundColor: appWhite,
         drawer: MyDrawer(),

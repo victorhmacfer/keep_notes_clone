@@ -6,6 +6,7 @@ import 'package:keep_notes_clone/custom_widgets/floating_action_button.dart';
 import 'package:keep_notes_clone/custom_widgets/multi_note_selection_appbar.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card_grids.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/no_screen.dart';
@@ -18,18 +19,23 @@ import 'package:provider/provider.dart';
 class RemindersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MultiNoteSelection>(
-      create: (context) => MultiNoteSelection(),
-      child: Scaffold(
-        backgroundColor: appWhite,
-        extendBody: true,
-        floatingActionButton: MyCustomFab(),
-        floatingActionButtonLocation: MyCustomFabLocation(),
-        bottomNavigationBar: MyNotchedBottomAppBar(),
-        drawer: MyDrawer(),
-        body: _Body(),
-      ),
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<MultiNoteSelection>(
+            create: (context) => MultiNoteSelection(),
+          ),
+          Provider<RemindersBloc>(
+              create: (context) => RemindersBloc(globalNoteRepo)),
+        ],
+        child: Scaffold(
+          backgroundColor: appWhite,
+          extendBody: true,
+          floatingActionButton: MyCustomFab(),
+          floatingActionButtonLocation: MyCustomFabLocation(),
+          bottomNavigationBar: MyNotchedBottomAppBar(),
+          drawer: MyDrawer(),
+          body: _Body(),
+        ));
   }
 }
 
