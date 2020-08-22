@@ -14,7 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 final flnp = FlutterLocalNotificationsPlugin();
 
-NoteRepository globalNoteRepo = NoteRepository();
+NoteRepository globalNoteRepo;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,9 +58,11 @@ class AuthChecker extends StatelessWidget {
       stream: authBloc.loggedInUserId,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          print('snapshot data is ${snapshot.data}');
           if (snapshot.data.isEmpty) {
             return LoginScreen();
           }
+          globalNoteRepo = NoteRepository(snapshot.data);
           return Provider<HomeBloc>(
             create: (context) => HomeBloc(globalNoteRepo),
             child: PreHome(),

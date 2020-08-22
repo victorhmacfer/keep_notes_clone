@@ -5,19 +5,26 @@ import 'package:sqflite/sqflite.dart';
 class SQLiteHandler {
   Database _database;
 
-  SQLiteHandler() {
-    _initialized = _openOrCreateDatabase();
+  final String userId;
+
+  SQLiteHandler(this.userId) {
+    assert(userId != null);
+    assert(userId.isNotEmpty);
+    _initialized = _openOrCreateDatabase(userId);
   }
 
   Future<bool> _initialized;
 
   Future<bool> get initialized => _initialized;
 
-  Future<bool> _openOrCreateDatabase() async {
+  Future<bool> _openOrCreateDatabase(String uid) async {
     var databasesPath = await getDatabasesPath();
 
+    String myDbName = '$uid.db';
     String dbName = '02jul20201540.db';
-    String path = '$databasesPath/$dbName';
+    String path = '$databasesPath/$myDbName';
+
+    print('just created or opened the db in: $path');
 
     _database = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) {

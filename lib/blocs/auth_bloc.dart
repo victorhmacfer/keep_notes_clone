@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:keep_notes_clone/main.dart';
+
 class AuthBloc {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -39,9 +41,10 @@ class AuthBloc {
     }
   }
 
-  void logout() async {
-    await _auth.signOut();
+  void logout() {
+    _auth.signOut();
     _loggedInUserIdBS.add('');
+    globalNoteRepo = null; // FIXME: this is wrong.
   }
 
   void dispose() {}

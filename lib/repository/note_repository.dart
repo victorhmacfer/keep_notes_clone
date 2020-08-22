@@ -9,11 +9,13 @@ class NoteRepository {
   final notesBS = BehaviorSubject<List<Note>>();
   final _labelsBS = BehaviorSubject<List<Label>>();
 
+  final String userId;
+
   Stream<List<Note>> get notes => notesBS.stream;
   Stream<List<Label>> get allLabels => _labelsBS.stream;
 
-  NoteRepository() {
-    dbHandler = SQLiteHandler();
+  NoteRepository(this.userId) {
+    dbHandler = SQLiteHandler(userId);
 
     _fetchNotes();
     _fetchLabels();
