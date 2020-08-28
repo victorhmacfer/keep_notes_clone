@@ -118,7 +118,11 @@ class _LoginFormState extends State<LoginForm> {
             onEditingComplete: () {
               passwordFocusNode.requestFocus();
             },
-            fieldValidator: (username) {},
+            fieldValidator: (username) {
+              if (username.isEmpty) {
+                return 'Required';
+              }
+            },
             prefixIconData: Icons.person_outline,
             labelText: 'USERNAME',
           ),
@@ -129,7 +133,12 @@ class _LoginFormState extends State<LoginForm> {
             controller: _passwordController,
             focusNode: passwordFocusNode,
             textInputAction: TextInputAction.done,
-            fieldValidator: (pwd) {},
+            validateOnEveryChange: true,
+            fieldValidator: (pwd) {
+              if (pwd.length < 8) {
+                return 'Should have at least 8 characters!';
+              }
+            },
             prefixIconData: Icons.lock_outline,
             labelText: 'PASSWORD',
           ),
@@ -151,7 +160,11 @@ class _LoginFormState extends State<LoginForm> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             padding: EdgeInsets.symmetric(vertical: 12),
-            onPressed: () {},
+            onPressed: () {
+              if (_loginFormKey.currentState.validate()) {
+                //authbloc login bla bla
+              }
+            },
             child: Text(
               'LOGIN',
               style: TextStyle(
@@ -178,6 +191,7 @@ class _TextFormFieldContainer extends StatelessWidget {
   final void Function() onEditingComplete;
   final IconData prefixIconData;
   final String labelText;
+  final bool validateOnEveryChange;
 
   _TextFormFieldContainer(
       {@required this.textFormFieldKey,
@@ -187,6 +201,7 @@ class _TextFormFieldContainer extends StatelessWidget {
       this.obscureText = false,
       @required this.focusNode,
       @required this.fieldValidator,
+      this.validateOnEveryChange = false,
       @required this.prefixIconData,
       @required this.labelText,
       @required this.textInputAction});
@@ -204,6 +219,7 @@ class _TextFormFieldContainer extends StatelessWidget {
       ),
       child: TextFormField(
         key: textFormFieldKey,
+        maxLines: 1,
         controller: controller,
         obscureText: obscureText,
         textInputAction: textInputAction,
@@ -213,7 +229,9 @@ class _TextFormFieldContainer extends StatelessWidget {
         cursorColor: NoteColor.orange.getColor(),
         validator: fieldValidator,
         onChanged: (_) {
-          textFormFieldKey.currentState.validate();
+          if (validateOnEveryChange) {
+            textFormFieldKey.currentState.validate();
+          }
         },
         style: TextStyle(
           fontSize: 15,
@@ -232,6 +250,10 @@ class _TextFormFieldContainer extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          errorStyle:
+              TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w500),
+          errorMaxLines: 1,
           labelText: labelText,
           labelStyle: TextStyle(
               fontSize: 14,
