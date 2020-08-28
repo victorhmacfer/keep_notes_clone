@@ -288,7 +288,11 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: appIconGrey),
+        backgroundColor: _backgroundColor,
+        elevation: 0,
+      ),
       body: Container(
         constraints: BoxConstraints.expand(),
         color: _backgroundColor,

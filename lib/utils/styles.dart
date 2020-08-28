@@ -56,8 +56,12 @@ var noNotesMessageTextStyle = TextStyle(
     letterSpacing: -0.5);
 
 final appLightThemeData = ThemeData(
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-    iconTheme: IconThemeData(color: appIconGrey),
-    hintColor: Colors.grey[400],
-    textSelectionHandleColor: appVeryDarkGrey,
-    canvasColor: appWhite);
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+  appBarTheme: AppBarTheme(
+    brightness: Brightness.light,
+  ),
+  iconTheme: IconThemeData(color: appIconGrey),
+  hintColor: Colors.grey[400],
+  textSelectionHandleColor: appVeryDarkGrey,
+  canvasColor: appWhite,
+);
