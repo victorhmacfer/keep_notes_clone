@@ -10,10 +10,15 @@ final _forgotPwdStyle = TextStyle(
     color: NoteColor.orange.getColor(),
     fontWeight: FontWeight.w500);
 
-class LoginScreen extends StatelessWidget {
-  final emailController = TextEditingController();
-  final pwdController = TextEditingController();
+final _titleStyle = TextStyle(
+    fontFamily: 'Montserrat',
+    fontWeight: FontWeight.w400,
+    color: appIconGrey,
+    fontSize: 34);
 
+const double donthaveAccountTextSpacing = 24;
+
+class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);
@@ -39,11 +44,7 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 36),
               Text(
                 'Welcome to Keep!',
-                style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w400,
-                    color: appIconGrey,
-                    fontSize: 34),
+                style: _titleStyle,
               ),
               SizedBox(height: 8),
               Text(
@@ -55,17 +56,33 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 64),
               LoginForm(),
-              SizedBox(height: 32),
-              RichText(
-                  text: TextSpan(
-                style: TextStyle(color: Colors.red),
+              SizedBox(height: donthaveAccountTextSpacing),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextSpan(
-                      text: "Don't have an account?  ",
-                      style: _forgotPwdStyle.copyWith(color: Colors.grey)),
-                  TextSpan(text: "Sign up", style: _forgotPwdStyle),
+                  Text(
+                    "Don't have an account?",
+                    style: _forgotPwdStyle.copyWith(color: Colors.grey),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignUpScreen(),
+                          ));
+                    },
+                    child: Container(
+                      color: _backgroundColor,
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      child: Text(
+                        'Sign up',
+                        style: _forgotPwdStyle,
+                      ),
+                    ),
+                  ),
                 ],
-              )),
+              ),
             ],
           ),
         ),
@@ -150,6 +167,7 @@ class _LoginFormState extends State<LoginForm> {
                 onPressed: () {},
                 color: _backgroundColor,
                 splashColor: _backgroundColor, // remove default splash
+                highlightColor: _backgroundColor,
                 child: Text(
                   'Forgot password?',
                   style: _forgotPwdStyle,
@@ -261,6 +279,210 @@ class _TextFormFieldContainer extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: Colors.grey),
         ),
+      ),
+    );
+  }
+}
+
+class SignUpScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Container(
+        constraints: BoxConstraints.expand(),
+        color: _backgroundColor,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ClipOval(
+                child: Image.asset(
+                  'assets/images/keep-logo-square512.png',
+                  height: 100,
+                ),
+              ),
+              SizedBox(height: 36),
+              Text(
+                'Sign Up',
+                style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w400,
+                    color: appIconGrey,
+                    fontSize: 34),
+              ),
+              SizedBox(height: 24),
+              SignUpForm(),
+              SizedBox(height: donthaveAccountTextSpacing),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account?",
+                    style: _forgotPwdStyle.copyWith(color: Colors.grey),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      color: _backgroundColor,
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      child: Text(
+                        'Log in',
+                        style: _forgotPwdStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpForm extends StatefulWidget {
+  @override
+  _SignUpFormState createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  static const double _formFieldSpacing = 20;
+  final _signUpFormKey = GlobalKey<FormState>();
+
+  final _usernameKey = GlobalKey<FormFieldState>();
+  final _emailKey = GlobalKey<FormFieldState>();
+  final _passwordKey = GlobalKey<FormFieldState>();
+  final _confirmPasswordKey = GlobalKey<FormFieldState>();
+
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  FocusNode usernameFocusNode;
+  FocusNode emailFocusNode;
+  FocusNode passwordFocusNode;
+  FocusNode confirmPasswordFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    usernameFocusNode = FocusNode();
+    emailFocusNode = FocusNode();
+    passwordFocusNode = FocusNode();
+    confirmPasswordFocusNode = FocusNode();
+
+    usernameFocusNode.addListener(() => setState(() {}));
+    emailFocusNode.addListener(() => setState(() {}));
+    passwordFocusNode.addListener(() => setState(() {}));
+    confirmPasswordFocusNode.addListener(() => setState(() {}));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _signUpFormKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _TextFormFieldContainer(
+            textFormFieldKey: _usernameKey,
+            controller: _usernameController,
+            focusNode: usernameFocusNode,
+            textInputAction: TextInputAction.next,
+            onEditingComplete: () {
+              emailFocusNode.requestFocus();
+            },
+            fieldValidator: (username) {
+              if (username.isEmpty) {
+                return 'Required';
+              }
+            },
+            prefixIconData: Icons.person_outline,
+            labelText: 'USERNAME',
+          ),
+          SizedBox(height: _formFieldSpacing),
+          _TextFormFieldContainer(
+            textFormFieldKey: _emailKey,
+            controller: _emailController,
+            focusNode: emailFocusNode,
+            textInputAction: TextInputAction.next,
+            onEditingComplete: () {
+              passwordFocusNode.requestFocus();
+            },
+            fieldValidator: (email) {
+              if (email.isEmpty) {
+                return 'Required';
+              }
+            },
+            prefixIconData: Icons.mail_outline,
+            labelText: 'EMAIL',
+          ),
+          SizedBox(height: _formFieldSpacing),
+          _TextFormFieldContainer(
+            obscureText: true,
+            textFormFieldKey: _passwordKey,
+            controller: _passwordController,
+            focusNode: passwordFocusNode,
+            textInputAction: TextInputAction.next,
+            onEditingComplete: () {
+              confirmPasswordFocusNode.requestFocus();
+            },
+            validateOnEveryChange: true,
+            fieldValidator: (pwd) {
+              if (pwd.length < 8) {
+                return 'Should have at least 8 characters!';
+              }
+            },
+            prefixIconData: Icons.lock_outline,
+            labelText: 'PASSWORD',
+          ),
+          SizedBox(height: _formFieldSpacing),
+          _TextFormFieldContainer(
+            obscureText: true,
+            textFormFieldKey: _confirmPasswordKey,
+            controller: _confirmPasswordController,
+            focusNode: confirmPasswordFocusNode,
+            textInputAction: TextInputAction.done,
+            validateOnEveryChange: true,
+            fieldValidator: (pwd) {
+              if (pwd.length < 8) {
+                return 'Should have at least 8 characters!';
+              }
+            },
+            prefixIconData: Icons.lock_outline,
+            labelText: 'CONFIRM PASSWORD',
+          ),
+          SizedBox(height: 32),
+          FlatButton(
+            color: NoteColor.orange.getColor(),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            padding: EdgeInsets.symmetric(vertical: 12),
+            onPressed: () {
+              if (_signUpFormKey.currentState.validate()) {
+                //authbloc register bla bla
+              }
+            },
+            child: Text(
+              'SIGN UP',
+              style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
+                  color: _backgroundColor),
+            ),
+          )
+        ],
       ),
     );
   }
