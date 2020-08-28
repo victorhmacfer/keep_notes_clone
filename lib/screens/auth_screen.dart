@@ -5,6 +5,11 @@ import 'package:provider/provider.dart';
 
 const Color _backgroundColor = appWhite;
 
+final _forgotPwdStyle = TextStyle(
+    fontFamily: 'Montserrat',
+    color: NoteColor.orange.getColor(),
+    fontWeight: FontWeight.w500);
+
 class LoginScreen extends StatelessWidget {
   final emailController = TextEditingController();
   final pwdController = TextEditingController();
@@ -50,6 +55,17 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 64),
               LoginForm(),
+              SizedBox(height: 32),
+              RichText(
+                  text: TextSpan(
+                style: TextStyle(color: Colors.red),
+                children: [
+                  TextSpan(
+                      text: "Don't have an account?  ",
+                      style: _forgotPwdStyle.copyWith(color: Colors.grey)),
+                  TextSpan(text: "Sign up", style: _forgotPwdStyle),
+                ],
+              )),
             ],
           ),
         ),
@@ -98,16 +114,21 @@ class _LoginFormState extends State<LoginForm> {
             textFormFieldKey: _usernameKey,
             controller: _usernameController,
             focusNode: usernameFocusNode,
-            autofocus: true,
+            textInputAction: TextInputAction.next,
+            onEditingComplete: () {
+              passwordFocusNode.requestFocus();
+            },
             fieldValidator: (username) {},
             prefixIconData: Icons.person_outline,
             labelText: 'USERNAME',
           ),
           SizedBox(height: 32),
           _TextFormFieldContainer(
+            obscureText: true,
             textFormFieldKey: _passwordKey,
             controller: _passwordController,
             focusNode: passwordFocusNode,
+            textInputAction: TextInputAction.done,
             fieldValidator: (pwd) {},
             prefixIconData: Icons.lock_outline,
             labelText: 'PASSWORD',
@@ -122,10 +143,7 @@ class _LoginFormState extends State<LoginForm> {
                 splashColor: _backgroundColor, // remove default splash
                 child: Text(
                   'Forgot password?',
-                  style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      color: NoteColor.orange.getColor(),
-                      fontWeight: FontWeight.w500),
+                  style: _forgotPwdStyle,
                 ),
               )),
           FlatButton(
@@ -154,9 +172,10 @@ class _TextFormFieldContainer extends StatelessWidget {
   final TextEditingController controller;
   final bool autofocus;
   final FocusNode focusNode;
-
+  final TextInputAction textInputAction;
+  final bool obscureText;
   final String Function(String) fieldValidator;
-
+  final void Function() onEditingComplete;
   final IconData prefixIconData;
   final String labelText;
 
@@ -164,10 +183,13 @@ class _TextFormFieldContainer extends StatelessWidget {
       {@required this.textFormFieldKey,
       @required this.controller,
       this.autofocus = false,
+      this.onEditingComplete,
+      this.obscureText = false,
       @required this.focusNode,
       @required this.fieldValidator,
       @required this.prefixIconData,
-      @required this.labelText});
+      @required this.labelText,
+      @required this.textInputAction});
 
   @override
   Widget build(BuildContext context) {
@@ -183,8 +205,11 @@ class _TextFormFieldContainer extends StatelessWidget {
       child: TextFormField(
         key: textFormFieldKey,
         controller: controller,
+        obscureText: obscureText,
+        textInputAction: textInputAction,
         focusNode: focusNode,
         autofocus: autofocus,
+        onEditingComplete: onEditingComplete,
         cursorColor: NoteColor.orange.getColor(),
         validator: fieldValidator,
         onChanged: (_) {
