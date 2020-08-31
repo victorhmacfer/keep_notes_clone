@@ -180,37 +180,37 @@ class _LoginFormState extends State<LoginForm> {
             padding: EdgeInsets.symmetric(vertical: 12),
             onPressed: () async {
               if (_loginFormKey.currentState.validate()) {
-                var authResult = await authBloc.login(
+                var loginError = await authBloc.login(
                     _usernameController.text, _passwordController.text);
 
                 String m;
 
-                switch (authResult) {
-                  case AuthenticationResult.usernameNotFoundError:
+                switch (loginError) {
+                  case LoginError.usernameNotFoundError:
                     m = "Couldn't find a user with this username";
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case AuthenticationResult.wrongPwdError:
+                  case LoginError.wrongPwdError:
                     m = 'Wrong password';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case AuthenticationResult.userDisabledError:
+                  case LoginError.userDisabledError:
                     m = 'You did not sign in correctly or your account is temporarily disabled';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case AuthenticationResult.invalidEmailError:
+                  case LoginError.invalidEmailError:
                     m = 'Sign in failed. Internal error.';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case AuthenticationResult.emailNotFoundError:
+                  case LoginError.emailNotFoundError:
                     m = 'Sign in failed. Internal error.';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case AuthenticationResult.authenticationUnavailableError:
+                  case LoginError.authenticationUnavailableError:
                     m = "Login failed... Do you have an internet connection?";
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case AuthenticationResult.unknownError:
+                  case LoginError.unknownError:
                     m = "We couldn't sign you in. Please try again later";
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;

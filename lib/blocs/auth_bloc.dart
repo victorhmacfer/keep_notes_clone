@@ -5,8 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:keep_notes_clone/main.dart';
 
-enum AuthenticationResult {
-  success,
+enum LoginError {
+  none,
   usernameNotFoundError,
   wrongPwdError,
   userDisabledError,
@@ -40,48 +40,49 @@ class AuthBloc {
     }
   }
 
-  Future<AuthenticationResult> login(String username, String pwd) async {
+  Future<LoginError> login(String username, String pwd) async {
     if ((await _hasInternetConnection()) == false) {
-      return AuthenticationResult.authenticationUnavailableError;
+      return LoginError.authenticationUnavailableError;
     }
 
     var docSnapshot =
         await _firebaseFirestore.collection("usernames").doc(username).get();
 
-    if (docSnapshot.exists) {
-      String email = docSnapshot.data()['email'];
-      UserCredential userCredential;
-
-      try {
-        userCredential =
-            await _auth.signInWithEmailAndPassword(email: email, password: pwd);
-      } on Exception catch (e) {
-        print('entrei no catch caralho');
-        print('a exception eh.. $e');
-
-        if (e.toString().contains('wrong-password')) {
-          return AuthenticationResult.wrongPwdError;
-        } else if (e.toString().contains('invalid-email')) {
-          return AuthenticationResult.invalidEmailError;
-        } else if (e.toString().contains('user-disabled')) {
-          return AuthenticationResult.userDisabledError;
-        } else if (e.toString().contains('user-not-found')) {
-          return AuthenticationResult.emailNotFoundError;
-        } else {
-          return AuthenticationResult.unknownError;
-        }
-      } catch (error) {
-        return AuthenticationResult.unknownError;
-      }
-      var theId = userCredential?.user?.uid;
-
-      if (theId != null) {
-        _loggedInUserIdBS.add(theId);
-        return AuthenticationResult.success; // FIXME: is this necessary ?
-      }
+    if (docSnapshot.exists == false) {
+      return LoginError.usernameNotFoundError;
     }
 
-    return AuthenticationResult.usernameNotFoundError;
+    String email = docSnapshot.data()['email'];
+    UserCredential userCredential;
+
+    try {
+      userCredential =
+          await _auth.signInWithEmailAndPassword(email: email, password: pwd);
+    } on Exception catch (e) {
+      print('entrei no catch caralho');
+      print('a exception eh.. $e');
+
+      if (e.toString().contains('wrong-password')) {
+        return LoginError.wrongPwdError;
+      } else if (e.toString().contains('invalid-email')) {
+        return LoginError.invalidEmailError;
+      } else if (e.toString().contains('user-disabled')) {
+        return LoginError.userDisabledError;
+      } else if (e.toString().contains('user-not-found')) {
+        return LoginError.emailNotFoundError;
+      } else {
+        return LoginError.unknownError;
+      }
+    } catch (error) {
+      return LoginError.unknownError;
+    }
+    var theId = userCredential?.user?.uid;
+
+    if (theId == null) {
+      return LoginError.unknownError;
+    }
+    _loggedInUserIdBS.add(theId);
+    return LoginError.none; // FIXME: is this necessary ?
   }
 
   // should call this at the start every method that uses the internet
