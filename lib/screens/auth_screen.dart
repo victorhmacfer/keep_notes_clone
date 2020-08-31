@@ -16,13 +16,11 @@ final _titleStyle = TextStyle(
     color: appIconGrey,
     fontSize: 34);
 
-const double donthaveAccountTextSpacing = 24;
+const double _donthaveAccountTextSpacing = 24;
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var authBloc = Provider.of<AuthBloc>(context);
-
     return Scaffold(
       body: Container(
         constraints: BoxConstraints.expand(),
@@ -56,7 +54,7 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 64),
               LoginForm(),
-              SizedBox(height: donthaveAccountTextSpacing),
+              SizedBox(height: _donthaveAccountTextSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -121,6 +119,8 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    var authBloc = Provider.of<AuthBloc>(context);
+
     return Form(
       key: _loginFormKey,
       child: Column(
@@ -178,9 +178,45 @@ class _LoginFormState extends State<LoginForm> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             padding: EdgeInsets.symmetric(vertical: 12),
-            onPressed: () {
+            onPressed: () async {
               if (_loginFormKey.currentState.validate()) {
-                //authbloc login bla bla
+                var authResult = await authBloc.login(
+                    _usernameController.text, _passwordController.text);
+
+                String m;
+
+                switch (authResult) {
+                  case AuthenticationResult.usernameNotFoundError:
+                    m = "Couldn't find a user with this username";
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case AuthenticationResult.wrongPwdError:
+                    m = 'Wrong password';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case AuthenticationResult.userDisabledError:
+                    m = 'You did not sign in correctly or your account is temporarily disabled';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case AuthenticationResult.invalidEmailError:
+                    m = 'Sign in failed. Internal error.';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case AuthenticationResult.emailNotFoundError:
+                    m = 'Sign in failed. Internal error.';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case AuthenticationResult.authenticationUnavailableError:
+                    m = "Login failed... Do you have an internet connection?";
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case AuthenticationResult.unknownError:
+                    m = "We couldn't sign you in. Please try again later";
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  default:
+                    print('success');
+                }
               }
             },
             child: Text(
@@ -196,6 +232,19 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
   }
+}
+
+SnackBar _authErrorSnackBar(String message) {
+  return SnackBar(
+    backgroundColor: Colors.red[400],
+    content: Text(
+      message,
+      style: TextStyle(
+          color: appWhite,
+          fontFamily: 'Montserrat',
+          fontWeight: FontWeight.w500),
+    ),
+  );
 }
 
 class _TextFormFieldContainer extends StatelessWidget {
@@ -320,7 +369,7 @@ class SignUpScreen extends StatelessWidget {
               ),
               SizedBox(height: 24),
               SignUpForm(),
-              SizedBox(height: donthaveAccountTextSpacing),
+              SizedBox(height: _donthaveAccountTextSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
