@@ -7,13 +7,24 @@ import 'package:keep_notes_clone/main.dart';
 
 enum LoginError {
   none,
-  usernameNotFoundError,
-  wrongPwdError,
-  userDisabledError,
-  invalidEmailError,
-  emailNotFoundError,
-  authenticationUnavailableError,
-  unknownError,
+  usernameNotFound,
+  wrongPwd,
+  userDisabled,
+  invalidEmail,
+  emailNotFound,
+  authenticationUnavailable,
+  unknown,
+}
+
+enum SignUpError {
+  none,
+  authenticationUnavailable,
+  usernameAlreadyInUse,
+  emailAlreadyInUse,
+  invalidEmail,
+  emailAccountsDisabled,
+  weakPassword,
+  unknown,
 }
 
 class AuthBloc {
@@ -28,28 +39,22 @@ class AuthBloc {
   final _connectivityChecker = Connectivity();
 
   AuthBloc() {
-    _getLoggedInUser();
-  }
-
-  void _getLoggedInUser() {
-    var theUser = _auth.currentUser;
-    if (theUser != null) {
-      _loggedInUserIdBS.add(theUser.uid);
-    } else {
-      _loggedInUserIdBS.add('');
-    }
+    _auth.authStateChanges().listen((user) {
+      String userId = user?.uid ?? '';
+      _loggedInUserIdBS.add(userId);
+    });
   }
 
   Future<LoginError> login(String username, String pwd) async {
     if ((await _hasInternetConnection()) == false) {
-      return LoginError.authenticationUnavailableError;
+      return LoginError.authenticationUnavailable;
     }
 
     var docSnapshot =
         await _firebaseFirestore.collection("usernames").doc(username).get();
 
     if (docSnapshot.exists == false) {
-      return LoginError.usernameNotFoundError;
+      return LoginError.usernameNotFound;
     }
 
     String email = docSnapshot.data()['email'];
@@ -59,30 +64,69 @@ class AuthBloc {
       userCredential =
           await _auth.signInWithEmailAndPassword(email: email, password: pwd);
     } on Exception catch (e) {
-      print('entrei no catch caralho');
-      print('a exception eh.. $e');
-
       if (e.toString().contains('wrong-password')) {
-        return LoginError.wrongPwdError;
+        return LoginError.wrongPwd;
       } else if (e.toString().contains('invalid-email')) {
-        return LoginError.invalidEmailError;
+        return LoginError.invalidEmail;
       } else if (e.toString().contains('user-disabled')) {
-        return LoginError.userDisabledError;
+        return LoginError.userDisabled;
       } else if (e.toString().contains('user-not-found')) {
-        return LoginError.emailNotFoundError;
+        return LoginError.emailNotFound;
       } else {
-        return LoginError.unknownError;
+        return LoginError.unknown;
       }
     } catch (error) {
-      return LoginError.unknownError;
+      return LoginError.unknown;
     }
     var theId = userCredential?.user?.uid;
 
     if (theId == null) {
-      return LoginError.unknownError;
+      return LoginError.unknown;
     }
-    _loggedInUserIdBS.add(theId);
     return LoginError.none; // FIXME: is this necessary ?
+  }
+
+  Future<SignUpError> signup(String username, String email, String pwd) async {
+    if ((await _hasInternetConnection()) == false) {
+      return SignUpError.authenticationUnavailable;
+    }
+
+    var docSnapshot =
+        await _firebaseFirestore.collection("usernames").doc(username).get();
+
+    if (docSnapshot.exists) {
+      return SignUpError.usernameAlreadyInUse;
+    }
+
+    // TODO: WHAT ARE THE POSSIBLE ERRORS HERE ?
+    await _firebaseFirestore
+        .collection("usernames")
+        .doc(username)
+        .set({'email': email});
+
+    try {
+      await _auth.createUserWithEmailAndPassword(email: email, password: pwd);
+    } on Exception catch (e) {
+      if (e.toString().contains('email-already-in-use')) {
+        return SignUpError.emailAlreadyInUse;
+      } else if (e.toString().contains('invalid-email')) {
+        return SignUpError.invalidEmail;
+      } else if (e.toString().contains('weak-password')) {
+        return SignUpError.weakPassword;
+      } else if (e.toString().contains('operation-not-allowed')) {
+        return SignUpError.emailAccountsDisabled;
+      }
+    } catch (error) {
+      return SignUpError.unknown;
+    }
+
+    // TODO: WHAT ARE THE POSSIBLE ERRORS HERE ?
+    await _firebaseFirestore
+        .collection("usernames")
+        .doc(username)
+        .set({'email': email});
+
+    return SignUpError.none;
   }
 
   // should call this at the start every method that uses the internet
@@ -93,7 +137,6 @@ class AuthBloc {
 
   void logout() {
     _auth.signOut();
-    _loggedInUserIdBS.add('');
     globalNoteRepo = null; // FIXME: this is wrong.
   }
 

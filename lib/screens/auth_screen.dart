@@ -186,31 +186,31 @@ class _LoginFormState extends State<LoginForm> {
                 String m;
 
                 switch (loginError) {
-                  case LoginError.usernameNotFoundError:
+                  case LoginError.usernameNotFound:
                     m = "Couldn't find a user with this username";
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case LoginError.wrongPwdError:
+                  case LoginError.wrongPwd:
                     m = 'Wrong password';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case LoginError.userDisabledError:
+                  case LoginError.userDisabled:
                     m = 'You did not sign in correctly or your account is temporarily disabled';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case LoginError.invalidEmailError:
+                  case LoginError.invalidEmail:
                     m = 'Sign in failed. Internal error.';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case LoginError.emailNotFoundError:
+                  case LoginError.emailNotFound:
                     m = 'Sign in failed. Internal error.';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case LoginError.authenticationUnavailableError:
+                  case LoginError.authenticationUnavailable:
                     m = "Login failed... Do you have an internet connection?";
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
-                  case LoginError.unknownError:
+                  case LoginError.unknown:
                     m = "We couldn't sign you in. Please try again later";
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
@@ -441,6 +441,8 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   Widget build(BuildContext context) {
+    var authBloc = Provider.of<AuthBloc>(context);
+
     return Form(
       key: _signUpFormKey,
       child: Column(
@@ -506,10 +508,13 @@ class _SignUpFormState extends State<SignUpForm> {
             controller: _confirmPasswordController,
             focusNode: confirmPasswordFocusNode,
             textInputAction: TextInputAction.done,
-            validateOnEveryChange: true,
-            fieldValidator: (pwd) {
-              if (pwd.length < 8) {
+            fieldValidator: (pwdConfirmation) {
+              if (pwdConfirmation.length < 8) {
                 return 'Should have at least 8 characters!';
+              }
+
+              if (pwdConfirmation != _passwordController.text) {
+                return "Password confirmation doesn't match";
               }
             },
             prefixIconData: Icons.lock_outline,
@@ -521,9 +526,45 @@ class _SignUpFormState extends State<SignUpForm> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             padding: EdgeInsets.symmetric(vertical: 12),
-            onPressed: () {
+            onPressed: () async {
               if (_signUpFormKey.currentState.validate()) {
-                //authbloc register bla bla
+                var signupError = await authBloc.signup(
+                    _usernameController.text,
+                    _emailController.text,
+                    _passwordController.text);
+
+                String m;
+
+                switch (signupError) {
+                  case SignUpError.usernameAlreadyInUse:
+                    m = "This username is already in use";
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case SignUpError.authenticationUnavailable:
+                    m = 'Sign up failed... Do you have an internet connection?';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case SignUpError.emailAlreadyInUse:
+                    m = 'This email is already in use';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case SignUpError.invalidEmail:
+                    m = 'Invalid email';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case SignUpError.weakPassword:
+                    m = 'Password is too weak! Avoid using whole words and throw some numbers in there!';
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+                  case SignUpError.unknown:
+                    m = "Sign up failed... Please try again later";
+                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    break;
+
+                  default:
+                    print('success');
+                    Navigator.pop(context);
+                }
               }
             },
             child: Text(
