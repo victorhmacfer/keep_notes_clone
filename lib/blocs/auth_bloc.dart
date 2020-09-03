@@ -1,5 +1,6 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:keep_notes_clone/models/keep_clone_user.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -32,16 +33,32 @@ class AuthBloc {
 
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  final _loggedInUserIdBS = BehaviorSubject<String>();
+  final _loggedInUserBS = BehaviorSubject<KeepCloneUser>();
 
-  Stream<String> get loggedInUserId => _loggedInUserIdBS.stream;
+  Stream<KeepCloneUser> get loggedInUser => _loggedInUserBS.stream;
 
   final _connectivityChecker = Connectivity();
 
   AuthBloc() {
-    _auth.authStateChanges().listen((user) {
-      String userId = user?.uid ?? '';
-      _loggedInUserIdBS.add(userId);
+    _auth.authStateChanges().listen((firebaseAuthUser) async {
+      String firebaseAuthUid = firebaseAuthUser?.uid;
+      if (firebaseAuthUid == null) {
+        _loggedInUserBS.add(KeepCloneUser.signedOut());
+      } else {
+        var queryDocumentSnapshot = (await _firebaseFirestore
+                .collection("users")
+                .where('firebaseAuthUid', isEqualTo: firebaseAuthUid)
+                .get())
+            .docs
+            .first;
+
+        String username = queryDocumentSnapshot.id;
+        String email = queryDocumentSnapshot.data()['email'];
+        _loggedInUserBS.add(KeepCloneUser(
+            firebaseAuthUID: firebaseAuthUid,
+            username: username,
+            email: email));
+      }
     });
   }
 
@@ -51,7 +68,7 @@ class AuthBloc {
     }
 
     var docSnapshot =
-        await _firebaseFirestore.collection("usernames").doc(username).get();
+        await _firebaseFirestore.collection("users").doc(username).get();
 
     if (docSnapshot.exists == false) {
       return LoginError.usernameNotFound;
@@ -92,20 +109,17 @@ class AuthBloc {
     }
 
     var docSnapshot =
-        await _firebaseFirestore.collection("usernames").doc(username).get();
+        await _firebaseFirestore.collection("users").doc(username).get();
 
     if (docSnapshot.exists) {
       return SignUpError.usernameAlreadyInUse;
     }
 
-    // TODO: WHAT ARE THE POSSIBLE ERRORS HERE ?
-    await _firebaseFirestore
-        .collection("usernames")
-        .doc(username)
-        .set({'email': email});
+    UserCredential userCredential;
 
     try {
-      await _auth.createUserWithEmailAndPassword(email: email, password: pwd);
+      userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email, password: pwd);
     } on Exception catch (e) {
       if (e.toString().contains('email-already-in-use')) {
         return SignUpError.emailAlreadyInUse;
@@ -120,11 +134,16 @@ class AuthBloc {
       return SignUpError.unknown;
     }
 
+    var firebaseAuthUid = userCredential?.user?.uid;
+
+    if (firebaseAuthUid == null) {
+      return SignUpError.unknown;
+    }
     // TODO: WHAT ARE THE POSSIBLE ERRORS HERE ?
     await _firebaseFirestore
-        .collection("usernames")
+        .collection("users")
         .doc(username)
-        .set({'email': email});
+        .set({'firebaseAuthUid': firebaseAuthUid, 'email': email});
 
     return SignUpError.none;
   }
