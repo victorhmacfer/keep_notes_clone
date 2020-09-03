@@ -361,11 +361,7 @@ class SignUpScreen extends StatelessWidget {
               SizedBox(height: 36),
               Text(
                 'Sign Up',
-                style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w400,
-                    color: appIconGrey,
-                    fontSize: 34),
+                style: _titleStyle,
               ),
               SizedBox(height: 24),
               SignUpForm(),
@@ -460,6 +456,13 @@ class _SignUpFormState extends State<SignUpForm> {
             fieldValidator: (username) {
               if (username.isEmpty) {
                 return 'Required';
+              } else if (username.length < 4) {
+                return 'Too short';
+              } else {
+                var regex = RegExp(r"^_{0,2}[a-zA-Z0-9]+_{0,2}$");
+                if (!regex.hasMatch(username)) {
+                  return 'Invalid username';
+                }
               }
             },
             prefixIconData: Icons.person_outline,
@@ -477,6 +480,11 @@ class _SignUpFormState extends State<SignUpForm> {
             fieldValidator: (email) {
               if (email.isEmpty) {
                 return 'Required';
+              } else {
+                var regex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+                if (!regex.hasMatch(email)) {
+                  return 'Invalid email';
+                }
               }
             },
             prefixIconData: Icons.mail_outline,
@@ -496,6 +504,11 @@ class _SignUpFormState extends State<SignUpForm> {
             fieldValidator: (pwd) {
               if (pwd.length < 8) {
                 return 'Should have at least 8 characters!';
+              } else {
+                var hasAnyNumber = RegExp(r"(?=.*[0-9])");
+                if (!hasAnyNumber.hasMatch(pwd)) {
+                  return 'Should have at least one number';
+                }
               }
             },
             prefixIconData: Icons.lock_outline,
@@ -509,10 +522,6 @@ class _SignUpFormState extends State<SignUpForm> {
             focusNode: confirmPasswordFocusNode,
             textInputAction: TextInputAction.done,
             fieldValidator: (pwdConfirmation) {
-              if (pwdConfirmation.length < 8) {
-                return 'Should have at least 8 characters!';
-              }
-
               if (pwdConfirmation != _passwordController.text) {
                 return "Password confirmation doesn't match";
               }
