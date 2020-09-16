@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/auth_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/models/keep_clone_user.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/note_search_screen.dart';
 
@@ -33,8 +35,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
     if (notifier.mode == NoteCardMode.extended) {
       return PngIconButton(
-        backgroundColor: appWhite,
-        padding: EdgeInsets.all(8),
+          backgroundColor: appWhite,
+          padding: EdgeInsets.all(8),
           pngIcon: PngIcon(
             fileName: 'outline_dashboard_black_48.png',
           ),
@@ -43,8 +45,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
           });
     }
     return PngIconButton(
-      backgroundColor: appWhite,
-      padding: EdgeInsets.all(8),
+        backgroundColor: appWhite,
+        padding: EdgeInsets.all(8),
         pngIcon: PngIcon(
           fileName: 'outline_view_agenda_black_48.png',
         ),
@@ -57,6 +59,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     var noteCardModeNotifier = Provider.of<NoteCardModeSelection>(context);
+    var authBloc = Provider.of<AuthBloc>(context);
 
     return Container(
       // color: Colors.red[100],
@@ -103,16 +106,30 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     _selectNoteCardModeButton(noteCardModeNotifier),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12, left: 12),
-                      child: CircleAvatar(
-                        radius: 16,
-                        child: Text(
-                          'V',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ),
+                    StreamBuilder<KeepCloneUser>(
+                        stream: authBloc.loggedInUser,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            return GestureDetector(
+                              onTap: () {
+                                authBloc.logout();
+                              },
+                              child: Container(
+                                color: appWhite,
+                                padding:
+                                    const EdgeInsets.only(right: 12, left: 12),
+                                child: CircleAvatar(
+                                  radius: 16,
+                                  child: Text(
+                                    snapshot.data.username[0].toUpperCase(),
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return Container();
+                        }),
                   ],
                 ),
               ],
