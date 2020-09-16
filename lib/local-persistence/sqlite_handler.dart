@@ -23,8 +23,6 @@ class SQLiteHandler {
     String myDbName = '$username.db';
     String path = '$databasesPath/$myDbName';
 
-    print('just created or opened the db in: $path');
-
     _database = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) {
       db.execute('''CREATE TABLE note (
@@ -74,12 +72,22 @@ class SQLiteHandler {
 
     var insertedNoteId = await _database.rawInsert(
         '''INSERT INTO note (title, text, pinned, archived, deleted, colorIndex, lastEdited, reminderTime, reminderAlarmId) 
-      VALUES ("$noteTitle", "$noteText", $notePinned, $noteArchived, $noteDeleted,
-              $noteColorIndex, "$noteLastEdited", "$noteReminderTime", $noteReminderAlarmId);''');
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+        [
+          noteTitle,
+          noteText,
+          notePinned,
+          noteArchived,
+          noteDeleted,
+          noteColorIndex,
+          noteLastEdited,
+          noteReminderTime,
+          noteReminderAlarmId
+        ]);
 
     for (var label in note.labels) {
       _database.rawInsert('''INSERT INTO note_label (note_id, label_id)
-           VALUES ($insertedNoteId, ${label.id});''');
+           VALUES (?, ?);''', [insertedNoteId, label.id]);
     }
 
     return insertedNoteId;
@@ -92,7 +100,7 @@ class SQLiteHandler {
     String labelName = label.name;
 
     return _database
-        .rawInsert('''INSERT INTO label (name) VALUES ("$labelName");''');
+        .rawInsert('INSERT INTO label (name) VALUES (?);', [labelName]);
   }
 
   Future<void> updateNote(Note note) async {
@@ -110,23 +118,34 @@ class SQLiteHandler {
     int noteReminderAlarmId = note.reminderAlarmId;
 
     await _database.rawUpdate('''UPDATE note
-         SET title = "$noteTitle",
-             text = "$noteText",
-             pinned = $notePinned,
-             archived = $noteArchived,
-             deleted = $noteDeleted,
-             colorIndex = $noteColorIndex,
-             lastEdited = "$noteLastEdited",
-             reminderTime = "$noteReminderTime",
-             reminderAlarmId = $noteReminderAlarmId
-         WHERE id = ${note.id};''');
+         SET title = ?,
+             text = ?,
+             pinned = ?,
+             archived = ?,
+             deleted = ?,
+             colorIndex = ?,
+             lastEdited = ?,
+             reminderTime = ?,
+             reminderAlarmId = ?
+         WHERE id = ?''', [
+      noteTitle,
+      noteText,
+      notePinned,
+      noteArchived,
+      noteDeleted,
+      noteColorIndex,
+      noteLastEdited,
+      noteReminderTime,
+      noteReminderAlarmId,
+      note.id
+    ]);
 
     await _database.rawDelete('''
-        DELETE FROM note_label WHERE note_id = ${note.id}''');
+        DELETE FROM note_label WHERE note_id = ?''', [note.id]);
 
     for (var label in note.labels) {
       _database.rawInsert('''INSERT INTO note_label (note_id, label_id)
-           VALUES (${note.id}, ${label.id});''');
+           VALUES (?, ?);''', [note.id, label.id]);
     }
   }
 
@@ -137,28 +156,28 @@ class SQLiteHandler {
     String newLabelName = label.name;
 
     _database.rawUpdate('''UPDATE label
-          SET name = "$newLabelName"
-          WHERE id = ${label.id};''');
+          SET name = ?
+          WHERE id = ?''', [newLabelName, label.id]);
   }
 
   Future<void> deleteLabel(Label label) async {
     var initialized = await _initialized;
     assert(initialized);
 
-    await _database.rawDelete('''DELETE FROM label WHERE id = ${label.id};''');
+    await _database.rawDelete('''DELETE FROM label WHERE id = ?''', [label.id]);
 
     _database
-        .rawDelete('''DELETE FROM note_label WHERE label_id = ${label.id};''');
+        .rawDelete('''DELETE FROM note_label WHERE label_id = ?''', [label.id]);
   }
 
   Future<void> deleteNote(Note note) async {
     var initialized = await _initialized;
     assert(initialized);
 
-    await _database.rawDelete('''DELETE FROM note WHERE id = ${note.id};''');
+    await _database.rawDelete('''DELETE FROM note WHERE id = ?''', [note.id]);
 
     _database
-        .rawDelete('''DELETE FROM note_label WHERE note_id = ${note.id};''');
+        .rawDelete('''DELETE FROM note_label WHERE note_id = ?''', [note.id]);
   }
 
   Future<int> insertReminderAlarm() async {
