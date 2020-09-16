@@ -8,6 +8,7 @@ import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:keep_notes_clone/screens/auth_screen.dart';
+import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -74,8 +75,14 @@ class AuthChecker extends StatelessWidget {
             child: PreHome(),
           );
         }
-        return Center(
-          child: CircularProgressIndicator(),
+        return Container(
+          color: appWhite,
+          constraints: BoxConstraints.expand(),
+          alignment: Alignment.center,
+          child: CircularProgressIndicator(
+            valueColor:
+                AlwaysStoppedAnimation<Color>(NoteColor.orange.getColor()),
+          ),
         );
       },
     );
