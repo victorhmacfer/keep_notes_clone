@@ -32,7 +32,7 @@ class NoteSearchScreen extends StatelessWidget {
           create: (context) => MultiNoteSelection(),
         ),
         Provider<SearchBloc>(
-          create: (context) => SearchBloc(globalNoteRepo),
+          create: (context) => SearchBloc(repo),
         ),
       ],
       child: _SearchScaffold(),

@@ -222,7 +222,7 @@ class __BodyState extends State<_Body> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => Provider<HomeBloc>(
-                              create: (context) => HomeBloc(globalNoteRepo),
+                              create: (context) => HomeBloc(repo),
                               child: HomeScreen(),
                             )));
 

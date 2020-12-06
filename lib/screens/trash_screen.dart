@@ -23,7 +23,7 @@ class TrashScreen extends StatelessWidget {
         ChangeNotifierProvider<MultiNoteSelection>(
           create: (context) => MultiNoteSelection(),
         ),
-        Provider<TrashBloc>(create: (context) => TrashBloc(globalNoteRepo)),
+        Provider<TrashBloc>(create: (context) => TrashBloc(repo)),
       ],
       child: Scaffold(
         backgroundColor: appWhite,

@@ -3,12 +3,12 @@ import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:rxdart/subjects.dart';
 
 class EditLabelsBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
   final _sortedLabelsBS = BehaviorSubject<List<Label>>();
 
-  EditLabelsBloc(this.noteRepo) {
-    noteRepo.allLabels.listen((labelList) {
+  EditLabelsBloc(this.repo) {
+    repo.allLabels.listen((labelList) {
       _sortedLabelsBS.add(_sortLabelsAlphabetically(labelList));
     });
   }
@@ -18,12 +18,12 @@ class EditLabelsBloc {
   void onCreateNewLabel(String text) {
     var labelExists = _labelAlreadyExists(text);
     if (labelExists == false) {
-      noteRepo.addLabel(Label(name: text));
+      repo.addLabel(Label(name: text));
     }
   }
 
   void onDeleteLabel(Label label) {
-    noteRepo.deleteLabel(label);
+    repo.deleteLabel(label);
   }
 
   bool renameLabel(Label label, String newName) {
@@ -40,7 +40,7 @@ class EditLabelsBloc {
     }
     var renamedLabel = Label(id: label.id, name: newName);
 
-    noteRepo.updateLabel(renamedLabel);
+    repo.updateLabel(renamedLabel);
     return true;
   }
 

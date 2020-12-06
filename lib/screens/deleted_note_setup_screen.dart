@@ -27,7 +27,7 @@ class DeletedNoteSetupScreen extends StatelessWidget {
           create: (context) => NoteSetupScreenController.fromNote(note),
         ),
         Provider<NoteSetupBloc>(
-          create: (context) => NoteSetupBloc(globalNoteRepo),
+          create: (context) => NoteSetupBloc(repo),
         ),
       ],
       child: Scaffold(

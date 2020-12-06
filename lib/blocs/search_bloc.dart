@@ -11,7 +11,7 @@ import 'package:keep_notes_clone/viewmodels/search_result_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 class SearchBloc implements NoteChangerBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
@@ -21,8 +21,8 @@ class SearchBloc implements NoteChangerBloc {
 
   final _searchRequestBS = BehaviorSubject<SearchRequestViewModel>();
 
-  SearchBloc(this.noteRepo) {
-    noteRepo.notes.listen((notes) {
+  SearchBloc(this.repo) {
+    repo.notes.listen((notes) {
       _notesBS.add(notes);
     });
 
@@ -67,7 +67,7 @@ class SearchBloc implements NoteChangerBloc {
   }
 
   void manyNotesChanged(List<Note> changedNotes) {
-    noteRepo.updateManyNotes(changedNotes);
+    repo.updateManyNotes(changedNotes);
   }
 
   void _remakeLastSearchRequest() {

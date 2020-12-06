@@ -25,7 +25,7 @@ class RemindersScreen extends StatelessWidget {
             create: (context) => MultiNoteSelection(),
           ),
           Provider<RemindersBloc>(
-              create: (context) => RemindersBloc(globalNoteRepo)),
+              create: (context) => RemindersBloc(repo)),
         ],
         child: Scaffold(
           backgroundColor: appWhite,

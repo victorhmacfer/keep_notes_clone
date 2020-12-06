@@ -3,7 +3,7 @@ import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:rxdart/rxdart.dart';
 
-class NoteRepository {
+class GlobalRepository {
   SQLiteHandler dbHandler;
 
   final notesBS = BehaviorSubject<List<Note>>();
@@ -14,7 +14,7 @@ class NoteRepository {
   Stream<List<Note>> get notes => notesBS.stream;
   Stream<List<Label>> get allLabels => _labelsBS.stream;
 
-  NoteRepository(this.username) {
+  GlobalRepository(this.username) {
     dbHandler = SQLiteHandler(username);
 
     _fetchNotes();

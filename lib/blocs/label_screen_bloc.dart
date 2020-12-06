@@ -8,21 +8,21 @@ import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
   final Label label;
 
   final _notesBS = BehaviorSubject<List<Note>>();
   List<Label> _currentLabelsSorted = [];
   final _labelFilteredNotesBS = BehaviorSubject<List<Note>>();
 
-  LabelScreenBloc(this.noteRepo, this.label) {
+  LabelScreenBloc(this.repo, this.label) {
     _filterWithLabelAndStream();
 
-    noteRepo.notes.listen((noteList) {
+    repo.notes.listen((noteList) {
       _notesBS.add(noteList);
     });
 
-    noteRepo.allLabels.listen((labelList) {
+    repo.allLabels.listen((labelList) {
       _currentLabelsSorted = _sortLabelsAlphabetically(labelList);
     });
 
@@ -35,11 +35,11 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
       _labelFilteredNotesBS.stream.map((notes) => LabelViewModel(notes));
 
   void manyNotesChanged(List<Note> changedNotes) {
-    noteRepo.updateManyNotes(changedNotes);
+    repo.updateManyNotes(changedNotes);
   }
 
   void onDeleteLabel(Label label) {
-    noteRepo.deleteLabel(label);
+    repo.deleteLabel(label);
   }
 
   bool renameLabel(Label label, String newName) {
@@ -54,12 +54,12 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
     }
     var renamedLabel = Label(id: label.id, name: newName);
 
-    noteRepo.updateLabel(renamedLabel);
+    repo.updateLabel(renamedLabel);
     return true;
   }
 
   void _filterWithLabelAndStream() {
-    var lastNotesEmitted = noteRepo.notesBS.value ?? [];
+    var lastNotesEmitted = repo.notesBS.value ?? [];
     var filteredNotes = _filterNotesWithLabel(label, lastNotesEmitted);
 
     _labelFilteredNotesBS.add(filteredNotes);

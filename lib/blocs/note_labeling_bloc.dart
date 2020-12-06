@@ -4,14 +4,14 @@ import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 class NoteLabelingBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
   final _sortedLabelsBS = BehaviorSubject<List<Label>>();
 
   final _noteLabelingViewModelBS = BehaviorSubject<NoteLabelingViewModel>();
 
-  NoteLabelingBloc(this.noteRepo) {
-    noteRepo.allLabels.listen((labelList) {
+  NoteLabelingBloc(this.repo) {
+    repo.allLabels.listen((labelList) {
       _sortedLabelsBS.add(_sortLabelsAlphabetically(labelList));
     });
 
@@ -29,7 +29,7 @@ class NoteLabelingBloc {
     // FIXME: but this is a dependency on implementation..
 
     var createdLabel = Label(name: text);
-    var labelId = await noteRepo.addLabel(createdLabel);
+    var labelId = await repo.addLabel(createdLabel);
     createdLabel.id = labelId;
     return createdLabel;
   }

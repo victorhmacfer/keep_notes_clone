@@ -5,12 +5,12 @@ import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 class HomeBloc implements NoteChangerBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
-  HomeBloc(this.noteRepo) {
-    noteRepo.notes.listen((notes) {
+  HomeBloc(this.repo) {
+    repo.notes.listen((notes) {
       _notesBS.add(notes);
     });
   }
@@ -31,7 +31,7 @@ class HomeBloc implements NoteChangerBloc {
   }
 
   void manyNotesChanged(List<Note> changedNotes) {
-    noteRepo.updateManyNotes(changedNotes);
+    repo.updateManyNotes(changedNotes);
   }
 
   void dispose() {

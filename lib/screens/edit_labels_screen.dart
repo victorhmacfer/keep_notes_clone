@@ -17,7 +17,7 @@ class EditLabelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<EditLabelsBloc>(
-      create: (context) => EditLabelsBloc(globalNoteRepo),
+      create: (context) => EditLabelsBloc(repo),
       child: _EditLabelsScreen(autoFocus: autoFocus),
     );
   }

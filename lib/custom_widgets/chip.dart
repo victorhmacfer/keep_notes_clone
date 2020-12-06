@@ -48,7 +48,7 @@ class NoteSetupLabelChip extends StatelessWidget {
                               NoteSetupScreenController>.value(value: notifier),
                           Provider<NoteLabelingBloc>(
                             create: (context) =>
-                                NoteLabelingBloc(globalNoteRepo),
+                                NoteLabelingBloc(repo),
                           ),
                         ],
                         child: NoteLabelingScreen(),

@@ -49,7 +49,7 @@ class NoteSetupScreen extends StatelessWidget {
         ChangeNotifierProvider<NoteSetupScreenController>.value(
             value: controller),
         Provider<NoteSetupBloc>(
-          create: (context) => NoteSetupBloc(globalNoteRepo),
+          create: (context) => NoteSetupBloc(repo),
         ),
       ],
       child: Scaffold(
@@ -133,7 +133,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ChangeNotifierProvider<NoteSetupScreenController>.value(
                           value: notifier),
                       Provider(
-                          create: (context) => NoteSetupBloc(globalNoteRepo)),
+                          create: (context) => NoteSetupBloc(repo)),
                     ],
                     child: ReminderSetupDialog(),
                   ),
@@ -434,7 +434,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                                   value: notifier),
                               Provider<NoteLabelingBloc>(
                                 create: (context) =>
-                                    NoteLabelingBloc(globalNoteRepo),
+                                    NoteLabelingBloc(repo),
                               ),
                             ],
                             child: NoteLabelingScreen(),

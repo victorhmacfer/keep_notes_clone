@@ -5,12 +5,12 @@ import 'package:keep_notes_clone/viewmodels/trash_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 class TrashBloc implements NoteChangerBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
-  TrashBloc(this.noteRepo) {
-    noteRepo.notes.listen((notes) {
+  TrashBloc(this.repo) {
+    repo.notes.listen((notes) {
       _notesBS.add(notes);
     });
   }
@@ -19,10 +19,10 @@ class TrashBloc implements NoteChangerBloc {
       _notesBS.stream.map((notes) => TrashViewModel(notes));
 
   void manyNotesChanged(List<Note> changedNotes) {
-    noteRepo.updateManyNotes(changedNotes);
+    repo.updateManyNotes(changedNotes);
   }
 
   void emptyTrash(List<Note> trashNotes) {
-    noteRepo.deleteManyNotes(trashNotes);
+    repo.deleteManyNotes(trashNotes);
   }
 }

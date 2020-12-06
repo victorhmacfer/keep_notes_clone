@@ -5,12 +5,12 @@ import 'package:keep_notes_clone/repository/note_repository.dart';
 import 'package:rxdart/subjects.dart';
 
 class DrawerBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
   final _sortedLabelsBS = BehaviorSubject<List<Label>>();
 
-  DrawerBloc(this.noteRepo) {
-    noteRepo.allLabels.listen((labelList) {
+  DrawerBloc(this.repo) {
+    repo.allLabels.listen((labelList) {
       _sortedLabelsBS.add(_sortLabelsAlphabetically(labelList));
     });
   }

@@ -5,12 +5,12 @@ import 'package:keep_notes_clone/viewmodels/archive_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
 class ArchiveBloc implements NoteChangerBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
 
-  ArchiveBloc(this.noteRepo) {
-    noteRepo.notes.listen((notes) {
+  ArchiveBloc(this.repo) {
+    repo.notes.listen((notes) {
       _notesBS.add(notes);
     });
   }
@@ -19,6 +19,6 @@ class ArchiveBloc implements NoteChangerBloc {
       _notesBS.stream.map((notes) => ArchiveViewModel(notes));
 
   void manyNotesChanged(List<Note> changedNotes) {
-    noteRepo.updateManyNotes(changedNotes);
+    repo.updateManyNotes(changedNotes);
   }
 }

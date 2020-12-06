@@ -25,7 +25,7 @@ class ArchiveScreen extends StatelessWidget {
         ChangeNotifierProvider<MultiNoteSelection>(
           create: (context) => MultiNoteSelection(),
         ),
-        Provider<ArchiveBloc>(create: (context) => ArchiveBloc(globalNoteRepo)),
+        Provider<ArchiveBloc>(create: (context) => ArchiveBloc(repo)),
       ],
       child: Scaffold(
         backgroundColor: appWhite,

@@ -156,7 +156,7 @@ class AuthBloc {
 
   void logout() {
     _auth.signOut();
-    globalNoteRepo = null; // FIXME: this is wrong.
+    repo = null; // FIXME: this is wrong.
   }
 
   void dispose() {}

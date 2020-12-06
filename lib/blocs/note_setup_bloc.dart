@@ -3,22 +3,22 @@ import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/repository/note_repository.dart';
 
 class NoteSetupBloc {
-  final NoteRepository noteRepo;
+  final GlobalRepository repo;
 
-  NoteSetupBloc(this.noteRepo);
+  NoteSetupBloc(this.repo);
 
   void onCreateNote(NoteSetupModel noteSetupModel,
       {bool createArchived = false}) {
     var newNote = Note.fromSetupModel(noteSetupModel, archived: createArchived);
-    noteRepo.addNote(newNote);
+    repo.addNote(newNote);
   }
 
   void onNoteChanged(Note changedNote) {
-    noteRepo.updateNote(changedNote);
+    repo.updateNote(changedNote);
   }
 
   void onDeleteNoteForever(Note noteForPermanentDeletion) {
-    noteRepo.deleteNote(noteForPermanentDeletion);
+    repo.deleteNote(noteForPermanentDeletion);
   }
 
   // Will reference a stand-alone table that stores only ids.
@@ -27,6 +27,6 @@ class NoteSetupBloc {
   // Cannot be linked to notes because at the time I call this, the note
   // may not exist.. so I cant pass the note here as an argument.
   Future<int> addReminderAlarm() async {
-    return noteRepo.addReminderAlarm();
+    return repo.addReminderAlarm();
   }
 }

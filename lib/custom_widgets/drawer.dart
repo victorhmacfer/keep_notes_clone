@@ -33,7 +33,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<DrawerBloc>(
-      create: (context) => DrawerBloc(globalNoteRepo),
+      create: (context) => DrawerBloc(repo),
       child: _MyDrawer(),
     );
   }
@@ -69,7 +69,7 @@ class _MyDrawer extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => Provider<LabelScreenBloc>(
                           create: (context) =>
-                              LabelScreenBloc(globalNoteRepo, labels[i]),
+                              LabelScreenBloc(repo, labels[i]),
                           child: LabelScreen(labels[i]),
                         )));
           }
@@ -101,7 +101,7 @@ class _MyDrawer extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => Provider<HomeBloc>(
-                              create: (context) => HomeBloc(globalNoteRepo),
+                              create: (context) => HomeBloc(repo),
                               child: HomeScreen(),
                             )));
               }
