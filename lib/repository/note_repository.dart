@@ -1,10 +1,12 @@
+import 'package:keep_notes_clone/local-persistence/local_database_handler.dart';
 import 'package:keep_notes_clone/local-persistence/sqlite_handler.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GlobalRepository {
-  SQLiteHandler dbHandler;
+  SQLiteHandler sqlDbHandler;
+  LocalDatabaseHandler dbHandler;
 
   final notesBS = BehaviorSubject<List<Note>>();
   final _labelsBS = BehaviorSubject<List<Label>>();
@@ -15,7 +17,8 @@ class GlobalRepository {
   Stream<List<Label>> get allLabels => _labelsBS.stream;
 
   GlobalRepository(this.username) {
-    dbHandler = SQLiteHandler(username);
+    sqlDbHandler = SQLiteHandler(username);
+    dbHandler = SembastLocalDatabaseHandler(username: username);
 
     _fetchNotes();
     _fetchLabels();
@@ -23,19 +26,13 @@ class GlobalRepository {
 
   void _fetchNotes() async {
     await dbHandler.initialized;
-
     var notes = await dbHandler.readAllNotes();
-
     notesBS.add(notes);
   }
 
   void _fetchLabels() async {
     await dbHandler.initialized;
-
-    List<Map<String, dynamic>> labelMaps = await dbHandler.readAllLabels();
-
-    List<Label> labels = labelMaps.map((m) => Label.fromMap(m)).toList();
-
+    var labels = await dbHandler.readAllLabels();
     _labelsBS.add(labels);
   }
 
@@ -70,7 +67,7 @@ class GlobalRepository {
   }
 
   void updateLabel(Label label) async {
-    dbHandler.updateLabel(label);
+    await dbHandler.updateLabel(label);
 
     List<Label> currentLabels = _labelsBS.value;
     var index = currentLabels.indexWhere((lab) => lab.id == label.id);
@@ -123,6 +120,6 @@ class GlobalRepository {
   }
 
   Future<int> addReminderAlarm() async {
-    return dbHandler.insertReminderAlarm();
+    return sqlDbHandler.insertReminderAlarm();
   }
 }

@@ -26,13 +26,15 @@ class Note {
       this.reminderTime,
       this.reminderAlarmId,
       bool deleted = false,
-      pinned = false,
-      archived = false}) {
+      bool pinned = false,
+      bool archived = false}) {
     if (deleted) {
       assert((reminderTime == null) && !pinned && !archived);
     }
 
-    this.labels = labels ?? [];
+    this.labels = (labels != null) ? (List.from(labels)) : [];
+
+    // this.labels = labels ?? [];
 
     _pinned = pinned;
     _archived = archived;
