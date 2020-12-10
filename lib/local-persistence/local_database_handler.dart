@@ -54,86 +54,14 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
     return labelStore.add(_db, _labelInsertionMap(label));
   }
 
-  //TODO: account for failure opening
-  Future<bool> _openOrCreateDatabase(String username) async {
-    var path = await _dbPath(username);
-    _db = await databaseFactoryIo.openDatabase(path);
-    return true;
-  }
-
-  //TODO: use username for db name
-  Future<String> _dbPath(String username) async {
-    var dir = await getApplicationDocumentsDirectory();
-    await dir.create(recursive: true);
-    return join(dir.path, '9dez1449.db');
-  }
-
-  Map<String, dynamic> _noteInsertionMap(Note note) {
-    var labelMaps =
-        note.labels.map((lab) => {'id': lab.id, 'name': lab.name}).toList();
-
-    return {
-      'title': note.title,
-      'text': note.text,
-      'pinned': note.pinned,
-      'archived': note.archived,
-      'deleted': note.deleted,
-      'colorIndex': note.colorIndex,
-      'lastEdited': Timestamp.fromDateTime(note.lastEdited),
-      'reminderTime': (note.reminderTime != null)
-          ? Timestamp.fromDateTime(note.reminderTime)
-          : null,
-      'reminderAlarmId': note.reminderAlarmId,
-      'labels': labelMaps,
-    };
-  }
-
-  // FIXME: only used for maps destined to labels collection!
-  // should not be used for producing label maps for the notes collection since
-  // those need a label id
-  Map<String, dynamic> _labelInsertionMap(Label label) {
-    return {
-      'name': label.name,
-    };
-  }
-
-  Note _noteFromRecordSnapshot(RecordSnapshot<int, Map<String, dynamic>> rs) {
-    var theLabels = rs.value['labels']?.map((labelMap) {
-      var theId = labelMap['id'];
-      var theName = labelMap['name'];
-      return Label(id: theId, name: theName);
-    }).toList();
-
-    return Note(
-      id: rs.key,
-      title: rs.value['title'] ?? '',
-      text: rs.value['text'] ?? '',
-      pinned: rs.value['pinned'] ?? false,
-      archived: rs.value['archived'] ?? false,
-      deleted: rs.value['deleted'] ?? false,
-      colorIndex: rs.value['colorIndex'] ?? 0,
-      lastEdited: rs.value['lastEdited']?.toDateTime(),
-      reminderTime: rs.value['reminderTime']?.toDateTime(),
-      reminderAlarmId: rs.value['reminderAlarmId'],
-      labels: theLabels,
-    );
-  }
-
-  Label _labelFromRecordSnapshot(RecordSnapshot<int, Map<String, dynamic>> rs) {
-    return Label(
-      id: rs.key,
-      name: rs.value['name'] ?? '',
-    );
-  }
-
   Future<void> updateLabel(Label label) async {
-    // update label record for this label
+    // update this label in labels collection
     assert(label.id != null);
     var labelRecord = labelStore.record(label.id);
     await labelRecord.update(_db, _labelInsertionMap(label));
 
     // update all notes that have this label
-    var hasThisLabelAndIsOutdated = Finder(filter: Filter.custom((rs) {
+    var hasLabelAndIsOutdated = Finder(filter: Filter.custom((rs) {
       List<Map<String, dynamic>> labelMapsList =
           (rs.value['labels'] != null) ? List.from(rs.value['labels']) : [];
       return labelMapsList
@@ -141,21 +69,20 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
     }));
 
     while (true) {
-      var recSnap =
-          await noteStore.findFirst(_db, finder: hasThisLabelAndIsOutdated);
-      if (recSnap == null) break;
+      var rs = await noteStore.findFirst(_db, finder: hasLabelAndIsOutdated);
+      if (rs == null) break;
 
-      var key = recSnap.key;
+      var recordMap = await noteStore.record(rs.key).get(_db);
 
-      var recordMap = await noteStore.record(key).get(_db);
       List<Map<String, dynamic>> labelMapsList = List.from(recordMap['labels']);
       var i = labelMapsList.indexWhere((m) => m['id'] == label.id);
       labelMapsList[i] = {'id': label.id, 'name': label.name};
-      await noteStore.record(key).update(_db, {'labels': labelMapsList});
+
+      await noteStore.record(rs.key).update(_db, {'labels': labelMapsList});
     }
   }
 
-  Future<void> updateNote(Note note) {
+  Future<void> updateNote(Note note) async {
     assert(note.id != null);
     var noteRecord = noteStore.record(note.id);
     noteRecord.update(_db, _noteInsertionMap(note));
@@ -188,9 +115,79 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
     }
   }
 
-  Future<void> deleteNote(Note note) {
+  Future<void> deleteNote(Note note) async {
     assert(note.id != null);
     var noteRecord = noteStore.record(note.id);
     noteRecord.delete(_db);
+  }
+
+  Future<bool> _openOrCreateDatabase(String username) async {
+    var path = await _dbPath(username);
+    _db = await databaseFactoryIo.openDatabase(path);
+    return true;
+  }
+
+  Future<String> _dbPath(String username) async {
+    assert(username != null);
+    assert(username.isNotEmpty);
+    var dir = await getApplicationDocumentsDirectory();
+    await dir.create(recursive: true);
+    return join(dir.path, '$username.db');
+  }
+
+  Map<String, dynamic> _noteInsertionMap(Note note) {
+    var labelMaps =
+        note.labels.map((lab) => {'id': lab.id, 'name': lab.name}).toList();
+
+    return {
+      'title': note.title,
+      'text': note.text,
+      'pinned': note.pinned,
+      'archived': note.archived,
+      'deleted': note.deleted,
+      'colorIndex': note.colorIndex,
+      'lastEdited': Timestamp.fromDateTime(note.lastEdited),
+      'reminderTime': (note.reminderTime != null)
+          ? Timestamp.fromDateTime(note.reminderTime)
+          : null,
+      'reminderAlarmId': note.reminderAlarmId,
+      'labels': labelMaps,
+    };
+  }
+
+  // Only used for maps destined to labels collection!
+  // Should not be used for producing label maps for the notes collection since
+  // those need a label id
+  Map<String, dynamic> _labelInsertionMap(Label label) {
+    return {
+      'name': label.name,
+    };
+  }
+
+  Note _noteFromRecordSnapshot(RecordSnapshot<int, Map<String, dynamic>> rs) {
+    var theLabels = rs.value['labels']?.map((labelMap) {
+      return Label(id: labelMap['id'], name: labelMap['name']);
+    })?.toList();
+
+    return Note(
+      id: rs.key,
+      title: rs.value['title'] ?? '',
+      text: rs.value['text'] ?? '',
+      pinned: rs.value['pinned'] ?? false,
+      archived: rs.value['archived'] ?? false,
+      deleted: rs.value['deleted'] ?? false,
+      colorIndex: rs.value['colorIndex'] ?? 0,
+      lastEdited: rs.value['lastEdited']?.toDateTime(),
+      reminderTime: rs.value['reminderTime']?.toDateTime(),
+      reminderAlarmId: rs.value['reminderAlarmId'],
+      labels: theLabels,
+    );
+  }
+
+  Label _labelFromRecordSnapshot(RecordSnapshot<int, Map<String, dynamic>> rs) {
+    return Label(
+      id: rs.key,
+      name: rs.value['name'] ?? '',
+    );
   }
 }
