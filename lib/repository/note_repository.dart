@@ -1,11 +1,9 @@
 import 'package:keep_notes_clone/local-persistence/local_database_handler.dart';
-import 'package:keep_notes_clone/local-persistence/sqlite_handler.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GlobalRepository {
-  SQLiteHandler sqlDbHandler;
   LocalDatabaseHandler dbHandler;
 
   final notesBS = BehaviorSubject<List<Note>>();
@@ -17,7 +15,6 @@ class GlobalRepository {
   Stream<List<Label>> get allLabels => _labelsBS.stream;
 
   GlobalRepository(this.username) {
-    sqlDbHandler = SQLiteHandler(username);
     dbHandler = SembastLocalDatabaseHandler(username: username);
 
     _fetchNotes();
@@ -119,7 +116,7 @@ class GlobalRepository {
     notesBS.add(currentNotes);
   }
 
-  Future<int> addReminderAlarm() async {
-    return sqlDbHandler.insertReminderAlarm();
+  Future<int> addReminderAlarm() {
+    return dbHandler.insertReminderAlarm();
   }
 }

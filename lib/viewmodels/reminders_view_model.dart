@@ -12,11 +12,9 @@ class RemindersViewModel {
   RemindersViewModel(List<Note> notes)
       : _fired = [],
         _upcoming = [] {
-    var now = DateTime.now();
-
     for (var note in notes) {
-      if (note.reminderTime != null) {
-        if (note.reminderTime.isBefore(now)) {
+      if (note.reminder != null) {
+        if (note.reminder.expired) {
           _fired.add(note);
         } else {
           _upcoming.add(note);

@@ -21,13 +21,13 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
 
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    String reminderDayText =
-        translateReminderDay(notifier.futureReminderDateTime);
-    String reminderTimeText =
-        translateReminderTime(notifier.futureReminderDateTime);
+    String reminderDayText = translateReminderDay(
+        notifier.reminderTimeInConstruction ?? DateTime.now());
+    String reminderTimeText = translateReminderTime(
+        notifier.reminderTimeInConstruction ?? DateTime.now());
 
     var now = DateTime.now();
-    var twoYearsInTheFuture = now.add(Duration(days: 366 * 2));
+    var twoYearsFromNow = now.add(Duration(days: 366 * 2));
 
     bool hasSavedReminder = notifier.savedReminderTime != null;
 
@@ -54,9 +54,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
       child: Container(
         width: screenWidth * 0.93,
         padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-        // color: Colors.purple[100],
         child: Container(
-          // color: Colors.green[100],
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -72,17 +70,23 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 onTap: () async {
                   var chosenDate = await showDatePicker(
                       context: context,
-                      initialDate: notifier.futureReminderDateTime,
+                      initialDate:
+                          notifier.reminderTimeInConstruction ?? DateTime.now(),
                       firstDate: now,
-                      lastDate: twoYearsInTheFuture);
+                      lastDate: twoYearsFromNow);
                   if (chosenDate != null) {
                     var now = DateTime.now();
-                    var r = notifier.futureReminderDateTime;
+                    var inConstruction =
+                        notifier.reminderTimeInConstruction ?? now;
 
-                    var chosenInstant = DateTime(chosenDate.year,
-                        chosenDate.month, chosenDate.day, r.hour, r.minute);
+                    var chosenInstant = DateTime(
+                        chosenDate.year,
+                        chosenDate.month,
+                        chosenDate.day,
+                        inConstruction.hour,
+                        inConstruction.minute);
 
-                    notifier.futureReminderDay = chosenDate;
+                    notifier.futureReminderCalendarDay = chosenDate;
 
                     setState(() {
                       chosenTimeIsPast = chosenInstant.isBefore(now);
@@ -108,17 +112,22 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 onTap: () async {
                   var chosenTime = await showTimePicker(
                     context: context,
-                    initialTime:
-                        TimeOfDay.fromDateTime(notifier.futureReminderDateTime),
+                    initialTime: TimeOfDay.fromDateTime(
+                        notifier.reminderTimeInConstruction ?? DateTime.now()),
                   );
                   if (chosenTime != null) {
                     var now = DateTime.now();
-                    var r = notifier.futureReminderDateTime;
+                    var inConstruction =
+                        notifier.reminderTimeInConstruction ?? now;
 
-                    var chosenInstant = DateTime(r.year, r.month, r.day,
-                        chosenTime.hour, chosenTime.minute);
+                    var chosenInstant = DateTime(
+                        inConstruction.year,
+                        inConstruction.month,
+                        inConstruction.day,
+                        chosenTime.hour,
+                        chosenTime.minute);
 
-                    notifier.futureReminderTime = DateTime(
+                    notifier.futureReminderHourMinute = DateTime(
                         9999, 12, 12, chosenTime.hour, chosenTime.minute);
 
                     setState(() {
@@ -167,7 +176,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                           notifier.removeSavedReminder();
                         }
 
-                        // I do this for grabbing an auto-incremented id
+                        // I only do this to grab an auto-incremented id
                         // for scheduling the new reminder
                         var newAlarmId = await noteSetupBloc.addReminderAlarm();
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/models/reminder.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
@@ -19,6 +20,8 @@ abstract class LocalDatabaseHandler {
   Future<int> insertLabel(Label label);
   Future<void> updateLabel(Label label);
   Future<void> deleteLabel(Label label);
+
+  Future<int> insertReminderAlarm();
 }
 
 class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
@@ -27,6 +30,7 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
 
   final noteStore = intMapStoreFactory.store('notes');
   final labelStore = intMapStoreFactory.store('labels');
+  final reminderStore = intMapStoreFactory.store('reminders');
 
   SembastLocalDatabaseHandler({@required String username}) {
     assert(username != null);
@@ -139,6 +143,13 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
     var labelMaps =
         note.labels.map((lab) => {'id': lab.id, 'name': lab.name}).toList();
 
+    var reminderMap = (note.reminder != null)
+        ? {
+            'id': note.reminder.id,
+            'time': Timestamp.fromDateTime(note.reminder.time)
+          }
+        : {};
+
     return {
       'title': note.title,
       'text': note.text,
@@ -147,10 +158,7 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
       'deleted': note.deleted,
       'colorIndex': note.colorIndex,
       'lastEdited': Timestamp.fromDateTime(note.lastEdited),
-      'reminderTime': (note.reminderTime != null)
-          ? Timestamp.fromDateTime(note.reminderTime)
-          : null,
-      'reminderAlarmId': note.reminderAlarmId,
+      'reminder': reminderMap,
       'labels': labelMaps,
     };
   }
@@ -169,6 +177,17 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
       return Label(id: labelMap['id'], name: labelMap['name']);
     })?.toList();
 
+    Reminder theReminder;
+
+    if (rs.value['reminder'] != null) {
+      Map<String, dynamic> theMap = rs.value['reminder'];
+      if (theMap.isNotEmpty) {
+        theReminder = Reminder(
+            id: rs.value['reminder']['id'],
+            time: rs.value['reminder']['time']?.toDateTime());
+      }
+    }
+
     return Note(
       id: rs.key,
       title: rs.value['title'] ?? '',
@@ -178,8 +197,7 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
       deleted: rs.value['deleted'] ?? false,
       colorIndex: rs.value['colorIndex'] ?? 0,
       lastEdited: rs.value['lastEdited']?.toDateTime(),
-      reminderTime: rs.value['reminderTime']?.toDateTime(),
-      reminderAlarmId: rs.value['reminderAlarmId'],
+      reminder: theReminder,
       labels: theLabels,
     );
   }
@@ -189,5 +207,10 @@ class SembastLocalDatabaseHandler implements LocalDatabaseHandler {
       id: rs.key,
       name: rs.value['name'] ?? '',
     );
+  }
+
+  //FIXME: this is temporary !
+  Future<int> insertReminderAlarm() {
+    return reminderStore.add(_db, {'useless_field': 'bla'});
   }
 }

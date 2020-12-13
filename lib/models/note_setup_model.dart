@@ -17,7 +17,7 @@ class NoteSetupModel {
 
   List<Label> labels;
 
-  DateTime reminderDateTime = DateTime.now();
+  DateTime reminderTimeInConstruction;
 
   DateTime _savedReminderDateTime;
 
@@ -48,11 +48,11 @@ class NoteSetupModel {
         isPinned = note.pinned,
         noteLastEdited = note.lastEdited,
         labels = List.from(note.labels) {
-    if (note.reminderTime != null) {
-      reminderDateTime = note.reminderTime;
-      _savedReminderDateTime = note.reminderTime;
-      _reminderExpired = _savedReminderDateTime.isBefore(DateTime.now());
-      _savedReminderAlarmId = note.reminderAlarmId;
+    if (note.reminder != null) {
+      reminderTimeInConstruction = note.reminder.time;
+      _savedReminderDateTime = note.reminder.time;
+      _reminderExpired = note.reminder.expired;
+      _savedReminderAlarmId = note.reminder.id;
     }
   }
 
@@ -65,24 +65,28 @@ class NoteSetupModel {
 
   bool get reminderExpired => _reminderExpired;
 
-  set reminderTime(DateTime newTime) {
-    reminderDateTime = DateTime(
-        reminderDateTime?.year ?? 9999,
-        reminderDateTime?.month ?? 12,
-        reminderDateTime?.day ?? 12,
+  set reminderHourMinute(DateTime newTime) {
+    var now = DateTime.now();
+    reminderTimeInConstruction = DateTime(
+        reminderTimeInConstruction?.year ?? now.year,
+        reminderTimeInConstruction?.month ?? now.month,
+        reminderTimeInConstruction?.day ?? now.day,
         newTime.hour,
         newTime.minute);
   }
 
   set reminderDay(DateTime newReminderDate) {
-    var currentHour = reminderDateTime?.hour ?? 12;
-    var currentMinute = reminderDateTime?.minute ?? 12;
-    reminderDateTime = DateTime(newReminderDate.year, newReminderDate.month,
-        newReminderDate.day, currentHour, currentMinute);
+    var now = DateTime.now();
+    reminderTimeInConstruction = DateTime(
+        newReminderDate.year,
+        newReminderDate.month,
+        newReminderDate.day,
+        reminderTimeInConstruction?.hour ?? now.hour,
+        reminderTimeInConstruction?.minute ?? now.minute);
   }
 
   void saveReminderTime(int alarmId) {
-    _savedReminderDateTime = reminderDateTime;
+    _savedReminderDateTime = reminderTimeInConstruction;
     _savedReminderAlarmId = alarmId;
   }
 

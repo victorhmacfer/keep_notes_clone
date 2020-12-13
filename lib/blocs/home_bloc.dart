@@ -27,7 +27,7 @@ class HomeBloc implements NoteChangerBloc {
   // already streamed
   Note getNoteWithAlarmId(int alarmId) {
     var notes = _notesBS.value ?? [];
-    return notes.firstWhere((n) => n.reminderAlarmId == alarmId);
+    return notes.firstWhere((n) => n.reminder.id == alarmId);
   }
 
   void manyNotesChanged(List<Note> changedNotes) {

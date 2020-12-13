@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
+import 'package:keep_notes_clone/models/reminder.dart';
 
 class Note {
   int id;
@@ -11,8 +12,7 @@ class Note {
   bool _deleted;
   int colorIndex;
   DateTime lastEdited;
-  DateTime reminderTime;
-  int reminderAlarmId;
+  Reminder reminder;
 
   List<Label> labels;
 
@@ -23,18 +23,15 @@ class Note {
       this.colorIndex = 0,
       labels,
       @required this.lastEdited,
-      this.reminderTime,
-      this.reminderAlarmId,
+      this.reminder,
       bool deleted = false,
       bool pinned = false,
       bool archived = false}) {
     if (deleted) {
-      assert((reminderTime == null) && !pinned && !archived);
+      assert((reminder == null) && !pinned && !archived);
     }
 
     this.labels = (labels != null) ? (List.from(labels)) : [];
-
-    // this.labels = labels ?? [];
 
     _pinned = pinned;
     _archived = archived;
@@ -52,11 +49,14 @@ class Note {
     _deleted = false;
     colorIndex = setupModel.selectedColorIndex;
     lastEdited = setupModel.noteLastEdited;
-    reminderTime = setupModel.savedReminderTime;
-    if (title.isEmpty && text.isEmpty && (reminderTime != null)) {
+    reminder = (setupModel.hasSavedReminder)
+        ? Reminder(
+            id: setupModel.savedReminderAlarmId,
+            time: setupModel.savedReminderTime)
+        : null;
+    if (title.isEmpty && text.isEmpty && (reminder != null)) {
       text = 'Empty reminder';
     }
-    reminderAlarmId = setupModel.savedReminderAlarmId;
     labels = setupModel.labels ?? [];
   }
 
@@ -66,8 +66,11 @@ class Note {
     colorIndex = setupModel.selectedColorIndex;
     lastEdited = setupModel.noteLastEdited;
     pinned = setupModel.isPinned;
-    reminderTime = setupModel.savedReminderTime;
-    reminderAlarmId = setupModel.savedReminderAlarmId;
+    reminder = (setupModel.hasSavedReminder)
+        ? Reminder(
+            id: setupModel.savedReminderAlarmId,
+            time: setupModel.savedReminderTime)
+        : null;
     labels = setupModel.labels;
   }
 
@@ -104,7 +107,7 @@ class Note {
     _pinned = false;
     _archived = false;
     _deleted = true;
-    reminderTime = null;
+    reminder = null;
   }
 
   void restore() {

@@ -84,7 +84,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            if (notifier.canApplySetupModelToNote) {
+            if (notifier.canCreateNote) {
               if (notifier.notEditing) {
                 noteSetupBloc.onCreateNote(notifier.noteSetupModel);
               } else {
@@ -154,7 +154,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                       iconColor: appIconGreyForColoredBg,
                     ),
               onTap: () {
-                if (notifier.canApplySetupModelToNote) {
+                if (notifier.canCreateNote) {
                   if (notifier.notEditing) {
                     noteSetupBloc.onCreateNote(notifier.noteSetupModel,
                         createArchived: true);
@@ -215,7 +215,6 @@ class _NoteSetupBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
-
     var noteLabels = notifier.futureLabels;
 
     return GestureDetector(
@@ -451,7 +450,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    var lastEditedText = noteSetupLastEditedText(notifier.noteLastEdited);
+    var lastEditedText = noteSetupLastEditedText(notifier.lastEditedTime);
 
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),

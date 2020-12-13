@@ -38,33 +38,33 @@ class NoteSetupScreenController with ChangeNotifier {
 
   int get selectedColorIndex => _noteSetupModel.selectedColorIndex;
 
-  DateTime get futureReminderDateTime => _noteSetupModel.reminderDateTime;
+  DateTime get reminderTimeInConstruction => _noteSetupModel.reminderTimeInConstruction;
 
   DateTime get savedReminderTime => _noteSetupModel.savedReminderTime;
 
-  DateTime get noteLastEdited => _noteSetupModel.noteLastEdited;
+  DateTime get lastEditedTime => _noteSetupModel.noteLastEdited;
 
   bool get reminderExpired => _noteSetupModel.reminderExpired;
 
   NoteSetupModel get noteSetupModel => _noteSetupModel;
 
-  bool get canApplySetupModelToNote =>
+  bool get canCreateNote =>
       titleController.text.isNotEmpty ||
       textController.text.isNotEmpty ||
       _noteSetupModel.hasSavedReminder;
 
-  set futureReminderTime(DateTime newTime) {
-    _noteSetupModel.reminderTime = newTime;
+  set futureReminderHourMinute(DateTime newTime) {
+    _noteSetupModel.reminderHourMinute = newTime;
     notifyListeners();
   }
 
-  set futureReminderDay(DateTime newReminderDate) {
+  set futureReminderCalendarDay(DateTime newReminderDate) {
     _noteSetupModel.reminderDay = newReminderDate;
     notifyListeners();
   }
 
   void resetReminderTimeToSavedOrNow() {
-    _noteSetupModel.reminderDateTime =
+    _noteSetupModel.reminderTimeInConstruction =
         _noteSetupModel.savedReminderTime ?? DateTime.now();
   }
 

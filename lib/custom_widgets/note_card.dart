@@ -106,10 +106,10 @@ class ExtendedNoteCard extends StatelessWidget {
             _titleWidget(_title),
             _spacingWidget(),
             _textWidget(_text),
-            ((note.labels?.isNotEmpty ?? false) || (note.reminderTime != null))
+            ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
                 ? _ChipsContainer(
                     labels: note.labels,
-                    reminderTime: note.reminderTime,
+                    reminderTime: note.reminder?.time,
                   )
                 : Container(),
           ],
@@ -285,7 +285,7 @@ class SmallNoteCard extends StatelessWidget {
       totalHeight += _spacerHeight;
     }
 
-    var hasReminder = note.reminderTime != null;
+    var hasReminder = note.reminder != null;
     var hasAnyLabel = note.labels.isNotEmpty;
 
     var hasAnyChip = hasReminder || hasAnyLabel;
@@ -364,11 +364,10 @@ class SmallNoteCard extends StatelessWidget {
               _titleWidget(_title),
               _spacingWidget(),
               _textWidget(_text),
-              ((note.labels?.isNotEmpty ?? false) ||
-                      (note.reminderTime != null))
+              ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
                   ? _ChipsContainer(
                       labels: note.labels,
-                      reminderTime: note.reminderTime,
+                      reminderTime: note.reminder?.time,
                     )
                   : Container(),
             ],

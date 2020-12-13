@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
+import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -47,8 +48,7 @@ class NoteSetupLabelChip extends StatelessWidget {
                           ChangeNotifierProvider<
                               NoteSetupScreenController>.value(value: notifier),
                           Provider<NoteLabelingBloc>(
-                            create: (context) =>
-                                NoteLabelingBloc(repo),
+                            create: (context) => NoteLabelingBloc(repo),
                           ),
                         ],
                         child: NoteLabelingScreen(),
@@ -100,6 +100,7 @@ class NoteSetupReminderChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
+    final noteSetupBloc = Provider.of<NoteSetupBloc>(context);
 
     Color textColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
     Color alarmIconColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
@@ -111,9 +112,12 @@ class NoteSetupReminderChip extends StatelessWidget {
       onTap: () {
         showDialog(
           context: context,
-          builder: (context) =>
+          builder: (context) => MultiProvider(
+            providers: [
               ChangeNotifierProvider<NoteSetupScreenController>.value(
-            value: notifier,
+                  value: notifier),
+              Provider(create: (context) => NoteSetupBloc(repo)),
+            ],
             child: ReminderSetupDialog(),
           ),
         );
