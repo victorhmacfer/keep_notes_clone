@@ -22,6 +22,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: ValueKey('login_screen'),
       body: Container(
         constraints: BoxConstraints.expand(),
         color: _backgroundColor,
@@ -128,6 +129,7 @@ class _LoginFormState extends State<LoginForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _TextFormFieldContainer(
+            containerKey: ValueKey('login_username'),
             textFormFieldKey: _usernameKey,
             controller: _usernameController,
             focusNode: usernameFocusNode,
@@ -145,6 +147,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 32),
           _TextFormFieldContainer(
+            containerKey: ValueKey('login_pwd'),
             obscureText: true,
             textFormFieldKey: _passwordKey,
             controller: _passwordController,
@@ -174,6 +177,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               )),
           FlatButton(
+            key: ValueKey('login_button'),
             color: NoteColor.orange.getColor(),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -187,7 +191,7 @@ class _LoginFormState extends State<LoginForm> {
 
                 switch (loginError) {
                   case LoginError.usernameNotFound:
-                    m = "Couldn't find a user with this username";
+                    m = "Username not found";
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
                   case LoginError.wrongPwd:
@@ -195,7 +199,7 @@ class _LoginFormState extends State<LoginForm> {
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
                   case LoginError.userDisabled:
-                    m = 'You did not sign in correctly or your account is temporarily disabled';
+                    m = 'User disabled';
                     Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
                     break;
                   case LoginError.invalidEmail:
@@ -248,6 +252,7 @@ SnackBar _authErrorSnackBar(String message) {
 }
 
 class _TextFormFieldContainer extends StatelessWidget {
+  final ValueKey<String> containerKey;
   final GlobalKey<FormFieldState> textFormFieldKey;
   final TextEditingController controller;
   final bool autofocus;
@@ -261,7 +266,8 @@ class _TextFormFieldContainer extends StatelessWidget {
   final bool validateOnEveryChange;
 
   _TextFormFieldContainer(
-      {@required this.textFormFieldKey,
+      {@required this.containerKey,
+      @required this.textFormFieldKey,
       @required this.controller,
       this.autofocus = false,
       this.onEditingComplete,
@@ -276,6 +282,7 @@ class _TextFormFieldContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: containerKey,
       padding: EdgeInsets.fromLTRB(4, 6, 4, 4),
       decoration: BoxDecoration(
         color: _backgroundColor,
@@ -446,6 +453,7 @@ class _SignUpFormState extends State<SignUpForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _TextFormFieldContainer(
+            containerKey: ValueKey('signup_username'),
             textFormFieldKey: _usernameKey,
             controller: _usernameController,
             focusNode: usernameFocusNode,
@@ -470,6 +478,7 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: _formFieldSpacing),
           _TextFormFieldContainer(
+            containerKey: ValueKey('signup_email'),
             textFormFieldKey: _emailKey,
             controller: _emailController,
             focusNode: emailFocusNode,
@@ -492,6 +501,7 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: _formFieldSpacing),
           _TextFormFieldContainer(
+            containerKey: ValueKey('signup_pwd'),
             obscureText: true,
             textFormFieldKey: _passwordKey,
             controller: _passwordController,
@@ -516,6 +526,7 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: _formFieldSpacing),
           _TextFormFieldContainer(
+            containerKey: ValueKey('signup_confirm_pwd'),
             obscureText: true,
             textFormFieldKey: _confirmPasswordKey,
             controller: _confirmPasswordController,
