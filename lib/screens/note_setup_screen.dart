@@ -82,6 +82,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: notifier.selectedColor.getColor(),
       iconTheme: IconThemeData(color: appIconGreyForColoredBg),
       leading: IconButton(
+        key: ValueKey('note_setup_back'),
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             if (notifier.canCreateNote) {
@@ -232,6 +233,7 @@ class _NoteSetupBody extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       TextField(
+                        key: ValueKey('note_setup_title'),
                         controller: notifier.titleController,
                         focusNode: notifier.titleFocusNode,
                         onTap: () {
@@ -259,6 +261,7 @@ class _NoteSetupBody extends StatelessWidget {
                       ),
                       SizedBox(height: 12),
                       TextField(
+                        key: ValueKey('note_setup_text'),
                         controller: notifier.textController,
                         focusNode: notifier.textFocusNode,
                         autofocus: notifier.notEditing,

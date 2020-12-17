@@ -31,6 +31,16 @@ void main() {
     final trashScreenBurgerFinder =
         find.byValueKey('trash_screen_drawer_burger');
 
+    final notesDrawerItemFinder = find.byValueKey('notes_drawer_item');
+
+    final fabFinder = find.byType('MyCustomFab');
+
+    final noteSetupScreenFinder = find.byType('NoteSetupScreen');
+    final noteSetupBackFinder = find.byValueKey('note_setup_back');
+
+    final noteSetupTitleFinder = find.byValueKey('note_setup_title');
+    final noteSetupTextFinder = find.byValueKey('note_setup_text');
+
     FlutterDriver driver;
 
     setUpAll(() async {
@@ -145,6 +155,34 @@ void main() {
       await driver.waitFor(trashScreenFinder); // trash screen
       await driver.waitForAbsent(extendedNoteCardFinder);
       await driver.waitForAbsent(smallNoteCardFinder);
+    });
+
+    test('create a simple note, shows it', () async {
+      // go to home
+      await driver.tap(trashScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+      await driver.waitFor(homeScreenFinder);
+
+      // tap fab
+      await driver.tap(fabFinder);
+
+      // finds note setup screen
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // type a note text and title
+      await driver.tap(noteSetupTextFinder);
+      final testNoteText = 'xablau';
+      await driver.enterText(testNoteText);
+      await driver.tap(noteSetupTitleFinder);
+      final testNoteTitle = 'meu titulo';
+      await driver.enterText(testNoteTitle);
+
+      // leave note setup
+      await driver.tap(noteSetupBackFinder);
+
+      // finds text content of created note
+      await driver.waitFor(find.text(testNoteTitle));
+      await driver.waitFor(find.text(testNoteText));
     });
   });
 }
