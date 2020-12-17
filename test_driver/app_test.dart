@@ -73,7 +73,7 @@ void main() {
       await driver.waitFor(snackBarFinder);
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    });
+    }, skip: true);
 
     test('in login screen, login with wrong pwd, show correct snackbar text',
         () async {
@@ -90,7 +90,7 @@ void main() {
       await driver.waitFor(snackBarFinder, timeout: Duration(seconds: 10));
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    });
+    }, skip: true);
 
     test(
         'in login screen, login with disabled user, show correct snackbar text',
@@ -108,7 +108,7 @@ void main() {
       await driver.waitFor(snackBarFinder);
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    });
+    }, skip: true);
 
     test('in login screen, login with good credentials, shows home', () async {
       await driver.waitFor(loginScreenFinder, timeout: Duration(seconds: 4));
@@ -170,12 +170,12 @@ void main() {
       await driver.waitFor(noteSetupScreenFinder);
 
       // type a note text and title
-      await driver.tap(noteSetupTextFinder);
-      final testNoteText = 'xablau';
-      await driver.enterText(testNoteText);
       await driver.tap(noteSetupTitleFinder);
-      final testNoteTitle = 'meu titulo';
+      final testNoteTitle = 'first title';
       await driver.enterText(testNoteTitle);
+      await driver.tap(noteSetupTextFinder);
+      final testNoteText = 'first note text';
+      await driver.enterText(testNoteText);
 
       // leave note setup
       await driver.tap(noteSetupBackFinder);
@@ -183,6 +183,25 @@ void main() {
       // finds text content of created note
       await driver.waitFor(find.text(testNoteTitle));
       await driver.waitFor(find.text(testNoteText));
+    });
+
+    //FIXME: hardcoded note data from test above for simplicity.
+    test('create another note, shows both', () async {
+      await driver.tap(fabFinder);
+
+      await driver.waitFor(noteSetupScreenFinder);
+
+      await driver.tap(noteSetupTitleFinder);
+      await driver.enterText('titulo segunda');
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('texto segunda');
+
+      await driver.tap(noteSetupBackFinder);
+
+      await driver.waitFor(find.text('first title'));
+      await driver.waitFor(find.text('first note text'));
+      await driver.waitFor(find.text('titulo segunda'));
+      await driver.waitFor(find.text('texto segunda'));
     });
   });
 }
