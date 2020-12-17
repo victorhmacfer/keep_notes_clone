@@ -88,6 +88,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     IconButton(
+                      key: ValueKey('home_drawer_burger'),
                       icon: Icon(
                         Icons.menu,
                         color: appIconGrey,

@@ -93,6 +93,16 @@ class _SliverAppBar extends StatelessWidget {
     var notifier = Provider.of<NoteCardModeSelection>(context);
 
     return SliverAppBar(
+      leading: IconButton(
+        key: ValueKey('archive_screen_drawer_burger'),
+        icon: Icon(
+          Icons.menu,
+          color: appIconGrey,
+        ),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
       brightness: Brightness.light,
       floating: true,
       backgroundColor: appWhite,

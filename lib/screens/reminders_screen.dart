@@ -24,8 +24,7 @@ class RemindersScreen extends StatelessWidget {
           ChangeNotifierProvider<MultiNoteSelection>(
             create: (context) => MultiNoteSelection(),
           ),
-          Provider<RemindersBloc>(
-              create: (context) => RemindersBloc(repo)),
+          Provider<RemindersBloc>(create: (context) => RemindersBloc(repo)),
         ],
         child: Scaffold(
           backgroundColor: appWhite,
@@ -96,6 +95,16 @@ class _RemindersAppBar extends StatelessWidget {
     var notifier = Provider.of<NoteCardModeSelection>(context);
 
     return SliverAppBar(
+      leading: IconButton(
+        key: ValueKey('reminders_screen_drawer_burger'),
+        icon: Icon(
+          Icons.menu,
+          color: appIconGrey,
+        ),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
       floating: true,
       backgroundColor: appWhite,
       iconTheme: IconThemeData(color: appIconGrey),

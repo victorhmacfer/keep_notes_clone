@@ -56,7 +56,8 @@ class _MyDrawer extends StatelessWidget {
 
     for (int i = 0; i < labels.length; i++) {
       var selectableLabelItem = _SelectableDrawerItem(
-        labels[i].name,
+        key: ValueKey('drawer_label_${labels[i].name}'),
+        text: labels[i].name,
         iconFileName: 'outline_label_black_48.png',
         // accounting for the other 4 SELECTABLE drawer items that are not labels
         drawerItemIndex: i + 4,
@@ -68,8 +69,7 @@ class _MyDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => Provider<LabelScreenBloc>(
-                          create: (context) =>
-                              LabelScreenBloc(repo, labels[i]),
+                          create: (context) => LabelScreenBloc(repo, labels[i]),
                           child: LabelScreen(labels[i]),
                         )));
           }
@@ -86,11 +86,13 @@ class _MyDrawer extends StatelessWidget {
     var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
 
     return Drawer(
+      key: ValueKey('drawer'),
       child: ListView(
         children: <Widget>[
           _MyCustomDrawerHeader(),
           _SelectableDrawerItem(
-            'Notes',
+            key: ValueKey('notes_drawer_item'),
+            text: 'Notes',
             iconFileName: 'keep-quadrado.png',
             drawerItemIndex: 0,
             onPressed: () {
@@ -108,7 +110,8 @@ class _MyDrawer extends StatelessWidget {
             },
           ),
           _SelectableDrawerItem(
-            'Reminders',
+            key: ValueKey('reminders_drawer_item'),
+            text: 'Reminders',
             iconFileName: 'outline_notifications_black_48.png',
             drawerItemIndex: 1,
             onPressed: () {
@@ -127,6 +130,7 @@ class _MyDrawer extends StatelessWidget {
                   return Column(
                     children: <Widget>[
                       Container(
+                        key: ValueKey('drawer_labels_edit'),
                         padding: EdgeInsets.only(left: 16, right: 4),
                         height: 40,
                         child: Row(
@@ -173,7 +177,8 @@ class _MyDrawer extends StatelessWidget {
           ),
           _MyCustomDrawerDivider(),
           _SelectableDrawerItem(
-            'Archive',
+            key: ValueKey('archive_drawer_item'),
+            text: 'Archive',
             iconFileName: 'outline_archive_black_48.png',
             drawerItemIndex: 2,
             onPressed: () {
@@ -186,7 +191,8 @@ class _MyDrawer extends StatelessWidget {
             },
           ),
           _SelectableDrawerItem(
-            'Trash',
+            key: ValueKey('trash_drawer_item'),
+            text: 'Trash',
             iconFileName: 'outline_delete_black_48.png',
             drawerItemIndex: 3,
             onPressed: () {
@@ -219,13 +225,16 @@ class _MyDrawer extends StatelessWidget {
 }
 
 class _SelectableDrawerItem extends StatelessWidget {
+  final Key key;
   final String text;
   final String iconFileName;
   final int drawerItemIndex;
   final void Function() onPressed;
 
-  _SelectableDrawerItem(this.text,
-      {this.iconFileName = 'outline_label_black_48.png',
+  _SelectableDrawerItem(
+      {@required this.key,
+      @required this.text,
+      this.iconFileName = 'outline_label_black_48.png',
       @required this.drawerItemIndex,
       @required this.onPressed});
 

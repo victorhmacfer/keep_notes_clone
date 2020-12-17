@@ -10,6 +10,26 @@ void main() {
     final loginPasswordFinder = find.byValueKey('login_pwd');
     final snackBarFinder = find.byType('SnackBar');
     final homeScreenFinder = find.byType('HomeScreen');
+    final extendedNoteCardFinder = find.byType('ExtendedNoteCard');
+    final smallNoteCardFinder = find.byType('SmallNoteCard');
+    final homeDrawerBurgerFinder = find.byValueKey('home_drawer_burger');
+    final drawerFinder = find.byValueKey('drawer');
+    final remindersDrawerItemFinder = find.byValueKey('reminders_drawer_item');
+    final remindersScreenFinder = find.byType('RemindersScreen');
+    final remindersScreenBurgerFinder =
+        find.byValueKey('reminders_screen_drawer_burger');
+
+    final drawerLabelsEditFinder = find.byValueKey('drawer_labels_edit');
+
+    final archiveDrawerItemFinder = find.byValueKey('archive_drawer_item');
+    final archiveScreenFinder = find.byType('ArchiveScreen');
+    final archiveScreenBurgerFinder =
+        find.byValueKey('archive_screen_drawer_burger');
+
+    final trashDrawerItemFinder = find.byValueKey('trash_drawer_item');
+    final trashScreenFinder = find.byType('TrashScreen');
+    final trashScreenBurgerFinder =
+        find.byValueKey('trash_screen_drawer_burger');
 
     FlutterDriver driver;
 
@@ -93,6 +113,38 @@ void main() {
       await driver.waitForAbsent(snackBarFinder);
 
       await driver.waitFor(homeScreenFinder, timeout: Duration(seconds: 10));
+    });
+
+    test('confirm fresh user has no note or label created', () async {
+      await driver.waitFor(homeScreenFinder);
+      await driver.waitForAbsent(extendedNoteCardFinder);
+      await driver.waitForAbsent(smallNoteCardFinder);
+
+      // reminders screen shows nothing
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.waitFor(drawerFinder);
+      await driver.tap(remindersDrawerItemFinder);
+      await driver.waitFor(remindersScreenFinder);
+      await driver.waitForAbsent(extendedNoteCardFinder);
+      await driver.waitForAbsent(smallNoteCardFinder);
+
+      // drawer has no label list
+      await driver.tap(remindersScreenBurgerFinder);
+      await driver.waitFor(drawerFinder);
+      await driver.waitForAbsent(drawerLabelsEditFinder); // labels edit
+
+      // archive shows nothing
+      await driver.tap(archiveDrawerItemFinder); // archive item
+      await driver.waitFor(archiveScreenFinder); // archive screen
+      await driver.waitForAbsent(extendedNoteCardFinder);
+      await driver.waitForAbsent(smallNoteCardFinder);
+      await driver.tap(archiveScreenBurgerFinder);
+
+      // trash shows nothing
+      await driver.tap(trashDrawerItemFinder); // trash item
+      await driver.waitFor(trashScreenFinder); // trash screen
+      await driver.waitForAbsent(extendedNoteCardFinder);
+      await driver.waitForAbsent(smallNoteCardFinder);
     });
   });
 }

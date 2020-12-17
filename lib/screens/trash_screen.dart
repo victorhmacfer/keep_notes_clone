@@ -44,6 +44,16 @@ class _TrashBody extends StatelessWidget {
   Widget _sliverAppBar(
       {@required TrashBloc trashBloc, @required BuildContext context}) {
     return SliverAppBar(
+      leading: IconButton(
+        key: ValueKey('trash_screen_drawer_burger'),
+        icon: Icon(
+          Icons.menu,
+          color: appIconGrey,
+        ),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
       brightness: Brightness.light,
       floating: true,
       backgroundColor: appWhite,
