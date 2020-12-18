@@ -169,6 +169,7 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
             hintText: 'Create new label',
             suffixIcon: (isFocused)
                 ? IconButton(
+                  key: ValueKey('create_label_check_button'),
                     icon: Icon(Icons.check),
                     color: appIconGrey,
                     onPressed: () {

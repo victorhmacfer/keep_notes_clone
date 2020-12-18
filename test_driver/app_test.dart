@@ -41,6 +41,14 @@ void main() {
     final noteSetupTitleFinder = find.byValueKey('note_setup_title');
     final noteSetupTextFinder = find.byValueKey('note_setup_text');
 
+    final noteSetupArchiveButtonFinder =
+        find.byValueKey('note_setup_archive_button');
+
+    final createNewLabelDrawerItemFinder =
+        find.byValueKey('create_new_label_drawer_item');
+
+    final editLabelsScreenFinder = find.byType('EditLabelsScreen');
+
     FlutterDriver driver;
 
     setUpAll(() async {
@@ -155,7 +163,7 @@ void main() {
       await driver.waitFor(trashScreenFinder); // trash screen
       await driver.waitForAbsent(extendedNoteCardFinder);
       await driver.waitForAbsent(smallNoteCardFinder);
-    });
+    }, skip: true);
 
     test('create a simple note, shows it', () async {
       // go to home
@@ -183,7 +191,7 @@ void main() {
       // finds text content of created note
       await driver.waitFor(find.text(testNoteTitle));
       await driver.waitFor(find.text(testNoteText));
-    });
+    }, skip: true);
 
     //FIXME: hardcoded note data from test above for simplicity.
     test('create another note, shows both', () async {
@@ -202,6 +210,82 @@ void main() {
       await driver.waitFor(find.text('first note text'));
       await driver.waitFor(find.text('titulo segunda'));
       await driver.waitFor(find.text('texto segunda'));
+    }, skip: true);
+
+    test('create archived', () async {
+      // go to note setup
+      await driver.tap(fabFinder);
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // type note data
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('texto arquivada');
+
+      // tap archive button
+      await driver.tap(noteSetupArchiveButtonFinder);
+
+      // finds home and DOES NOT find note there
+      await driver.waitFor(homeScreenFinder);
+      await driver.waitForAbsent(find.text('texto arquivada'));
+
+      // go to archive and finds it there
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(archiveDrawerItemFinder);
+      await driver.waitFor(archiveScreenFinder);
+      await driver.waitFor(find.text('texto arquivada'));
+
+      // go back to home
+      await driver.tap(archiveScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+      await driver.waitFor(homeScreenFinder);
+    }, skip: true);
+
+    test('create label', () async {
+      // tap drawer burger
+      await driver.tap(homeDrawerBurgerFinder);
+
+      // tap create new label item
+      await driver.tap(createNewLabelDrawerItemFinder);
+
+      // finds edit labels screen
+      await driver.waitFor(editLabelsScreenFinder);
+
+      // enter text for new label (field starts autofocused)
+      await driver.enterText('minha primeira label');
+
+      // tap ok button
+      await driver.tap(find.byValueKey('create_label_check_button'));
+
+      // finds label text in list
+      await driver.waitFor(find.text('minha primeira label'));
+
+      // tap back button
+      await driver.tap(find.pageBack());
+
+      // finds home again
+      await driver.waitFor(homeScreenFinder);
+
+      // FIXME: I do this to close drawer so it finds the home drawer burger
+      // When I run the app manually this drawer doesnt remain open !!
+      // this drag is only needed for the test to work.. wtf
+      await driver.scroll(
+          find.byType('MyApp'), -300, 0, Duration(milliseconds: 300));
+      await driver.waitForAbsent(drawerFinder);
+
+      // finds label in drawer label items
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.waitFor(find.text('minha primeira label'));
     });
+
+    // test('delete first note, shows everything correctly', () {});
+
+    // test('archive second note, shows everything correctly', () async {});
+
+    // test('create a note with first label, shows correctly', () {});
+
+    // test('remove label from second note, shows note everywhere correctly',
+    //     () {});
+
+    // test('delete first label, doesnt show anywhere in the app', () {});
   });
 }

@@ -166,6 +166,7 @@ class _MyDrawer extends StatelessWidget {
                 return _MyCustomDrawerDivider();
               }),
           _SimpleDrawerItem(
+            key: ValueKey('create_new_label_drawer_item'),
             text: 'Create new label',
             iconFileName: 'outline_add_black_48.png',
             onPressed: () {
@@ -206,6 +207,7 @@ class _MyDrawer extends StatelessWidget {
           ),
           _MyCustomDrawerDivider(),
           _SimpleDrawerItem(
+            key: ValueKey('settings_drawer_item'),
             text: 'Settings',
             iconFileName: 'outline_settings_black_48.png',
             onPressed: () {
@@ -214,6 +216,7 @@ class _MyDrawer extends StatelessWidget {
             },
           ),
           _SimpleDrawerItem(
+            key: ValueKey('help_drawer_item'),
             text: 'Help & feedback',
             iconFileName: 'outline_help_outline_black_48.png',
             onPressed: () {},
@@ -285,13 +288,15 @@ class _SelectableDrawerItem extends StatelessWidget {
 }
 
 class _SimpleDrawerItem extends StatelessWidget {
+  final Key key;
   final String text;
 
   final String iconFileName;
   final void Function() onPressed;
 
   _SimpleDrawerItem(
-      {@required this.text,
+      {@required this.key,
+      @required this.text,
       @required this.iconFileName,
       @required this.onPressed});
 
