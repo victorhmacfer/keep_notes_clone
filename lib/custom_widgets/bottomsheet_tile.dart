@@ -4,6 +4,7 @@ import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
 class BottomSheetTile extends StatelessWidget {
+  final Key key;
   final PngIcon pngIcon;
 
   final String text;
@@ -13,7 +14,8 @@ class BottomSheetTile extends StatelessWidget {
   final void Function() onTap;
 
   BottomSheetTile(
-      {@required this.pngIcon,
+      {this.key,
+      @required this.pngIcon,
       @required this.text,
       @required this.onTap,
       @required this.noteSetupController});

@@ -418,6 +418,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           //   onTap: () {},
           // ),
           BottomSheetTile(
+            key: ValueKey('right_bs_labels_button'),
             noteSetupController: notifier,
             pngIcon: PngIcon(
               fileName: 'outline_label_black_48.png',
@@ -494,6 +495,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                   style: TextStyle(color: appVeryDarkGreyForColoredBg),
                 ),
                 PngIconButton(
+                  key: ValueKey('note_setup_right_bs_button'),
                     backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',

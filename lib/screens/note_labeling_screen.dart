@@ -108,6 +108,7 @@ class _NoteLabelListItem extends StatelessWidget {
                 ),
               ),
               Checkbox(
+                key: ValueKey('checkbox-${label.name}'),
                   value: labelIsChecked,
                   onChanged: (newValue) {
                     if (newValue == true) {

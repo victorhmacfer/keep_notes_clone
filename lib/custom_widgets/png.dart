@@ -28,6 +28,7 @@ class PngIcon extends StatelessWidget {
 }
 
 class PngIconButton extends StatelessWidget {
+  final Key key;
   final PngIcon pngIcon;
 
   final void Function() onTap;
@@ -37,7 +38,8 @@ class PngIconButton extends StatelessWidget {
   final Color backgroundColor;
 
   PngIconButton(
-      {@required this.pngIcon,
+      {this.key,
+      @required this.pngIcon,
       @required this.onTap,
       @required this.backgroundColor,
       this.padding = EdgeInsets.zero});

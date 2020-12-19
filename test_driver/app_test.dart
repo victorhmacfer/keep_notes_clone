@@ -275,6 +275,48 @@ void main() {
       // finds label in drawer label items
       await driver.tap(homeDrawerBurgerFinder);
       await driver.waitFor(find.text('minha primeira label'));
+
+      // go back to home
+      await driver.scroll(
+          find.byType('MyApp'), -300, 0, Duration(milliseconds: 300));
+      await driver.waitForAbsent(drawerFinder);
+    });
+
+    test('create note with existent label', () async {
+      // tap home fab
+      await driver.tap(fabFinder);
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // give it some text
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('nota criada com label');
+
+      // tap right bottom sheet button
+      await driver.tap(find.byValueKey('note_setup_right_bs_button'));
+
+      // tap labels button
+      await driver.tap(find.byValueKey('right_bs_labels_button'));
+
+      // finds notelabeling screen and the existent label
+      await driver.waitFor(find.byType('NoteLabelingScreen'));
+      await driver.waitFor(find.text('minha primeira label'));
+
+      // tap checkbox
+      await driver.tap(find.byValueKey('checkbox-minha primeira label'));
+
+      // tap back
+      await driver.tap(find.pageBack());
+
+      // finds label in chip in note setup
+      await driver.waitFor(find.text('minha primeira label'));
+
+      // go back to home
+      await driver.tap(noteSetupBackFinder);
+      await driver.waitFor(homeScreenFinder);
+
+      // finds note text and label
+      await driver.waitFor(find.text('nota criada com label'));
+      await driver.waitFor(find.text('minha primeira label'));
     });
 
     // test('delete first note, shows everything correctly', () {});
