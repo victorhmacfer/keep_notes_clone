@@ -319,6 +319,46 @@ void main() {
       await driver.waitFor(find.text('minha primeira label'));
     });
 
+    test('create note with new label', () async {
+      // fab
+      await driver.tap(fabFinder);
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // enter note text
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('nota com label nova');
+
+      // tap right bs
+      await driver.tap(find.byValueKey('note_setup_right_bs_button'));
+
+      // tap labels
+      await driver.tap(find.byValueKey('right_bs_labels_button'));
+
+      // find notelabeling screen and tap "enter label name" textfield
+      await driver.waitFor(find.byType('NoteLabelingScreen'));
+      await driver.tap(find.byValueKey('note_labeling_name_textfield'));
+
+      // enter name for new label
+      await driver.enterText('nova label dentro');
+
+      // tap the create button below
+      await driver.tap(find.byValueKey('note_labeling_create_button'));
+
+      // tap back
+      await driver.tap(find.pageBack());
+
+      // is in note setup and finds label chip
+      await driver.waitFor(noteSetupScreenFinder);
+      await driver.waitFor(find.text('nova label dentro'));
+
+      // tap back to home
+      await driver.tap(noteSetupBackFinder);
+
+      // finds note text and its label
+      await driver.waitFor(find.text('nota com label nova'));
+      await driver.waitFor(find.text('nova label dentro'));
+    });
+
     // test('delete first note, shows everything correctly', () {});
 
     // test('archive second note, shows everything correctly', () async {});

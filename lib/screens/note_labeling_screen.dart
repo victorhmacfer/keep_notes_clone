@@ -25,6 +25,7 @@ class NoteLabelingScreen extends StatelessWidget {
       appBar: AppBar(
         brightness: Brightness.light,
         title: TextField(
+          key: ValueKey('note_labeling_name_textfield'),
           controller: _labelSearchController,
           focusNode: _labelSearchFocusNode,
           cursorWidth: 1,
@@ -108,7 +109,7 @@ class _NoteLabelListItem extends StatelessWidget {
                 ),
               ),
               Checkbox(
-                key: ValueKey('checkbox-${label.name}'),
+                  key: ValueKey('checkbox-${label.name}'),
                   value: labelIsChecked,
                   onChanged: (newValue) {
                     if (newValue == true) {
@@ -124,11 +125,12 @@ class _NoteLabelListItem extends StatelessWidget {
 }
 
 class _CreateLabelButton extends StatelessWidget {
+  final Key key;
   final String labelText;
 
   final void Function() onTap;
 
-  _CreateLabelButton(this.labelText, {this.onTap});
+  _CreateLabelButton(this.labelText, {this.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +187,10 @@ class _LabelListView extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> theChildren = [];
     if (showCreateButton) {
-      theChildren.add(_CreateLabelButton(searchKeyword));
+      theChildren.add(_CreateLabelButton(
+        searchKeyword,
+        key: ValueKey('note_labeling_create_button'),
+      ));
     } else {
       theChildren.add(Container());
     }
