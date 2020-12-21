@@ -44,18 +44,21 @@ class NoteSetupScreen extends StatelessWidget {
       theAppBar = _NoteSetupAppBar(note: note);
     }
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<NoteSetupScreenController>.value(
-            value: controller),
-        Provider<NoteSetupBloc>(
-          create: (context) => NoteSetupBloc(repo),
-        ),
-      ],
-      child: Scaffold(
-          appBar: theAppBar,
-          body: _NoteSetupBody(),
-          bottomNavigationBar: _MyStickyBottomAppBar()),
+    return Hero(
+      tag: 'notesetup-note-${note?.id}',
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<NoteSetupScreenController>.value(
+              value: controller),
+          Provider<NoteSetupBloc>(
+            create: (context) => NoteSetupBloc(repo),
+          ),
+        ],
+        child: Scaffold(
+            appBar: theAppBar,
+            body: _NoteSetupBody(),
+            bottomNavigationBar: _MyStickyBottomAppBar()),
+      ),
     );
   }
 }
@@ -82,7 +85,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: notifier.selectedColor.getColor(),
       iconTheme: IconThemeData(color: appIconGreyForColoredBg),
       leading: IconButton(
-        key: ValueKey('note_setup_back'),
+          key: ValueKey('note_setup_back'),
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             if (notifier.canCreateNote) {
@@ -133,8 +136,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     providers: [
                       ChangeNotifierProvider<NoteSetupScreenController>.value(
                           value: notifier),
-                      Provider(
-                          create: (context) => NoteSetupBloc(repo)),
+                      Provider(create: (context) => NoteSetupBloc(repo)),
                     ],
                     child: ReminderSetupDialog(),
                   ),
@@ -438,8 +440,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                                       NoteSetupScreenController>.value(
                                   value: notifier),
                               Provider<NoteLabelingBloc>(
-                                create: (context) =>
-                                    NoteLabelingBloc(repo),
+                                create: (context) => NoteLabelingBloc(repo),
                               ),
                             ],
                             child: NoteLabelingScreen(),
@@ -496,7 +497,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                   style: TextStyle(color: appVeryDarkGreyForColoredBg),
                 ),
                 PngIconButton(
-                  key: ValueKey('note_setup_right_bs_button'),
+                    key: ValueKey('note_setup_right_bs_button'),
                     backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',

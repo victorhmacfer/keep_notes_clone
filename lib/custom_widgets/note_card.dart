@@ -91,28 +91,31 @@ class ExtendedNoteCard extends StatelessWidget {
           multiNoteSelection.toggleNote(note);
         }
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        padding: EdgeInsets.all(16),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: _color.getColor(),
-          border: cardBorder,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _titleWidget(_title),
-            _spacingWidget(),
-            _textWidget(_text),
-            ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
-                ? _ChipsContainer(
-                    labels: note.labels,
-                    reminderTime: note.reminder?.time,
-                  )
-                : Container(),
-          ],
+      child: Hero(
+        tag: 'notesetup-note-${note.id}',
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          padding: EdgeInsets.all(16),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: _color.getColor(),
+            border: cardBorder,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _titleWidget(_title),
+              _spacingWidget(),
+              _textWidget(_text),
+              ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
+                  ? _ChipsContainer(
+                      labels: note.labels,
+                      reminderTime: note.reminder?.time,
+                    )
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );
@@ -340,37 +343,40 @@ class SmallNoteCard extends StatelessWidget {
           multiNoteSelection.toggleNote(note);
         }
       },
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            minWidth: 0,
-            maxWidth: double.infinity,
-            minHeight:
-                heightEstimation * (1 - (_minHeightPercentageFactor / 100)),
-            maxHeight:
-                heightEstimation * (1 + (_maxHeightPercentageFactor / 100))),
-        child: Container(
-          margin: EdgeInsets.fromLTRB(
-              0, _verticalMargin, _rightMargin, _verticalMargin),
-          padding: EdgeInsets.all(_padding),
-          decoration: BoxDecoration(
-            color: _color.getColor(),
-            border: cardBorder,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _titleWidget(_title),
-              _spacingWidget(),
-              _textWidget(_text),
-              ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
-                  ? _ChipsContainer(
-                      labels: note.labels,
-                      reminderTime: note.reminder?.time,
-                    )
-                  : Container(),
-            ],
+      child: Hero(
+        tag: 'notesetup-note-${note.id}',
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              minWidth: 0,
+              maxWidth: double.infinity,
+              minHeight:
+                  heightEstimation * (1 - (_minHeightPercentageFactor / 100)),
+              maxHeight:
+                  heightEstimation * (1 + (_maxHeightPercentageFactor / 100))),
+          child: Container(
+            margin: EdgeInsets.fromLTRB(
+                0, _verticalMargin, _rightMargin, _verticalMargin),
+            padding: EdgeInsets.all(_padding),
+            decoration: BoxDecoration(
+              color: _color.getColor(),
+              border: cardBorder,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _titleWidget(_title),
+                _spacingWidget(),
+                _textWidget(_text),
+                ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
+                    ? _ChipsContainer(
+                        labels: note.labels,
+                        reminderTime: note.reminder?.time,
+                      )
+                    : Container(),
+              ],
+            ),
           ),
         ),
       ),
