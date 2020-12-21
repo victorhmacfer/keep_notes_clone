@@ -163,14 +163,48 @@ void main() {
       await driver.waitFor(trashScreenFinder); // trash screen
       await driver.waitForAbsent(extendedNoteCardFinder);
       await driver.waitForAbsent(smallNoteCardFinder);
-    }, skip: true);
 
-    test('create a simple note, shows it', () async {
-      // go to home
+      // go back to home
       await driver.tap(trashScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
       await driver.waitFor(homeScreenFinder);
+    }, skip: true);
 
+    test(
+        'back on empty note (no title, text or reminder) will abort creation, shows nothing in home',
+        () async {
+      // fab
+      await driver.tap(fabFinder);
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // press back
+      await driver.tap(noteSetupBackFinder);
+
+      // in home and finds nothing.
+      await driver.waitFor(homeScreenFinder);
+      await driver.waitForAbsent(extendedNoteCardFinder);
+      await driver.waitForAbsent(smallNoteCardFinder);
+    }, skip: true);
+
+    test('delete while creating a note will abort creation', () async {
+      // fab
+      await driver.tap(fabFinder);
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // give it some text
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('some random text');
+
+      // delete it
+      await driver.tap(find.byValueKey('note_setup_right_bs_button'));
+      await driver.tap(find.byValueKey('right_bs_delete_button'));
+
+      // finds home and does not find text
+      await driver.waitFor(homeScreenFinder);
+      await driver.waitForAbsent(find.text('some random title'));
+    });
+
+    test('create a simple note, shows it', () async {
       // tap fab
       await driver.tap(fabFinder);
 

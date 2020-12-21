@@ -371,6 +371,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           BottomSheetTile(
+            key: ValueKey('right_bs_delete_button'),
             noteSetupController: notifier,
             pngIcon: PngIcon(
               fileName: 'outline_delete_black_48.png',
