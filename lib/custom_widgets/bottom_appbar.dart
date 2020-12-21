@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/auth_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 
 import 'package:keep_notes_clone/utils/colors.dart';
-import 'package:provider/provider.dart';
 
 class MyNotchedBottomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-
-    var authBloc = Provider.of<AuthBloc>(context);
 
     return BottomAppBar(
       color: appTranslucentWhite,

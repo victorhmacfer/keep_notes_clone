@@ -100,7 +100,6 @@ class NoteSetupReminderChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
-    final noteSetupBloc = Provider.of<NoteSetupBloc>(context);
 
     Color textColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
     Color alarmIconColor = (reminderExpired) ? appGreyForColoredBg : appBlack;

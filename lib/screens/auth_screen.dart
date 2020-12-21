@@ -141,6 +141,7 @@ class _LoginFormState extends State<LoginForm> {
               if (username.isEmpty) {
                 return 'Required';
               }
+              return null;
             },
             prefixIconData: Icons.person_outline,
             labelText: 'USERNAME',
@@ -158,6 +159,7 @@ class _LoginFormState extends State<LoginForm> {
               if (pwd.length < 8) {
                 return 'Should have at least 8 characters!';
               }
+              return null;
             },
             prefixIconData: Icons.lock_outline,
             labelText: 'PASSWORD',
@@ -472,6 +474,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   return 'Invalid username';
                 }
               }
+              return null;
             },
             prefixIconData: Icons.person_outline,
             labelText: 'USERNAME',
@@ -495,6 +498,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   return 'Invalid email';
                 }
               }
+              return null;
             },
             prefixIconData: Icons.mail_outline,
             labelText: 'EMAIL',
@@ -520,6 +524,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   return 'Should have at least one number';
                 }
               }
+              return null;
             },
             prefixIconData: Icons.lock_outline,
             labelText: 'PASSWORD',
@@ -536,6 +541,7 @@ class _SignUpFormState extends State<SignUpForm> {
               if (pwdConfirmation != _passwordController.text) {
                 return "Password confirmation doesn't match";
               }
+              return null;
             },
             prefixIconData: Icons.lock_outline,
             labelText: 'CONFIRM PASSWORD',
