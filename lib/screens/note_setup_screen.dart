@@ -186,6 +186,28 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
+class _FiredReminderBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 48,
+      alignment: Alignment.center,
+      color: Colors.grey[700],
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Fired Today, 18:05',
+            style: TextStyle(color: appWhite),
+          ),
+          Icon(Icons.check, color: appWhite),
+        ],
+      ),
+    );
+  }
+}
+
 class _NoteSetupBody extends StatelessWidget {
   List<Widget> _labelWidgets(List<Label> theLabels) {
     return theLabels.map((lab) => NoteSetupLabelChip(label: lab)).toList();
@@ -229,6 +251,12 @@ class _NoteSetupBody extends StatelessWidget {
         color: notifier.selectedColor.getColor(),
         child: CustomScrollView(
           slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: Visibility(
+                child: _FiredReminderBanner(),
+                visible: false,
+              ),
+            ),
             SliverToBoxAdapter(
               child: Container(
                   padding:
