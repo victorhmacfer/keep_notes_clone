@@ -46,6 +46,10 @@ class NoteSetupScreen extends StatelessWidget {
 
     return Hero(
       tag: 'notesetup-note-${note?.id}',
+      flightShuttleBuilder: (context, animation, flightDirection,
+          fromHeroContext, toHeroContext) {
+            return DefaultTextStyle(style: DefaultTextStyle.of(toHeroContext).style, child: toHeroContext.widget);
+          },
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider<NoteSetupScreenController>.value(
