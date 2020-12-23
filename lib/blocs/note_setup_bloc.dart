@@ -1,6 +1,6 @@
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/models/note_setup_model.dart';
-import 'package:keep_notes_clone/repository/note_repository.dart';
+import 'package:keep_notes_clone/repository/repository.dart';
 
 class NoteSetupBloc {
   final GlobalRepository repo;

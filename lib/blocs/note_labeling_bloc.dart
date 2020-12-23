@@ -1,5 +1,5 @@
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/repository/note_repository.dart';
+import 'package:keep_notes_clone/repository/repository.dart';
 import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:rxdart/subjects.dart';
 

@@ -139,7 +139,6 @@ class AuthBloc {
     if (firebaseAuthUid == null) {
       return SignUpError.unknown;
     }
-    // TODO: WHAT ARE THE POSSIBLE ERRORS HERE ?
     await _firebaseFirestore
         .collection("users")
         .doc(username)

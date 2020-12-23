@@ -81,7 +81,7 @@ void main() {
       await driver.waitFor(snackBarFinder);
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    }, skip: true);
+    });
 
     test('in login screen, login with wrong pwd, show correct snackbar text',
         () async {
@@ -98,7 +98,7 @@ void main() {
       await driver.waitFor(snackBarFinder, timeout: Duration(seconds: 10));
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    }, skip: true);
+    });
 
     test(
         'in login screen, login with disabled user, show correct snackbar text',
@@ -116,7 +116,7 @@ void main() {
       await driver.waitFor(snackBarFinder);
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    }, skip: true);
+    });
 
     test('in login screen, login with good credentials, shows home', () async {
       await driver.waitFor(loginScreenFinder, timeout: Duration(seconds: 4));
@@ -168,7 +168,7 @@ void main() {
       await driver.tap(trashScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
       await driver.waitFor(homeScreenFinder);
-    }, skip: true);
+    });
 
     test(
         'back on empty note (no title, text or reminder) will abort creation, shows nothing in home',
@@ -184,7 +184,7 @@ void main() {
       await driver.waitFor(homeScreenFinder);
       await driver.waitForAbsent(extendedNoteCardFinder);
       await driver.waitForAbsent(smallNoteCardFinder);
-    }, skip: true);
+    });
 
     test('delete while creating a note will abort creation', () async {
       // fab
@@ -225,7 +225,7 @@ void main() {
       // finds text content of created note
       await driver.waitFor(find.text(testNoteTitle));
       await driver.waitFor(find.text(testNoteText));
-    }, skip: true);
+    });
 
     //FIXME: hardcoded note data from test above for simplicity.
     test('create another note, shows both', () async {
@@ -244,7 +244,7 @@ void main() {
       await driver.waitFor(find.text('first note text'));
       await driver.waitFor(find.text('titulo segunda'));
       await driver.waitFor(find.text('texto segunda'));
-    }, skip: true);
+    });
 
     test('create archived', () async {
       // go to note setup
@@ -272,7 +272,7 @@ void main() {
       await driver.tap(archiveScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
       await driver.waitFor(homeScreenFinder);
-    }, skip: true);
+    });
 
     test('create label', () async {
       // tap drawer burger

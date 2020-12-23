@@ -6,7 +6,7 @@ import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/models/keep_clone_user.dart';
 import 'package:keep_notes_clone/notifiers/drawer_screen_selection.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
-import 'package:keep_notes_clone/repository/note_repository.dart';
+import 'package:keep_notes_clone/repository/repository.dart';
 import 'package:keep_notes_clone/screens/auth_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
@@ -17,6 +17,11 @@ import 'package:firebase_core/firebase_core.dart';
 
 final flnp = FlutterLocalNotificationsPlugin();
 
+// This reference is public to anyone who imports main.dart
+// I made it deliberately global because:
+//    1- All blocs need a reference to it (my convention is: screen imports main
+//       and gives the repo reference to the bloc constructor, just to make the
+//       dependency explicit)
 GlobalRepository repo;
 
 void main() async {
@@ -30,10 +35,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark));
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ));
 
     return MultiProvider(
       providers: [
@@ -49,15 +54,14 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
         theme: appLightThemeData,
-        home: AuthChecker(),
+        home: AuthStatusChecker(),
       ),
     );
   }
 }
 
-class AuthChecker extends StatelessWidget {
+class AuthStatusChecker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);

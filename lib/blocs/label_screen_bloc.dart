@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:keep_notes_clone/blocs/bloc_base.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/repository/note_repository.dart';
+import 'package:keep_notes_clone/repository/repository.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
