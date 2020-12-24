@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   // TESTS ASSUME DEVICE HAS INTERNET CONNECTION !
+  // All tests must go back to home at the end.
   group('Keep notes clone', () {
     final loginScreenFinder = find.byValueKey('login_screen');
     final loginButtonFinder = find.byValueKey('login_button');
@@ -201,7 +202,7 @@ void main() {
 
       // finds home and does not find text
       await driver.waitFor(homeScreenFinder);
-      await driver.waitForAbsent(find.text('some random title'));
+      await driver.waitForAbsent(find.text('some random text'));
     });
 
     test('create a simple note, shows it', () async {
@@ -211,20 +212,18 @@ void main() {
       // finds note setup screen
       await driver.waitFor(noteSetupScreenFinder);
 
-      // type a note text and title
+      // give it a text and title
       await driver.tap(noteSetupTitleFinder);
-      final testNoteTitle = 'first title';
-      await driver.enterText(testNoteTitle);
+      await driver.enterText('first title');
       await driver.tap(noteSetupTextFinder);
-      final testNoteText = 'first note text';
-      await driver.enterText(testNoteText);
+      await driver.enterText('first note text');
 
-      // leave note setup
+      // back to home
       await driver.tap(noteSetupBackFinder);
 
       // finds text content of created note
-      await driver.waitFor(find.text(testNoteTitle));
-      await driver.waitFor(find.text(testNoteText));
+      await driver.waitFor(find.text('first title'));
+      await driver.waitFor(find.text('first note text'));
     });
 
     //FIXME: hardcoded note data from test above for simplicity.
@@ -244,6 +243,26 @@ void main() {
       await driver.waitFor(find.text('first note text'));
       await driver.waitFor(find.text('titulo segunda'));
       await driver.waitFor(find.text('texto segunda'));
+    });
+
+    test('create pinned', () async {
+      await driver.tap(fabFinder);
+
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // tap pin
+      await driver.tap(find.byValueKey('note_setup_pin_button'));
+
+      // give it some text
+      await driver.tap(noteSetupTitleFinder);
+      await driver.enterText('nota pinada');
+
+      // back
+      await driver.tap(noteSetupBackFinder);
+
+      // finds 'PINNED' and text in home
+      await driver.waitFor(find.text('PINNED'));
+      await driver.waitFor(find.text('nota pinada'));
     });
 
     test('create archived', () async {

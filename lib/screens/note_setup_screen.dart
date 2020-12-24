@@ -107,6 +107,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
           }),
       actions: <Widget>[
         Padding(
+          key: ValueKey('note_setup_pin_button'),
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
               backgroundColor: notifier.selectedColor.getColor(),
