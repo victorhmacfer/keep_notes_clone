@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
+import 'package:keep_notes_clone/models/reminder.dart';
 import 'package:provider/provider.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 
@@ -34,22 +35,24 @@ class NoteSetupScreen extends StatelessWidget {
     if (note == null) {
       if (label != null) {
         controller = NoteSetupScreenController.withLabel(label);
-        theAppBar = _NoteSetupAppBar(label: label);
+        theAppBar = _NoteSetupAppBar();
       } else {
         controller = NoteSetupScreenController();
         theAppBar = _NoteSetupAppBar();
       }
     } else {
       controller = NoteSetupScreenController.fromNote(note);
-      theAppBar = _NoteSetupAppBar(note: note);
+      theAppBar = _NoteSetupAppBar();
     }
 
     return Hero(
       tag: 'notesetup-note-${note?.id}',
       flightShuttleBuilder: (context, animation, flightDirection,
           fromHeroContext, toHeroContext) {
-            return DefaultTextStyle(style: DefaultTextStyle.of(toHeroContext).style, child: toHeroContext.widget);
-          },
+        return DefaultTextStyle(
+            style: DefaultTextStyle.of(toHeroContext).style,
+            child: toHeroContext.widget);
+      },
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider<NoteSetupScreenController>.value(
@@ -68,12 +71,6 @@ class NoteSetupScreen extends StatelessWidget {
 }
 
 class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final Note note;
-
-  final Label label;
-
-  _NoteSetupAppBar({this.note, this.label});
-
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
@@ -82,7 +79,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
     final notifier = Provider.of<NoteSetupScreenController>(context);
     final noteSetupBloc = Provider.of<NoteSetupBloc>(context);
 
-    bool shouldUnarchive = note?.archived ?? false;
+    bool shouldUnarchive = notifier.archived;
 
     return AppBar(
       brightness: Brightness.light,
@@ -93,12 +90,11 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             if (notifier.canCreateNote) {
-              if (notifier.notEditing) {
-                noteSetupBloc.onCreateNote(notifier.noteSetupModel);
+              if (notifier.creating) {
+                noteSetupBloc.onCreateNote(notifier.noteBeingSetUp);
               } else {
                 notifier.tryToUpdateLastEdited();
-                note.updateWith(notifier.noteSetupModel);
-                noteSetupBloc.onNoteChanged(note);
+                noteSetupBloc.onNoteChanged(notifier.noteBeingSetUp);
               }
             }
             notifier.closeLeftBottomSheet();
@@ -111,7 +107,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
               backgroundColor: notifier.selectedColor.getColor(),
-              pngIcon: (notifier.isPinned)
+              pngIcon: (notifier.pinned)
                   ? PngIcon(
                       fileName: 'baseline_push_pin_black_48.png',
                       iconColor: appIconGreyForColoredBg,
@@ -121,12 +117,11 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                       iconColor: appIconGreyForColoredBg,
                     ),
               onTap: () {
-                var pinOrUnpin =
-                    (notifier.isPinned) ? notifier.unpinNote : notifier.pinNote;
-                pinOrUnpin();
+                notifier.togglePinned();
               }),
         ),
         Padding(
+          key: ValueKey('note_setup_reminder_button'),
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: PngIconButton(
               backgroundColor: notifier.selectedColor.getColor(),
@@ -164,21 +159,13 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
               onTap: () {
                 if (notifier.canCreateNote) {
-                  if (notifier.notEditing) {
-                    noteSetupBloc.onCreateNote(notifier.noteSetupModel,
+                  if (notifier.creating) {
+                    noteSetupBloc.onCreateNote(notifier.noteBeingSetUp,
                         createArchived: true);
                   } else {
                     notifier.tryToUpdateLastEdited();
-                    note.updateWith(notifier.noteSetupModel);
-
-                    if (shouldUnarchive) {
-                      if (note.archived) {
-                        note.archived = false;
-                      }
-                    } else {
-                      note.archived = true;
-                    }
-                    noteSetupBloc.onNoteChanged(note);
+                    notifier.toggleArchived();
+                    noteSetupBloc.onNoteChanged(notifier.noteBeingSetUp);
                   }
                 }
                 notifier.closeLeftBottomSheet();
@@ -218,15 +205,14 @@ class _NoteSetupBody extends StatelessWidget {
     return theLabels.map((lab) => NoteSetupLabelChip(label: lab)).toList();
   }
 
-  Widget _noteChips(
-      DateTime reminderTime, bool reminderExpired, List<Label> theLabels) {
-    if (theLabels.isEmpty && (reminderTime == null)) {
+  Widget _noteChips(Reminder savedReminder, List<Label> theLabels) {
+    if (theLabels.isEmpty && (savedReminder == null)) {
       return Container();
     }
     List<Widget> chipList = [];
 
-    if (reminderTime != null) {
-      chipList.add(NoteSetupReminderChip(reminderTime, reminderExpired));
+    if (savedReminder != null) {
+      chipList.add(NoteSetupReminderChip(savedReminder));
     }
 
     chipList.addAll(_labelWidgets(theLabels));
@@ -300,7 +286,7 @@ class _NoteSetupBody extends StatelessWidget {
                         key: ValueKey('note_setup_text'),
                         controller: notifier.textController,
                         focusNode: notifier.textFocusNode,
-                        autofocus: notifier.notEditing,
+                        autofocus: notifier.creating,
                         scrollPadding: const EdgeInsets.all(56),
                         onTap: () {
                           notifier.closeLeftBottomSheet();
@@ -325,8 +311,7 @@ class _NoteSetupBody extends StatelessWidget {
                               color: appGreyForColoredBg, fontSize: 15),
                         ),
                       ),
-                      _noteChips(notifier.savedReminderTime,
-                          notifier.reminderExpired, noteLabels),
+                      _noteChips(notifier.savedReminder, noteLabels),
                     ],
                   )),
             )
@@ -338,6 +323,32 @@ class _NoteSetupBody extends StatelessWidget {
 }
 
 class _MyStickyBottomAppBar extends StatelessWidget {
+  String _noteSetupLastEditedText(DateTime lastEdited) {
+    var now = DateTime.now();
+    var dayToday = now.day;
+    var monthToday = now.month;
+    var yearToday = now.year;
+    var yesterday = now.subtract(Duration(days: 1));
+
+    String hourZeroOrNothing = (lastEdited.hour < 10) ? '0' : '';
+    String minuteZeroOrNothing = (lastEdited.minute < 10) ? '0' : '';
+
+    // if today... Edited 16:53
+    if ((lastEdited.day == dayToday) &&
+        (lastEdited.month == monthToday) &&
+        (lastEdited.year == yearToday)) {
+      return 'Edited $hourZeroOrNothing${lastEdited.hour}:$minuteZeroOrNothing${lastEdited.minute}';
+    }
+
+    if ((lastEdited.day == yesterday.day) &&
+        (lastEdited.month == yesterday.month) &&
+        (lastEdited.year == yesterday.year)) {
+      return 'Edited Yesterday, $hourZeroOrNothing${lastEdited.hour}:$minuteZeroOrNothing${lastEdited.minute}';
+    }
+
+    return 'Edited ${monthAbbreviations[lastEdited.month]} ${lastEdited.day}';
+  }
+
   Widget _leftBottomSheetBuilder(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
@@ -414,13 +425,10 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             ),
             text: 'Delete',
             onTap: () {
-              var noteForDeletion = notifier.noteBeingEdited;
-              if (noteForDeletion != null) {
-                noteForDeletion.delete();
-                notifier.removeSavedReminder();
-                noteSetupBloc.onNoteChanged(noteForDeletion);
+              notifier.deleteNote();
+              if (notifier.editing) {
+                noteSetupBloc.onNoteChanged(notifier.noteBeingSetUp);
               }
-
               notifier.closeLeftBottomSheet();
               notifier.closeRightBottomSheet();
               Navigator.pop(context);
@@ -490,7 +498,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    var lastEditedText = noteSetupLastEditedText(notifier.lastEditedTime);
+    var lastEditedText = _noteSetupLastEditedText(notifier.lastEdited);
 
     return Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),

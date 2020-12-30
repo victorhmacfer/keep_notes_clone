@@ -164,9 +164,9 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
             ),
             text: 'Restore',
             onTap: () {
-              var noteToBeRestored = notifier.noteBeingEdited;
-              noteToBeRestored.restore();
-              noteSetupBloc.onNoteChanged(noteToBeRestored);
+              notifier.restoreNote();
+              var note = notifier.noteBeingSetUp;
+              noteSetupBloc.onNoteChanged(note);
 
               notifier.closeRightBottomSheet();
               Navigator.pop(context);
@@ -188,7 +188,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
               );
 
               if (shouldDelete) {
-                var noteForPermanentDeletion = notifier.noteBeingEdited;
+                var noteForPermanentDeletion = notifier.noteBeingSetUp;
                 noteSetupBloc.onDeleteNoteForever(noteForPermanentDeletion);
               }
 

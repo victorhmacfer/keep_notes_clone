@@ -1,5 +1,4 @@
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/repository/repository.dart';
 
 class NoteSetupBloc {
@@ -7,9 +6,8 @@ class NoteSetupBloc {
 
   NoteSetupBloc(this.repo);
 
-  void onCreateNote(NoteSetupModel noteSetupModel,
-      {bool createArchived = false}) {
-    var newNote = Note.fromSetupModel(noteSetupModel, archived: createArchived);
+  void onCreateNote(Note newNote, {bool createArchived = false}) {
+    newNote.archived = createArchived;
     repo.addNote(newNote);
   }
 

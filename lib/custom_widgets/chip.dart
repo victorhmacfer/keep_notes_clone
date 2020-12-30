@@ -3,6 +3,7 @@ import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
 import 'package:keep_notes_clone/models/label.dart';
+import 'package:keep_notes_clone/models/reminder.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/screens/note_labeling_screen.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -92,20 +93,19 @@ class NoteCardLabelChip extends StatelessWidget {
 }
 
 class NoteSetupReminderChip extends StatelessWidget {
-  final DateTime reminderTime;
-  final bool reminderExpired;
+  final Reminder reminder;
 
-  NoteSetupReminderChip(this.reminderTime, this.reminderExpired);
+  NoteSetupReminderChip(this.reminder);
 
   @override
   Widget build(BuildContext context) {
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    Color textColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
-    Color alarmIconColor = (reminderExpired) ? appGreyForColoredBg : appBlack;
+    Color textColor = (reminder.expired) ? appGreyForColoredBg : appBlack;
+    Color alarmIconColor = (reminder.expired) ? appGreyForColoredBg : appBlack;
 
     TextDecoration textDecoration =
-        (reminderExpired) ? TextDecoration.lineThrough : TextDecoration.none;
+        (reminder.expired) ? TextDecoration.lineThrough : TextDecoration.none;
 
     return GestureDetector(
       onTap: () {
@@ -123,7 +123,7 @@ class NoteSetupReminderChip extends StatelessWidget {
       },
       child: Container(
         padding: EdgeInsets.fromLTRB(8, 6, 14, 6),
-        decoration: (reminderExpired)
+        decoration: (reminder.expired)
             ? _expiredReminderChipDecoration
             : _noteSetupChipDecoration,
         child: Row(
@@ -138,7 +138,7 @@ class NoteSetupReminderChip extends StatelessWidget {
               width: 8,
             ),
             Text(
-              chipReminderText(reminderTime),
+              chipReminderText(reminder.time),
               style: drawerItemStyle.copyWith(
                   fontSize: 12, color: textColor, decoration: textDecoration),
             ),

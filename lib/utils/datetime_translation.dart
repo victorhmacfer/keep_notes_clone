@@ -1,4 +1,4 @@
-const _monthAbbreviations = {
+const monthAbbreviations = {
   1: 'Jan',
   2: 'Feb',
   3: 'Mar',
@@ -13,7 +13,7 @@ const _monthAbbreviations = {
   12: 'Dec',
 };
 
-const _monthNames = {
+const monthNames = {
   1: 'January',
   2: 'February',
   3: 'March',
@@ -27,46 +27,6 @@ const _monthNames = {
   11: 'November',
   12: 'December',
 };
-
-String noteSetupLastEditedText(DateTime lastEdited) {
-  var now = DateTime.now();
-  var dayToday = now.day;
-  var monthToday = now.month;
-  var yearToday = now.year;
-  var yesterday = now.subtract(Duration(days: 1));
-
-  String hourZeroOrNothing = (lastEdited.hour < 10) ? '0' : '';
-  String minuteZeroOrNothing = (lastEdited.minute < 10) ? '0' : '';
-
-  // if it is today... Edited 16:53
-
-  if ((lastEdited.day == dayToday) &&
-      (lastEdited.month == monthToday) &&
-      (lastEdited.year == yearToday)) {
-    return 'Edited $hourZeroOrNothing${lastEdited.hour}:$minuteZeroOrNothing${lastEdited.minute}';
-  }
-
-  if ((lastEdited.day == yesterday.day) &&
-      (lastEdited.month == yesterday.month) &&
-      (lastEdited.year == yesterday.year)) {
-    return 'Edited Yesterday, $hourZeroOrNothing${lastEdited.hour}:$minuteZeroOrNothing${lastEdited.minute}';
-  }
-
-  return 'Edited ${_monthAbbreviations[lastEdited.month]} ${lastEdited.day}';
-}
-
-String translateReminderDay(DateTime dateTimeOfDay) {
-  String zeroOrNothing = (dateTimeOfDay.day < 10) ? '0' : '';
-
-  return '${_monthNames[dateTimeOfDay.month]} $zeroOrNothing${dateTimeOfDay.day}';
-}
-
-String translateReminderTime(DateTime dateTime) {
-  String hourZeroOrNothing = (dateTime.hour < 10) ? '0' : '';
-  String minuteZeroOrNothing = (dateTime.minute < 10) ? '0' : '';
-
-  return '$hourZeroOrNothing${dateTime.hour}:$minuteZeroOrNothing${dateTime.minute}';
-}
 
 String chipReminderText(DateTime dateTime) {
   var today = DateTime.now();
@@ -87,7 +47,7 @@ String chipReminderText(DateTime dateTime) {
   } else {
     String dayZeroOrNothing = (dateTime.day < 10) ? '0' : '';
     prefix =
-        '${_monthAbbreviations[dateTime.month]} $dayZeroOrNothing${dateTime.day}';
+        '${monthAbbreviations[dateTime.month]} $dayZeroOrNothing${dateTime.day}';
   }
   var yearInfix = (dateTime.year > today.year) ? ' ${dateTime.year},' : '';
 
@@ -98,7 +58,7 @@ String reminderNotificationDateText(DateTime dateTime) {
   String dayZeroOrNothing = (dateTime.day < 10) ? '0' : '';
   String hourZeroOrNothing = (dateTime.hour < 10) ? '0' : '';
   String minuteZeroOrNothing = (dateTime.minute < 10) ? '0' : '';
-  var month = _monthAbbreviations[dateTime.month];
+  var month = monthAbbreviations[dateTime.month];
   var day = '$dayZeroOrNothing${dateTime.day}';
   var hour = '$hourZeroOrNothing${dateTime.hour}';
   var min = '$minuteZeroOrNothing${dateTime.minute}';

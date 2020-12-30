@@ -13,6 +13,19 @@ class ReminderSetupDialog extends StatefulWidget {
 class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
   bool chosenTimeIsPast = false;
 
+  String translateReminderDay(DateTime dateTimeOfDay) {
+    String zeroOrNothing = (dateTimeOfDay.day < 10) ? '0' : '';
+
+    return '${monthNames[dateTimeOfDay.month]} $zeroOrNothing${dateTimeOfDay.day}';
+  }
+
+  String translateReminderTime(DateTime dateTime) {
+    String hourZeroOrNothing = (dateTime.hour < 10) ? '0' : '';
+    String minuteZeroOrNothing = (dateTime.minute < 10) ? '0' : '';
+
+    return '$hourZeroOrNothing${dateTime.hour}:$minuteZeroOrNothing${dateTime.minute}';
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -21,15 +34,16 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
 
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    String reminderDayText = translateReminderDay(
-        notifier.reminderTimeInConstruction ?? DateTime.now());
-    String reminderTimeText = translateReminderTime(
-        notifier.reminderTimeInConstruction ?? DateTime.now());
+    var nextMinute = DateTime.now().add(Duration(minutes: 1));
 
-    var now = DateTime.now();
-    var twoYearsFromNow = now.add(Duration(days: 366 * 2));
+    String reminderDayText =
+        translateReminderDay(notifier.changingReminder ?? nextMinute);
+    String reminderTimeText =
+        translateReminderTime(notifier.changingReminder ?? nextMinute);
 
-    bool hasSavedReminder = notifier.savedReminderTime != null;
+    var twoYearsFromNow = DateTime.now().add(Duration(days: 366 * 2));
+
+    var hasSavedReminder = notifier.savedReminder != null;
 
     String timeSettingFailureText =
         (chosenTimeIsPast) ? 'The time has passed' : '';
@@ -70,26 +84,15 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 onTap: () async {
                   var chosenDate = await showDatePicker(
                       context: context,
-                      initialDate:
-                          notifier.reminderTimeInConstruction ?? DateTime.now(),
-                      firstDate: now,
+                      initialDate: notifier.changingReminder ?? nextMinute,
+                      firstDate: nextMinute,
                       lastDate: twoYearsFromNow);
                   if (chosenDate != null) {
-                    var now = DateTime.now();
-                    var inConstruction =
-                        notifier.reminderTimeInConstruction ?? now;
-
-                    var chosenInstant = DateTime(
-                        chosenDate.year,
-                        chosenDate.month,
-                        chosenDate.day,
-                        inConstruction.hour,
-                        inConstruction.minute);
-
-                    notifier.futureReminderCalendarDay = chosenDate;
+                    notifier.reminderDate = chosenDate;
 
                     setState(() {
-                      chosenTimeIsPast = chosenInstant.isBefore(now);
+                      chosenTimeIsPast =
+                          notifier.changingReminder.isBefore(DateTime.now());
                     });
                   }
                 },
@@ -110,28 +113,28 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
               ),
               GestureDetector(
                 onTap: () async {
-                  var chosenTime = await showTimePicker(
+                  var chosenTimeOfDay = await showTimePicker(
                     context: context,
                     initialTime: TimeOfDay.fromDateTime(
-                        notifier.reminderTimeInConstruction ?? DateTime.now()),
+                        notifier.changingReminder ?? nextMinute),
                   );
-                  if (chosenTime != null) {
-                    var now = DateTime.now();
-                    var inConstruction =
-                        notifier.reminderTimeInConstruction ?? now;
+                  if (chosenTimeOfDay != null) {
+                    int whateverYear = 9999;
+                    int whateverMonth = 99;
+                    int whateverDay = 99;
 
-                    var chosenInstant = DateTime(
-                        inConstruction.year,
-                        inConstruction.month,
-                        inConstruction.day,
-                        chosenTime.hour,
-                        chosenTime.minute);
+                    var inDateTime = DateTime(
+                        whateverYear,
+                        whateverMonth,
+                        whateverDay,
+                        chosenTimeOfDay.hour,
+                        chosenTimeOfDay.minute);
 
-                    notifier.futureReminderHourMinute = DateTime(
-                        9999, 12, 12, chosenTime.hour, chosenTime.minute);
+                    notifier.reminderHourMinute = inDateTime;
 
                     setState(() {
-                      chosenTimeIsPast = chosenInstant.isBefore(now);
+                      chosenTimeIsPast =
+                          notifier.changingReminder.isBefore(DateTime.now());
                     });
                   }
                 },
@@ -163,16 +166,17 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                   FlatButton(
                     child: Text('Cancel'),
                     onPressed: () {
-                      notifier.resetReminderTimeToSavedOrNow();
+                      notifier.resetChangingReminder();
                       Navigator.pop(context);
                     },
                   ),
                   FlatButton(
+                    key: ValueKey('reminder_dialog_save_button'),
                     color: NoteColor.orange.getColor(),
                     child: Text('Save'),
                     onPressed: () async {
                       if (chosenTimeIsPast == false) {
-                        if (notifier.savedReminderTime != null) {
+                        if (notifier.savedReminder != null) {
                           notifier.removeSavedReminder();
                         }
 
@@ -180,7 +184,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                         // for scheduling the new reminder
                         var newAlarmId = await noteSetupBloc.addReminderAlarm();
 
-                        notifier.saveReminderTime(newAlarmId);
+                        notifier.saveReminder(newAlarmId);
                         Navigator.pop(context);
                       }
                     },

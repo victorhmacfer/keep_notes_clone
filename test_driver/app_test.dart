@@ -412,6 +412,44 @@ void main() {
       await driver.waitFor(find.text('nova label dentro'));
     });
 
+    test('create note with reminder - any title or text', () async {
+      //fab
+      await driver.tap(fabFinder);
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // type text
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('nota com reminder e texto');
+
+      // tap reminder button
+      await driver.tap(find.byValueKey('note_setup_reminder_button'));
+
+      // finds reminder dialog
+      await driver.waitFor(find.byType('ReminderSetupDialog'));
+
+      // tap save
+      await driver.tap(find.byValueKey('reminder_dialog_save_button'));
+
+      // finds note setup and chip
+      await driver.waitFor(noteSetupScreenFinder);
+      await driver.waitFor(find.byType('NoteSetupReminderChip'));
+
+      // back to home
+      await driver.tap(noteSetupBackFinder);
+
+      // finds note with text and chip
+      await driver.waitFor(find.text('nota com reminder e texto'));
+      await driver.waitFor(find.byType('NoteCardReminderChip'));
+
+      // go to reminders screen
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(remindersDrawerItemFinder);
+
+      // finds it there
+      await driver.waitFor(remindersScreenFinder);
+      await driver.waitFor(find.text('nota com reminder e texto'));
+    });
+
     // test('delete first note, shows everything correctly', () {});
 
     // test('archive second note, shows everything correctly', () async {});

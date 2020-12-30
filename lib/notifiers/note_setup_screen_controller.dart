@@ -4,78 +4,131 @@ import 'package:keep_notes_clone/main.dart';
 
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
-import 'package:keep_notes_clone/models/note_setup_model.dart';
+import 'package:keep_notes_clone/models/reminder.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/datetime_translation.dart';
 
 class NoteSetupScreenController with ChangeNotifier {
-  final NoteSetupModel _noteSetupModel;
+  final bool _creating;
 
-  Note _noteBeingEdited;
+  final TextEditingController _titleController;
+  final TextEditingController _textController;
 
-  final bool _editing;
+  final FocusNode titleFocusNode = FocusNode();
+  final FocusNode textFocusNode = FocusNode();
+
+  Note _noteBeingSetUp;
+
+  DateTime _changingReminder;
 
   bool _noteIsDirty = false;
 
   NoteSetupScreenController()
-      : _noteSetupModel = NoteSetupModel(),
-        _editing = false;
+      : _noteBeingSetUp = Note(lastEdited: DateTime.now()),
+        _titleController = TextEditingController(),
+        _textController = TextEditingController(),
+        _creating = true {
+    _titleController.addListener(() {
+      _noteBeingSetUp.title = _titleController.text;
+    });
+    _textController.addListener(() {
+      _noteBeingSetUp.text = _textController.text;
+    });
+  }
 
   NoteSetupScreenController.withLabel(Label label)
-      : _noteSetupModel = NoteSetupModel.withLabel(label),
-        _editing = false;
+      : _noteBeingSetUp = Note(lastEdited: DateTime.now(), labels: [label]),
+        _titleController = TextEditingController(),
+        _textController = TextEditingController(),
+        _creating = true {
+    _titleController.addListener(() {
+      _noteBeingSetUp.title = _titleController.text;
+    });
+    _textController.addListener(() {
+      _noteBeingSetUp.text = _textController.text;
+    });
+  }
 
   NoteSetupScreenController.fromNote(Note note)
-      : _noteBeingEdited = note,
-        _noteSetupModel = NoteSetupModel.fromNote(note),
-        _editing = true;
+      : _noteBeingSetUp = note,
+        _titleController = TextEditingController(text: note.title),
+        _textController = TextEditingController(text: note.text),
+        _creating = false {
+    _titleController.addListener(() {
+      _noteBeingSetUp.title = _titleController.text;
+    });
+    _textController.addListener(() {
+      _noteBeingSetUp.text = _textController.text;
+    });
 
-  TextEditingController get titleController => _noteSetupModel.titleController;
-  TextEditingController get textController => _noteSetupModel.textController;
+    _changingReminder = note.reminder?.time;
+  }
 
-  FocusNode get titleFocusNode => _noteSetupModel.titleFocusNode;
-  FocusNode get textFocusNode => _noteSetupModel.textFocusNode;
+  Note get noteBeingSetUp => _noteBeingSetUp;
 
-  int get selectedColorIndex => _noteSetupModel.selectedColorIndex;
+  TextEditingController get titleController => _titleController;
+  TextEditingController get textController => _textController;
 
-  DateTime get reminderTimeInConstruction => _noteSetupModel.reminderTimeInConstruction;
+  int get selectedColorIndex => _noteBeingSetUp.colorIndex;
 
-  DateTime get savedReminderTime => _noteSetupModel.savedReminderTime;
+  NoteColor get selectedColor =>
+      NoteColor.getNoteColorFromIndex(_noteBeingSetUp.colorIndex);
 
-  DateTime get lastEditedTime => _noteSetupModel.noteLastEdited;
-
-  bool get reminderExpired => _noteSetupModel.reminderExpired;
-
-  NoteSetupModel get noteSetupModel => _noteSetupModel;
-
-  bool get canCreateNote =>
-      titleController.text.isNotEmpty ||
-      textController.text.isNotEmpty ||
-      _noteSetupModel.hasSavedReminder;
-
-  set futureReminderHourMinute(DateTime newTime) {
-    _noteSetupModel.reminderHourMinute = newTime;
+  set selectedColorIndex(int newValue) {
+    _noteBeingSetUp.colorIndex = newValue;
     notifyListeners();
   }
 
-  set futureReminderCalendarDay(DateTime newReminderDate) {
-    _noteSetupModel.reminderDay = newReminderDate;
-    notifyListeners();
+  bool get creating => _creating;
+  bool get editing => !creating;
+
+  bool get pinned => _noteBeingSetUp.pinned;
+
+  bool get archived => _noteBeingSetUp.archived;
+
+  DateTime get lastEdited => _noteBeingSetUp.lastEdited;
+
+  List<Label> get futureLabels => List.unmodifiable(_noteBeingSetUp.labels);
+
+  Reminder get savedReminder => _noteBeingSetUp.reminder;
+
+  DateTime get changingReminder => _changingReminder;
+
+  void resetChangingReminder() {
+    var nextMinute = DateTime.now().add(Duration(minutes: 1));
+    _changingReminder = _noteBeingSetUp.reminder?.time ?? nextMinute;
   }
 
-  void resetReminderTimeToSavedOrNow() {
-    _noteSetupModel.reminderTimeInConstruction =
-        _noteSetupModel.savedReminderTime ?? DateTime.now();
+  set reminderHourMinute(DateTime hourMinute) {
+    var nextMinute = DateTime.now().add(Duration(minutes: 1));
+    _changingReminder = DateTime(
+        _changingReminder?.year ?? nextMinute.year,
+        _changingReminder?.month ?? nextMinute.month,
+        _changingReminder?.day ?? nextMinute.day,
+        hourMinute.hour,
+        hourMinute.minute);
   }
 
-  void saveReminderTime(int alarmId) async {
-    _noteSetupModel.saveReminderTime(alarmId);
+  set reminderDate(DateTime date) {
+    var nextMinute = DateTime.now().add(Duration(minutes: 1));
+    _changingReminder = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        _changingReminder?.hour ?? nextMinute.hour,
+        _changingReminder?.minute ?? nextMinute.minute);
+  }
+
+  void saveReminder(int alarmId) async {
+    var nextMinute = DateTime.now().add(Duration(minutes: 1));
+    _noteBeingSetUp.reminder =
+        Reminder(id: alarmId, time: _changingReminder ?? nextMinute);
 
     await _scheduleReminderNotification(
         id: alarmId,
-        noteTitle: _noteSetupModel.title,
-        noteText: _noteSetupModel.text,
-        scheduledNotificationDateTime: _noteSetupModel.savedReminderTime);
+        noteTitle: _noteBeingSetUp.title,
+        noteText: _noteBeingSetUp.text,
+        scheduledNotificationDateTime: _noteBeingSetUp.reminder.time);
 
     notifyListeners();
   }
@@ -112,34 +165,24 @@ class NoteSetupScreenController with ChangeNotifier {
       }
     }
 
-    return flnp.schedule(id, notificationTitle,
-        notificationText, scheduledNotificationDateTime, notifDetails, payload: id.toString());
+    return flnp.schedule(id, notificationTitle, notificationText,
+        scheduledNotificationDateTime, notifDetails,
+        payload: id.toString());
   }
 
   void removeSavedReminder() async {
-    var alarmId = _noteSetupModel.savedReminderAlarmId;
-    _noteSetupModel.removeSavedReminder();
+    var alarmId = _noteBeingSetUp.reminder?.id;
+    _noteBeingSetUp.reminder = null;
 
     if (alarmId != null) {
       await flnp.cancel(alarmId);
     }
-    notifyListeners();
   }
 
-  int get savedReminderAlarmId => _noteSetupModel.savedReminderAlarmId;
-
-  Note get noteBeingEdited => _noteBeingEdited;
-
-  bool get editing => _editing;
-  bool get notEditing => !editing;
-
-  NoteColor get selectedColor =>
-      NoteColor.getNoteColorFromIndex(_noteSetupModel.selectedColorIndex);
-
-  set selectedColorIndex(int newValue) {
-    _noteSetupModel.selectedColorIndex = newValue;
-    notifyListeners();
-  }
+  bool get canCreateNote =>
+      titleController.text.isNotEmpty ||
+      textController.text.isNotEmpty ||
+      (_noteBeingSetUp.reminder != null);
 
   void markNoteAsDirty() {
     _noteIsDirty = true;
@@ -148,34 +191,49 @@ class NoteSetupScreenController with ChangeNotifier {
 
   void tryToUpdateLastEdited() {
     if (_noteIsDirty) {
-      _noteSetupModel.noteLastEdited = DateTime.now();
+      _noteBeingSetUp.lastEdited = DateTime.now();
     }
   }
 
-  bool get isPinned => _noteSetupModel.isPinned;
-
-  List<Label> get futureLabels => List.unmodifiable(_noteSetupModel.labels);
-
   void pinNote() {
-    _noteSetupModel.isPinned = true;
+    _noteBeingSetUp.pinned = true;
     notifyListeners();
   }
 
   void unpinNote() {
-    _noteSetupModel.isPinned = false;
+    _noteBeingSetUp.pinned = false;
+    notifyListeners();
+  }
+
+  void deleteNote() {
+    var alarmId = _noteBeingSetUp.delete();
+    if (alarmId != null) removeSavedReminder();
+  }
+
+  void restoreNote() {
+    _noteBeingSetUp.restore();
+  }
+
+  void togglePinned() {
+    _noteBeingSetUp.pinned = !_noteBeingSetUp.pinned;
+    notifyListeners();
+  }
+
+  void toggleArchived() {
+    _noteBeingSetUp.archived = !_noteBeingSetUp.archived;
     notifyListeners();
   }
 
   void checkLabel(Label label) {
-    _noteSetupModel.labels.add(label);
+    _noteBeingSetUp.labels.add(label);
     notifyListeners();
   }
 
   void uncheckLabel(Label label) {
     var foundLabelIndex =
-        _noteSetupModel.labels.indexWhere((lab) => lab.id == label.id);
+        _noteBeingSetUp.labels.indexWhere((lab) => lab.id == label.id);
 
-    _noteSetupModel.labels.removeAt(foundLabelIndex);
+    _noteBeingSetUp.labels.removeAt(foundLabelIndex);
     notifyListeners();
   }
 

@@ -103,11 +103,13 @@ class Note {
     _archived = newValue;
   }
 
-  void delete() {
+  int delete() {
     _pinned = false;
     _archived = false;
     _deleted = true;
+    var alarmId = reminder?.id;
     reminder = null;
+    return alarmId;
   }
 
   void restore() {
