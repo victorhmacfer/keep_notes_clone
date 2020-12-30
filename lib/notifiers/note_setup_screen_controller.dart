@@ -19,7 +19,7 @@ class NoteSetupScreenController with ChangeNotifier {
 
   Note _noteBeingSetUp;
 
-  DateTime _changingReminder;
+  DateTime _changingReminder = DateTime.now().add(Duration(minutes: 1));
 
   bool _noteIsDirty = false;
 
@@ -61,7 +61,7 @@ class NoteSetupScreenController with ChangeNotifier {
       _noteBeingSetUp.text = _textController.text;
     });
 
-    _changingReminder = note.reminder?.time;
+    if (note.reminder != null) _changingReminder = note.reminder.time;
   }
 
   Note get noteBeingSetUp => _noteBeingSetUp;
@@ -100,29 +100,21 @@ class NoteSetupScreenController with ChangeNotifier {
   }
 
   set reminderHourMinute(DateTime hourMinute) {
-    var nextMinute = DateTime.now().add(Duration(minutes: 1));
     _changingReminder = DateTime(
-        _changingReminder?.year ?? nextMinute.year,
-        _changingReminder?.month ?? nextMinute.month,
-        _changingReminder?.day ?? nextMinute.day,
+        _changingReminder.year,
+        _changingReminder.month,
+        _changingReminder.day,
         hourMinute.hour,
         hourMinute.minute);
   }
 
   set reminderDate(DateTime date) {
-    var nextMinute = DateTime.now().add(Duration(minutes: 1));
-    _changingReminder = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        _changingReminder?.hour ?? nextMinute.hour,
-        _changingReminder?.minute ?? nextMinute.minute);
+    _changingReminder = DateTime(date.year, date.month, date.day,
+        _changingReminder.hour, _changingReminder.minute);
   }
 
   void saveReminder(int alarmId) async {
-    var nextMinute = DateTime.now().add(Duration(minutes: 1));
-    _noteBeingSetUp.reminder =
-        Reminder(id: alarmId, time: _changingReminder ?? nextMinute);
+    _noteBeingSetUp.reminder = Reminder(id: alarmId, time: _changingReminder);
 
     await _scheduleReminderNotification(
         id: alarmId,
@@ -174,9 +166,12 @@ class NoteSetupScreenController with ChangeNotifier {
     var alarmId = _noteBeingSetUp.reminder?.id;
     _noteBeingSetUp.reminder = null;
 
+    _changingReminder = DateTime.now().add(Duration(minutes: 1));
+
     if (alarmId != null) {
       await flnp.cancel(alarmId);
     }
+    notifyListeners();
   }
 
   bool get canCreateNote =>

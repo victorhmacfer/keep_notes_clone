@@ -34,12 +34,8 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
 
     final notifier = Provider.of<NoteSetupScreenController>(context);
 
-    var nextMinute = DateTime.now().add(Duration(minutes: 1));
-
-    String reminderDayText =
-        translateReminderDay(notifier.changingReminder ?? nextMinute);
-    String reminderTimeText =
-        translateReminderTime(notifier.changingReminder ?? nextMinute);
+    String reminderDayText = translateReminderDay(notifier.changingReminder);
+    String reminderTimeText = translateReminderTime(notifier.changingReminder);
 
     var twoYearsFromNow = DateTime.now().add(Duration(days: 366 * 2));
 
@@ -84,8 +80,8 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 onTap: () async {
                   var chosenDate = await showDatePicker(
                       context: context,
-                      initialDate: notifier.changingReminder ?? nextMinute,
-                      firstDate: nextMinute,
+                      initialDate: notifier.changingReminder,
+                      firstDate: DateTime.now().add(Duration(minutes: 1)),
                       lastDate: twoYearsFromNow);
                   if (chosenDate != null) {
                     notifier.reminderDate = chosenDate;
@@ -115,8 +111,8 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 onTap: () async {
                   var chosenTimeOfDay = await showTimePicker(
                     context: context,
-                    initialTime: TimeOfDay.fromDateTime(
-                        notifier.changingReminder ?? nextMinute),
+                    initialTime:
+                        TimeOfDay.fromDateTime(notifier.changingReminder),
                   );
                   if (chosenTimeOfDay != null) {
                     int whateverYear = 9999;
