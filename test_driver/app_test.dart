@@ -448,6 +448,48 @@ void main() {
       // finds it there
       await driver.waitFor(remindersScreenFinder);
       await driver.waitFor(find.text('nota com reminder e texto'));
+
+      // back to home
+      await driver.tap(remindersScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+    });
+
+    test('create note with reminder - just reminder, nothing else', () async {
+      //fab
+      await driver.tap(fabFinder);
+      await driver.waitFor(noteSetupScreenFinder);
+
+      // tap reminder button
+      await driver.tap(find.byValueKey('note_setup_reminder_button'));
+
+      // finds reminder dialog
+      await driver.waitFor(find.byType('ReminderSetupDialog'));
+
+      // tap save
+      await driver.tap(find.byValueKey('reminder_dialog_save_button'));
+
+      // finds note setup and chip
+      await driver.waitFor(noteSetupScreenFinder);
+      await driver.waitFor(find.byType('NoteSetupReminderChip'));
+
+      // back to home
+      await driver.tap(noteSetupBackFinder);
+
+      // finds note with text and chip
+      await driver.waitFor(find.text('Empty reminder'));
+      await driver.waitFor(find.byType('NoteCardReminderChip'));
+
+      // go to reminders screen
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(remindersDrawerItemFinder);
+
+      // finds it there
+      await driver.waitFor(remindersScreenFinder);
+      await driver.waitFor(find.text('Empty reminder'));
+
+      // back to home
+      await driver.tap(remindersScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
     });
 
     // test('delete first note, shows everything correctly', () {});

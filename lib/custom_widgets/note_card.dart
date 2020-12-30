@@ -16,28 +16,28 @@ import 'package:provider/provider.dart';
 class ExtendedNoteCard extends StatelessWidget {
   final Note note;
 
-  final String _title;
-  String _text;
-  final NoteColor _color;
+  //FIXME: this is terrible.. but will do for now.
+  final String noteText;
 
   static const _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE = 43;
 
-  ExtendedNoteCard({@required this.note})
-      : _title = note.title,
-        _text = note.text,
-        _color = NoteColor.getNoteColorFromIndex(note.colorIndex);
+  ExtendedNoteCard(this.note)
+      : noteText =
+            (note.title.isEmpty && note.text.isEmpty && note.reminder != null)
+                ? 'Empty reminder'
+                : note.text;
 
-  Widget _titleWidget(String theTitle) {
-    return ((theTitle != null) && (theTitle.isNotEmpty))
+  Widget _titleWidget() {
+    return ((note.title != null) && (note.title.isNotEmpty))
         ? Text(
-            theTitle,
+            note.title,
             style: cardTitleStyle,
           )
         : Container();
   }
 
   Widget _spacingWidget() {
-    if ((_title.isNotEmpty) && (_text.isNotEmpty)) {
+    if ((note.title.isNotEmpty) && (noteText.isNotEmpty)) {
       return SizedBox(
         height: 12,
       );
@@ -45,13 +45,13 @@ class ExtendedNoteCard extends StatelessWidget {
     return Container();
   }
 
-  Widget _textWidget(String theText) {
-    return ((theText != null) && (theText.isNotEmpty))
+  Widget _textWidget() {
+    return ((noteText != null) && (noteText.isNotEmpty))
         ? Text(
-            theText,
+            noteText,
             maxLines: 10,
             overflow: TextOverflow.ellipsis,
-            style: (theText.length <= _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE)
+            style: (noteText.length <= _MAX_TEXT_LENGTH_WITH_BIG_FONTSIZE)
                 ? cardBigTextStyle
                 : cardSmallTextStyle,
           )
@@ -98,16 +98,16 @@ class ExtendedNoteCard extends StatelessWidget {
           padding: EdgeInsets.all(16),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: _color.getColor(),
+            color: NoteColor.getNoteColorFromIndex(note.colorIndex).getColor(),
             border: cardBorder,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _titleWidget(_title),
+              _titleWidget(),
               _spacingWidget(),
-              _textWidget(_text),
+              _textWidget(),
               ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
                   ? _ChipsContainer(
                       labels: note.labels,
@@ -183,9 +183,7 @@ class _ChipsContainer extends StatelessWidget {
 class SmallNoteCard extends StatelessWidget {
   final Note note;
 
-  final String _title;
-  String _text;
-  final NoteColor _color;
+  final String noteText;
 
   static const _maxTextLengthWithBigFontSize = 15;
   static const _minHeightPercentageFactor = 30; // cannot be higher than 100
@@ -200,14 +198,15 @@ class SmallNoteCard extends StatelessWidget {
   static const int _textMaxLines = 10;
 
   SmallNoteCard(this.note)
-      : _title = note.title,
-        _text = note.text,
-        _color = NoteColor.getNoteColorFromIndex(note.colorIndex);
+      : noteText =
+            (note.title.isEmpty && note.text.isEmpty && note.reminder != null)
+                ? 'Empty reminder'
+                : note.text;
 
-  Widget _titleWidget(String theTitle) {
-    return ((theTitle != null) && (theTitle.isNotEmpty))
+  Widget _titleWidget() {
+    return ((note.title != null) && (note.title.isNotEmpty))
         ? Text(
-            theTitle,
+            note.title,
             style: cardTitleStyle,
             maxLines: _titleMaxLines,
             overflow: TextOverflow.ellipsis,
@@ -216,7 +215,7 @@ class SmallNoteCard extends StatelessWidget {
   }
 
   Widget _spacingWidget() {
-    if ((_title.isNotEmpty) && (_text.isNotEmpty)) {
+    if ((note.title.isNotEmpty) && (noteText.isNotEmpty)) {
       return SizedBox(
         height: _spacerHeight,
       );
@@ -224,13 +223,13 @@ class SmallNoteCard extends StatelessWidget {
     return Container();
   }
 
-  Widget _textWidget(String theText) {
-    return ((theText != null) && (theText.isNotEmpty))
+  Widget _textWidget() {
+    return ((noteText != null) && (noteText.isNotEmpty))
         ? Text(
-            theText,
+            noteText,
             maxLines: _textMaxLines,
             overflow: TextOverflow.ellipsis,
-            style: (theText.length <= _maxTextLengthWithBigFontSize)
+            style: (noteText.length <= _maxTextLengthWithBigFontSize)
                 ? cardBigTextStyle
                 : cardSmallTextStyle,
           )
@@ -358,7 +357,8 @@ class SmallNoteCard extends StatelessWidget {
                 0, _verticalMargin, _rightMargin, _verticalMargin),
             padding: EdgeInsets.all(_padding),
             decoration: BoxDecoration(
-              color: _color.getColor(),
+              color:
+                  NoteColor.getNoteColorFromIndex(note.colorIndex).getColor(),
               border: cardBorder,
               borderRadius: BorderRadius.circular(8),
             ),
@@ -366,9 +366,9 @@ class SmallNoteCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _titleWidget(_title),
+                _titleWidget(),
                 _spacingWidget(),
-                _textWidget(_text),
+                _textWidget(),
                 ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
                     ? _ChipsContainer(
                         labels: note.labels,

@@ -9,7 +9,7 @@ class ExtendedModeList extends StatelessWidget {
 
   ExtendedModeList(this.notes);
 
-  Widget _cardBuilder(Note note) => ExtendedNoteCard(note: note);
+  Widget _cardBuilder(Note note) => ExtendedNoteCard(note);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,11 @@ class OptionalSection extends StatelessWidget {
   static const double _spacerHeight = 24;
 
   OptionalSection(
-      {this.title = '', @required this.mode, @required this.notes, this.spaceBelow = false, this.noSpacer = false});
+      {this.title = '',
+      @required this.mode,
+      @required this.notes,
+      this.spaceBelow = false,
+      this.noSpacer = false});
 
   @override
   Widget build(BuildContext context) {

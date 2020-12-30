@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/models/label.dart';
-import 'package:keep_notes_clone/models/note_setup_model.dart';
 import 'package:keep_notes_clone/models/reminder.dart';
 
 class Note {
@@ -36,42 +35,6 @@ class Note {
     _pinned = pinned;
     _archived = archived;
     _deleted = deleted;
-  }
-
-  // always used for creating a NEW NOTE
-  Note.fromSetupModel(NoteSetupModel setupModel, {bool archived = false})
-      : assert(setupModel.selectedColorIndex != null),
-        assert(setupModel.noteLastEdited != null) {
-    title = (setupModel.title.isNotEmpty) ? setupModel.title : '';
-    text = (setupModel.text.isNotEmpty) ? setupModel.text : '';
-    _pinned = setupModel.isPinned;
-    _archived = archived;
-    _deleted = false;
-    colorIndex = setupModel.selectedColorIndex;
-    lastEdited = setupModel.noteLastEdited;
-    reminder = (setupModel.hasSavedReminder)
-        ? Reminder(
-            id: setupModel.savedReminderAlarmId,
-            time: setupModel.savedReminderTime)
-        : null;
-    if (title.isEmpty && text.isEmpty && (reminder != null)) {
-      text = 'Empty reminder';
-    }
-    labels = setupModel.labels ?? [];
-  }
-
-  void updateWith(NoteSetupModel setupModel) {
-    title = setupModel.title;
-    text = setupModel.text;
-    colorIndex = setupModel.selectedColorIndex;
-    lastEdited = setupModel.noteLastEdited;
-    pinned = setupModel.isPinned;
-    reminder = (setupModel.hasSavedReminder)
-        ? Reminder(
-            id: setupModel.savedReminderAlarmId,
-            time: setupModel.savedReminderTime)
-        : null;
-    labels = setupModel.labels;
   }
 
   bool contains(String substring) {
