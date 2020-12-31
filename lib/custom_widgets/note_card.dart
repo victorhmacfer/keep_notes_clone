@@ -183,10 +183,12 @@ class _ChipsContainer extends StatelessWidget {
 class SmallNoteCard extends StatelessWidget {
   final Note note;
 
+  final double estimatedHeight;
+
   final String noteText;
 
   static const _maxTextLengthWithBigFontSize = 15;
-  static const _minHeightPercentageFactor = 30; // cannot be higher than 100
+  static const _minHeightPercentageFactor = 30;
   static const _maxHeightPercentageFactor = 30;
 
   static const double _rightMargin = 8;
@@ -197,7 +199,10 @@ class SmallNoteCard extends StatelessWidget {
   static const int _titleMaxLines = 2;
   static const int _textMaxLines = 10;
 
-  SmallNoteCard(this.note)
+  static const int _titleBaseFontHeight = 22;
+  static const int _textBaseFontHeight = 20;
+
+  SmallNoteCard(this.note, this.estimatedHeight)
       : noteText =
             (note.title.isEmpty && note.text.isEmpty && note.reminder != null)
                 ? 'Empty reminder'
@@ -248,10 +253,12 @@ class SmallNoteCard extends StatelessWidget {
     }
 
     final double titleCharsPerLine = (textScalingFactor > 1.2) ? 12 : 18;
-    final double titleFontHeight = 20 * systemFontSizeVariationFactor;
+    final double titleFontHeight =
+        _titleBaseFontHeight * systemFontSizeVariationFactor;
 
     final double textCharsPerLine = 20 * (1 / systemFontSizeVariationFactor);
-    final double textFontHeight = 18 * systemFontSizeVariationFactor;
+    final double textFontHeight =
+        _textBaseFontHeight * systemFontSizeVariationFactor;
 
     double totalHeight = 0;
 
@@ -307,11 +314,7 @@ class SmallNoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context);
-
     var multiNoteSelection = Provider.of<MultiNoteSelection>(context);
-
-    var heightEstimation = estimateHeight(note, mediaQuery.textScaleFactor);
 
     var cardBorder = (multiNoteSelection.isSelected(note))
         ? Border.all(color: appBlack, width: 2)
@@ -349,9 +352,9 @@ class SmallNoteCard extends StatelessWidget {
               minWidth: 0,
               maxWidth: double.infinity,
               minHeight:
-                  heightEstimation * (1 - (_minHeightPercentageFactor / 100)),
+                  estimatedHeight * (1 - (_minHeightPercentageFactor / 100)),
               maxHeight:
-                  heightEstimation * (1 + (_maxHeightPercentageFactor / 100))),
+                  estimatedHeight * (1 + (_maxHeightPercentageFactor / 100))),
           child: Container(
             margin: EdgeInsets.fromLTRB(
                 0, _verticalMargin, _rightMargin, _verticalMargin),

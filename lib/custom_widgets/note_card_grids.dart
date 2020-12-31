@@ -79,10 +79,10 @@ class SmallModeGrid extends StatelessWidget {
       if ((accumFirstHeight == 0) ||
           (accumFirstHeight + estimatedHeight <=
               accumSecondHeight + estimatedHeight)) {
-        first.add(SmallNoteCard(n));
+        first.add(SmallNoteCard(n, estimatedHeight));
         accumFirstHeight += estimatedHeight;
       } else {
-        second.add(SmallNoteCard(n));
+        second.add(SmallNoteCard(n, estimatedHeight));
         accumSecondHeight += estimatedHeight;
       }
     }

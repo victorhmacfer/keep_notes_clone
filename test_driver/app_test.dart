@@ -82,7 +82,7 @@ void main() {
       await driver.waitFor(snackBarFinder);
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    });
+    }, skip: true);
 
     test('in login screen, login with wrong pwd, show correct snackbar text',
         () async {
@@ -99,7 +99,7 @@ void main() {
       await driver.waitFor(snackBarFinder, timeout: Duration(seconds: 10));
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    });
+    }, skip: true);
 
     test(
         'in login screen, login with disabled user, show correct snackbar text',
@@ -117,7 +117,7 @@ void main() {
       await driver.waitFor(snackBarFinder);
       await driver.waitFor(snackBarTextFinder);
       await driver.waitForAbsent(snackBarFinder);
-    });
+    }, skip: true);
 
     test('in login screen, login with good credentials, shows home', () async {
       await driver.waitFor(loginScreenFinder, timeout: Duration(seconds: 4));
@@ -169,7 +169,7 @@ void main() {
       await driver.tap(trashScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
       await driver.waitFor(homeScreenFinder);
-    });
+    }, skip: true);
 
     test(
         'back on empty note (no title, text or reminder) will abort creation, shows nothing in home',
@@ -185,7 +185,7 @@ void main() {
       await driver.waitFor(homeScreenFinder);
       await driver.waitForAbsent(extendedNoteCardFinder);
       await driver.waitForAbsent(smallNoteCardFinder);
-    });
+    }, skip: true);
 
     test('delete while creating a note will abort creation', () async {
       // fab
@@ -203,7 +203,7 @@ void main() {
       // finds home and does not find text
       await driver.waitFor(homeScreenFinder);
       await driver.waitForAbsent(find.text('some random text'));
-    });
+    }, skip: true);
 
     test('create a simple note, shows it', () async {
       // tap fab
@@ -492,15 +492,27 @@ void main() {
       await driver.tap(notesDrawerItemFinder);
     });
 
-    // test('delete first note, shows everything correctly', () {});
+    test('change note title and text', () async {
+      // tap note
+      await driver.tap(find.text('first title'));
 
-    // test('archive second note, shows everything correctly', () async {});
+      // tap title and enter new text
+      await driver.tap(noteSetupTitleFinder);
+      await driver.enterText('novo TITULO editado da primeira');
 
-    // test('create a note with first label, shows correctly', () {});
+      // tap text and enter new text
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('novo TEXTO editado da primeira');
 
-    // test('remove label from second note, shows note everywhere correctly',
-    //     () {});
+      // back to home
+      await driver.tap(noteSetupBackFinder);
+      await driver.waitFor(homeScreenFinder);
 
-    // test('delete first label, doesnt show anywhere in the app', () {});
+      // finds new stuff and not old stuff there
+      await driver.waitFor(find.text('novo TITULO editado da primeira'));
+      await driver.waitFor(find.text('novo TEXTO editado da primeira'));
+      await driver.waitForAbsent(find.text('first title'));
+      await driver.waitForAbsent(find.text('first note text'));
+    });
   });
 }
