@@ -514,5 +514,21 @@ void main() {
       await driver.waitForAbsent(find.text('first title'));
       await driver.waitForAbsent(find.text('first note text'));
     });
+
+    test('unpin the only pinned note', () async {
+      // tap pinned note
+      await driver.tap(find.text('nota pinada'));
+
+      // tap unpin button
+      await driver.tap(find.byValueKey('note_setup_pin_button'));
+
+      // back
+      await driver.tap(noteSetupBackFinder);
+
+      // finds note and does not find 'PINNED' and 'OTHERS' sections
+      await driver.waitFor(find.text('nota pinada'));
+      await driver.waitForAbsent(find.text('PINNED'));
+      await driver.waitForAbsent(find.text('OTHERS'));
+    });
   });
 }
