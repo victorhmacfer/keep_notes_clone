@@ -519,16 +519,40 @@ void main() {
       // tap pinned note
       await driver.tap(find.text('nota pinada'));
 
-      // tap unpin button
+      // tap unpin button and change title
       await driver.tap(find.byValueKey('note_setup_pin_button'));
+      await driver.tap(noteSetupTitleFinder);
+      await driver.enterText('nota despinada');
 
       // back
       await driver.tap(noteSetupBackFinder);
 
       // finds note and does not find 'PINNED' and 'OTHERS' sections
-      await driver.waitFor(find.text('nota pinada'));
+      await driver.waitFor(find.text('nota despinada'));
       await driver.waitForAbsent(find.text('PINNED'));
       await driver.waitForAbsent(find.text('OTHERS'));
+    });
+
+    test('archive note', () async {
+      // tap note
+      await driver.tap(find.text('titulo segunda'));
+
+      // tap archive
+      await driver.tap(find.byValueKey('note_setup_archive_button'));
+
+      // finds home, does not find the note
+      await driver.waitFor(homeScreenFinder);
+      await driver.waitForAbsent(find.text('titulo segunda'));
+
+      // go to archive screen, finds note there
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(archiveDrawerItemFinder);
+      await driver.waitFor(find.text('titulo segunda'));
+
+      // go back to home
+      await driver.tap(archiveScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+      await driver.waitFor(homeScreenFinder);
     });
   });
 }
