@@ -677,5 +677,34 @@ void main() {
       await driver.tap(remindersScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
     });
+
+    test('remove reminder from note', () async {
+      // tap note
+      await driver.tap(find.text('titulo segunda'));
+
+      // tap reminder button
+      await driver.tap(find.byValueKey('note_setup_reminder_button'));
+
+      // tap delete
+      await driver.tap(find.byValueKey('reminder_dialog_delete_button'));
+
+      // does not find chip in note setup anymore
+      await driver.waitFor(noteSetupScreenFinder);
+      await driver.waitForAbsent(find.byType('NoteSetupReminderChip'));
+
+      // back to home, finds text there
+      await driver.tap(noteSetupBackFinder);
+      await driver.waitFor(find.text('titulo segunda'));
+
+      // go to reminders screen and does not find it there
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(remindersDrawerItemFinder);
+      await driver.waitFor(remindersScreenFinder);
+      await driver.waitForAbsent(find.text('titulo segunda'));
+
+      // back to home
+      await driver.tap(remindersScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+    });
   });
 }

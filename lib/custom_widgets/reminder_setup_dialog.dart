@@ -47,6 +47,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
     Widget _deleteButton(bool hasSaved) {
       if (hasSaved) {
         return FlatButton(
+          key: ValueKey('reminder_dialog_delete_button'),
           child: Text('Delete'),
           onPressed: () {
             notifier.removeSavedReminder();
