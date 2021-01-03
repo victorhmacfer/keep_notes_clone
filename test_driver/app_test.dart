@@ -555,7 +555,7 @@ void main() {
       await driver.waitFor(homeScreenFinder);
     });
 
-    test('give existent note an existent label', () async {
+    test('give note an existent label', () async {
       // tap note
       await driver.tap(find.text('nota despinada'));
 
@@ -581,6 +581,39 @@ void main() {
       // finds it in home
       await driver.waitFor(find.text('minha primeira label'));
       await driver.waitFor(find.byType('NoteCardLabelChip'));
+    });
+
+    test('give note a new label', () async {
+      // tap note
+      await driver.tap(find.text('texto segunda'));
+
+      // tap right BS
+      await driver.tap(find.byValueKey('note_setup_right_bs_button'));
+
+      // tab labels
+      await driver.tap(find.byValueKey('right_bs_labels_button'));
+
+      // tap field to get focus
+      await driver.tap(find.byValueKey('note_labeling_name_textfield'));
+
+      // enter new label text and create
+      await driver.enterText('nova label editando');
+      await driver.tap(find.byValueKey('note_labeling_create_button'));
+
+      // back
+      await driver.tap(find.pageBack());
+
+      // is in note setup and finds label chip
+      await driver.waitFor(noteSetupScreenFinder);
+      await driver.waitFor(find.text('nova label editando'));
+      await driver.waitFor(find.byType('NoteSetupLabelChip'));
+
+      // tap back to home
+      await driver.tap(noteSetupBackFinder);
+
+      // finds note text and its label
+      await driver.waitFor(find.text('texto segunda'));
+      await driver.waitFor(find.text('nova label editando'));
     });
   });
 }
