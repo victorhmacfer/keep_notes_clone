@@ -535,24 +535,52 @@ void main() {
 
     test('archive note', () async {
       // tap note
-      await driver.tap(find.text('titulo segunda'));
+      await driver.tap(find.text('minha primeira label'));
 
       // tap archive
       await driver.tap(find.byValueKey('note_setup_archive_button'));
 
       // finds home, does not find the note
       await driver.waitFor(homeScreenFinder);
-      await driver.waitForAbsent(find.text('titulo segunda'));
+      await driver.waitForAbsent(find.text('minha primeira label'));
 
       // go to archive screen, finds note there
       await driver.tap(homeDrawerBurgerFinder);
       await driver.tap(archiveDrawerItemFinder);
-      await driver.waitFor(find.text('titulo segunda'));
+      await driver.waitFor(find.text('minha primeira label'));
 
       // go back to home
       await driver.tap(archiveScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
       await driver.waitFor(homeScreenFinder);
+    });
+
+    test('give existent note an existent label', () async {
+      // tap note
+      await driver.tap(find.text('nota despinada'));
+
+      // tap right BS
+      await driver.tap(find.byValueKey('note_setup_right_bs_button'));
+
+      // tap labels
+      await driver.tap(find.byValueKey('right_bs_labels_button'));
+
+      // tap some existent label to include it..
+      await driver.tap(find.text('minha primeira label'));
+
+      // back
+      await driver.tap(find.pageBack());
+
+      // finds it in note setup
+      await driver.waitFor(find.text('minha primeira label'));
+      await driver.waitFor(find.byType('NoteSetupLabelChip'));
+
+      // back
+      await driver.tap(noteSetupBackFinder);
+
+      // finds it in home
+      await driver.waitFor(find.text('minha primeira label'));
+      await driver.waitFor(find.byType('NoteCardLabelChip'));
     });
   });
 }
