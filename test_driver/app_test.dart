@@ -615,5 +615,33 @@ void main() {
       await driver.waitFor(find.text('texto segunda'));
       await driver.waitFor(find.text('nova label editando'));
     });
+
+    test('delete note with reminder from note setup', () async {
+      // tap note
+      await driver.tap(find.text('nota com reminder e texto'));
+
+      // tap right BS
+      await driver.tap(find.byValueKey('note_setup_right_bs_button'));
+
+      // tap delete
+      await driver.tap(find.byValueKey('right_bs_delete_button'));
+
+      // does not find it in home
+      await driver.waitForAbsent(find.text('nota com reminder e texto'));
+
+      // go to trash
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(trashDrawerItemFinder);
+      await driver.waitFor(trashScreenFinder);
+
+      // finds text in trash and does not find the reminder chip
+      await driver.waitFor(find.text('nota com reminder e texto'));
+      await driver.waitForAbsent(find.byType('NoteCardReminderChip'));
+
+      // back to home
+      await driver.tap(trashScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+      await driver.waitFor(homeScreenFinder);
+    });
   });
 }
