@@ -643,5 +643,39 @@ void main() {
       await driver.tap(notesDrawerItemFinder);
       await driver.waitFor(homeScreenFinder);
     });
+
+    test('give existent note a reminder', () async {
+      // tap note
+      await driver.tap(find.text('titulo segunda'));
+
+      // tap reminder button
+      await driver.tap(find.byValueKey('note_setup_reminder_button'));
+      await driver.waitFor(find.byType('ReminderSetupDialog'));
+
+      // tap save
+      await driver.tap(find.byValueKey('reminder_dialog_save_button'));
+
+      // finds chip in note setup
+      await driver.waitFor(noteSetupScreenFinder);
+      await driver.waitFor(find.byType('NoteSetupReminderChip'));
+
+      // back to home
+      await driver.tap(noteSetupBackFinder);
+
+      // finds note in home
+      // (no point in checking for NoteCardReminderChip in home cuz there were
+      //  already some reminder chips there)
+      await driver.waitFor(find.text('titulo segunda'));
+
+      // go to reminders screen and finds it there
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(remindersDrawerItemFinder);
+      await driver.waitFor(remindersScreenFinder);
+      await driver.waitFor(find.text('titulo segunda'));
+
+      // back to home
+      await driver.tap(remindersScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+    });
   });
 }
