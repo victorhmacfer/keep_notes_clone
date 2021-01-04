@@ -173,6 +173,16 @@ class __BodyState extends State<_Body> {
       @required NoteCardModeSelection cardModeNotifier,
       @required DrawerScreenSelection drawerScreenSelection}) {
     return SliverAppBar(
+      leading: IconButton(
+        key: ValueKey('label_screen_drawer_burger'),
+        icon: Icon(
+          Icons.menu,
+          color: appIconGrey,
+        ),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
       floating: true,
       backgroundColor: appWhite,
       iconTheme: IconThemeData(color: appIconGrey),

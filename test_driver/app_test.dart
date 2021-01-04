@@ -706,5 +706,40 @@ void main() {
       await driver.tap(remindersScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
     });
+
+    test('switch between note card modes from home appbar', () async {
+      // tap switch mode button
+      await driver.tap(find.byValueKey('note_card_mode_button'));
+
+      // reminders screen changed mode
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(remindersDrawerItemFinder);
+      await driver.waitFor(find.byType('ExtendedNoteCard'));
+      await driver.tap(remindersScreenBurgerFinder);
+
+      // label screen changed mode
+      await driver.tap(find.byValueKey('drawer_label_minha primeira label'));
+      await driver.waitFor(find.byType('ExtendedNoteCard'));
+      await driver.tap(find.byValueKey('label_screen_drawer_burger'));
+
+      // archive changed mode
+      await driver.tap(archiveDrawerItemFinder);
+      await driver.waitFor(find.byType('ExtendedNoteCard'));
+      await driver.tap(archiveScreenBurgerFinder);
+
+      // trash changed mode
+      await driver.tap(trashDrawerItemFinder);
+      await driver.waitFor(find.byType('ExtendedNoteCard'));
+      await driver.tap(trashScreenBurgerFinder);
+
+      // back to home
+      await driver.tap(notesDrawerItemFinder);
+
+      // switch it back
+      await driver.tap(find.byValueKey('note_card_mode_button'));
+
+      // finds correct cards again
+      await driver.waitFor(find.byType('SmallNoteCard'));
+    });
   });
 }

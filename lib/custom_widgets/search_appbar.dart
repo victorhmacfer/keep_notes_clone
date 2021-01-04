@@ -33,25 +33,25 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
       false;
 
   Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
-    if (notifier.mode == NoteCardMode.extended) {
-      return PngIconButton(
-          backgroundColor: appWhite,
-          padding: EdgeInsets.all(8),
-          pngIcon: PngIcon(
-            fileName: 'outline_dashboard_black_48.png',
-          ),
-          onTap: () {
-            notifier.switchTo(NoteCardMode.small);
-          });
-    }
+    var noteCardMode = notifier.mode;
+
+    var nextModeIconFile = (noteCardMode == NoteCardMode.extended)
+        ? 'outline_dashboard_black_48.png'
+        : 'outline_view_agenda_black_48.png';
+
+    var nextMode = (noteCardMode == NoteCardMode.extended)
+        ? NoteCardMode.small
+        : NoteCardMode.extended;
+
     return PngIconButton(
+        key: ValueKey('note_card_mode_button'),
         backgroundColor: appWhite,
         padding: EdgeInsets.all(8),
         pngIcon: PngIcon(
-          fileName: 'outline_view_agenda_black_48.png',
+          fileName: nextModeIconFile,
         ),
         onTap: () {
-          notifier.switchTo(NoteCardMode.extended);
+          notifier.switchTo(nextMode);
         });
   }
 
