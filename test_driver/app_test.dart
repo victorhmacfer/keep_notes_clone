@@ -742,17 +742,56 @@ void main() {
       await driver.waitFor(find.byType('SmallNoteCard'));
     });
 
-    test('note search starts showing existent labels and colors ', () async {
+    test('note search', () async {
+      // setup.. have a colored note so we can test searching by color
+      await driver.tap(fabFinder);
+      await driver.tap(noteSetupTextFinder);
+      await driver.enterText('a colored note');
+      await driver.tap(find.byValueKey('note_setup_right_bs_button'));
+      await driver.tap(find.byValueKey('note_setup_color_circle_Green'));
+      await driver.tap(noteSetupBackFinder);
+
       // go to search screen
       await driver.tap(find.byValueKey('search_appbar'));
       await driver.waitFor(find.byType('NoteSearchScreen'));
 
-      // // finds label widget
+      // // finds label and color circle
       await driver.waitFor(find.byType('NoteSearchLabelItem'));
       await driver.waitFor(find.text('minha primeira label'));
-
-      // // finds color circle widget
       await driver.waitFor(find.byType('NoteSearchColorCircle'));
+
+      // search for a note
+      await driver.enterText('TITULO');
+      await driver.waitFor(find.text('novo TITULO editado da primeira'));
+
+      // erasing search finds search categories again
+      await driver.enterText('TITUL'); // simulate a BACKSPACE
+      await driver.waitFor(find.byType('NoteSearchLabelItem'));
+      await driver.waitFor(find.byType('NoteSearchColorCircle'));
+
+      // search for text in many notes.. finds all notes with it
+      await driver.enterText('texto');
+      await driver.waitFor(find.text('ARCHIVE'));
+      await driver.waitFor(find.text('texto arquivada'));
+      await driver.waitFor(find.text('TRASH'));
+      await driver.waitFor(find.text('nota com reminder e texto'));
+
+      // BACKSPACE
+      await driver.enterText('text');
+
+      // search by label
+      await driver.tap(find.text('minha primeira label'));
+      await driver.waitFor(find.text('nota despinada'));
+
+      // back
+      await driver.tap(find.byValueKey('note_search_back'));
+
+      // enter search screen again
+      await driver.tap(find.byValueKey('search_appbar'));
+
+      // search by color
+      await driver.tap(find.byValueKey('note_search_color_circle_Green'));
+      await driver.waitFor(find.text('a colored note'));
 
       // // back to home
       await driver.tap(find.byValueKey('note_search_back'));

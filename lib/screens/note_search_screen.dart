@@ -457,6 +457,7 @@ class NoteSearchColorCircle extends StatelessWidget {
           searchNotifier.showingResult = true;
         },
         child: Container(
+          key: ValueKey('note_search_color_circle_${noteColor.colorDescription}'),
           decoration: BoxDecoration(
               color: noteColor.getColor(),
               border: Border.all(width: 0.5, color: appGreyForColoredBg),

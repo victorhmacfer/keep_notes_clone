@@ -620,6 +620,7 @@ class _ColorSelectionCircle extends StatelessWidget {
         notifier.selectedColorIndex = index;
       },
       child: Container(
+        key: ValueKey('note_setup_color_circle_${noteColor.colorDescription}'),
         decoration: BoxDecoration(
             color: noteColor.getColor(),
             border: Border.all(width: 0.5, color: appGreyForColoredBg),
