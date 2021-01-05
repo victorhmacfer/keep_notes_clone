@@ -73,6 +73,13 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         : 'Search your notes';
 
     return AppBar(
+      leading: IconButton(
+        key: ValueKey('note_search_back'),
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
       brightness: Brightness.light,
       elevation: 0,
       title: TextField(
@@ -127,7 +134,7 @@ class _SearchLandingPageBody extends StatelessWidget {
                     _OptionalExpandableGridSection(
                         sectionTitle: 'LABELS',
                         items: snapshot.data.sortedLabelsInUse
-                            .map((lab) => _LabelGridItem(label: lab))
+                            .map((lab) => NoteSearchLabelItem(label: lab))
                             .toList()),
                     _OptionalColorsGridSection(
                         items: snapshot.data.noteColorsInUse),
@@ -318,7 +325,9 @@ class _OptionalColorsGridSection extends StatelessWidget {
           shrinkWrap: true,
           crossAxisCount: 6,
           physics: NeverScrollableScrollPhysics(),
-          children: items.map((noteColor) => _ColorCircle(noteColor)).toList(),
+          children: items
+              .map((noteColor) => NoteSearchColorCircle(noteColor))
+              .toList(),
         ),
       ],
     );
@@ -359,10 +368,10 @@ class _OptionalColorsGridSection extends StatelessWidget {
 //   }
 // }
 
-class _LabelGridItem extends StatelessWidget {
+class NoteSearchLabelItem extends StatelessWidget {
   final Label label;
 
-  _LabelGridItem({@required this.label});
+  NoteSearchLabelItem({@required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -427,10 +436,10 @@ class _MoreLessFlatButton extends StatelessWidget {
   }
 }
 
-class _ColorCircle extends StatelessWidget {
+class NoteSearchColorCircle extends StatelessWidget {
   final NoteColor noteColor;
 
-  _ColorCircle(this.noteColor);
+  NoteSearchColorCircle(this.noteColor);
 
   @override
   Widget build(BuildContext context) {

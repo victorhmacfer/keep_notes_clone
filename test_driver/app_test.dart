@@ -741,5 +741,22 @@ void main() {
       // finds correct cards again
       await driver.waitFor(find.byType('SmallNoteCard'));
     });
+
+    test('note search starts showing existent labels and colors ', () async {
+      // go to search screen
+      await driver.tap(find.byValueKey('search_appbar'));
+      await driver.waitFor(find.byType('NoteSearchScreen'));
+
+      // // finds label widget
+      await driver.waitFor(find.byType('NoteSearchLabelItem'));
+      await driver.waitFor(find.text('minha primeira label'));
+
+      // // finds color circle widget
+      await driver.waitFor(find.byType('NoteSearchColorCircle'));
+
+      // // back to home
+      await driver.tap(find.byValueKey('note_search_back'));
+      await driver.waitFor(homeScreenFinder);
+    });
   });
 }

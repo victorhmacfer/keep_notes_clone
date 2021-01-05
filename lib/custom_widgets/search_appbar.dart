@@ -62,7 +62,6 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
     var authBloc = Provider.of<AuthBloc>(context);
 
     return Container(
-      // color: Colors.red[100],
       padding: EdgeInsets.only(bottom: 8, left: 16, right: 16),
       alignment: Alignment.bottomCenter,
       child: SizedBox(
@@ -74,6 +73,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                 MaterialPageRoute(builder: (context) => NoteSearchScreen()));
           },
           child: Container(
+            key: ValueKey('search_appbar'),
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: appWhite,
