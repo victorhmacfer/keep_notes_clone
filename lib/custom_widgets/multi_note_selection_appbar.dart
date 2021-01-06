@@ -37,6 +37,7 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: PngIconButton(
+            key: ValueKey('multi_note_selection_pin'),
             pngIcon: PngIcon(
               fileName: (notifier.willPin)
                   ? 'outline_push_pin_black_48.png'
@@ -68,6 +69,7 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: PngIconButton(
+            key: ValueKey('multi_note_selection_change_color'),
             pngIcon: PngIcon(
               fileName: 'outline_palette_black_48.png',
               iconColor: appSettingsBlue,
@@ -102,6 +104,7 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
         //   ),
         // ),
         PopupMenuButton<_MultiNoteMenuAction>(
+          key: ValueKey('multi_note_selection_menu'),
           icon: Icon(
             Icons.more_vert,
             color: appSettingsBlue,
@@ -121,10 +124,12 @@ class SliverMultiNoteSelectionAppBar extends StatelessWidget {
           },
           itemBuilder: (context) => <PopupMenuEntry<_MultiNoteMenuAction>>[
             PopupMenuItem<_MultiNoteMenuAction>(
+              key: ValueKey('multi_note_selection_menu_item_archive'),
               value: _MultiNoteMenuAction.archive,
               child: Text('Archive'),
             ),
             PopupMenuItem<_MultiNoteMenuAction>(
+              key: ValueKey('multi_note_selection_menu_item_delete'),
               value: _MultiNoteMenuAction.delete,
               child: Text('Delete'),
             ),
@@ -321,6 +326,8 @@ class _ColorCircle extends StatelessWidget {
           Navigator.pop<NoteColor>(context, noteColor);
         },
         child: Container(
+          key: ValueKey(
+              'multi_note_selection_color_circle_${noteColor.colorDescription}'),
           decoration: BoxDecoration(
               color: noteColor.getColor(),
               border: Border.all(width: 0.5, color: appGreyForColoredBg),

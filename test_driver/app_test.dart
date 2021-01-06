@@ -50,6 +50,8 @@ void main() {
 
     final editLabelsScreenFinder = find.byType('EditLabelsScreen');
 
+    final longPressDuration = Duration(seconds: 1);
+
     FlutterDriver driver;
 
     setUpAll(() async {
@@ -796,6 +798,88 @@ void main() {
       // // back to home
       await driver.tap(find.byValueKey('note_search_back'));
       await driver.waitFor(homeScreenFinder);
+    });
+
+    test('pin multiple notes', () async {
+      await driver.scroll(find.text('titulo segunda'), 0, 0, longPressDuration);
+
+      await driver.tap(find.text('novo TITULO editado da primeira'));
+
+      await driver.tap(find.byValueKey('multi_note_selection_pin'));
+
+      await driver.waitFor(find.text('PINNED'));
+    });
+
+    test('change color of multiple notes', () async {
+      await driver.scroll(find.text('nota despinada'), 0, 0, longPressDuration);
+
+      await driver.tap(find.text('nota com label nova'));
+
+      await driver.tap(find.byValueKey('multi_note_selection_change_color'));
+
+      await driver
+          .tap(find.byValueKey('multi_note_selection_color_circle_Red'));
+
+      // check that it worked by searching red notes
+      await driver.tap(find.byValueKey('search_appbar'));
+      await driver.tap(find.byValueKey('note_search_color_circle_Red'));
+      await driver.waitFor(find.text('nota despinada'));
+      await driver.waitFor(find.text('nota com label nova'));
+
+      // back to home
+      await driver.tap(find.byValueKey('note_search_back'));
+    });
+
+    test('archive multiple notes', () async {
+      await driver.scroll(
+          find.text('nota com label nova'), 0, 0, longPressDuration);
+
+      await driver.tap(find.text('Empty reminder'));
+
+      await driver.tap(find.byValueKey('multi_note_selection_menu'));
+
+      await driver
+          .tap(find.byValueKey('multi_note_selection_menu_item_archive'));
+
+      // not showing in home
+      await driver.waitForAbsent(find.text('nota com label nova'));
+      await driver.waitForAbsent(find.text('Empty reminder'));
+
+      // check archive for these notes
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(archiveDrawerItemFinder);
+      await driver.waitFor(find.text('nota com label nova'));
+      await driver.waitFor(find.text('Empty reminder'));
+
+      // back to home
+      await driver.tap(archiveScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+    });
+
+    test('delete multiple notes', () async {
+      await driver.scroll(find.text('novo TITULO editado da primeira'), 0, 0,
+          longPressDuration);
+
+      await driver.tap(find.text('titulo segunda'));
+
+      await driver.tap(find.byValueKey('multi_note_selection_menu'));
+
+      await driver
+          .tap(find.byValueKey('multi_note_selection_menu_item_delete'));
+
+      // not showing in home
+      await driver.waitForAbsent(find.text('novo TITULO editado da primeira'));
+      await driver.waitForAbsent(find.text('titulo segunda'));
+
+      // check trash for these notes
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(trashDrawerItemFinder);
+      await driver.waitFor(find.text('novo TITULO editado da primeira'));
+      await driver.waitFor(find.text('titulo segunda'));
+
+      // back to home
+      await driver.tap(trashScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
     });
   });
 }
