@@ -881,5 +881,36 @@ void main() {
       await driver.tap(trashScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
     });
+
+    test('create note from label screen', () async {
+      // go to some label screen
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(find.byValueKey('drawer_label_minha primeira label'));
+      await driver.waitFor(find.byType('LabelScreen'));
+
+      // tap fab
+      await driver.tap(fabFinder);
+
+      // finds chip with label
+      await driver.waitFor(find.byType('NoteSetupLabelChip'));
+      await driver.waitFor(find.text('minha primeira label'));
+
+      // give note some text and reminder
+      await driver.enterText('nota com reminder criada na label screen');
+      await driver.tap(find.byValueKey('note_setup_reminder_button'));
+      await driver.tap(find.text('Save'));
+
+      // back to create
+      await driver.tap(noteSetupBackFinder);
+
+      // finds it in label screen
+      await driver
+          .waitFor(find.text('nota com reminder criada na label screen'));
+      await driver.waitFor(find.byType('NoteCardReminderChip'));
+
+      // back to home
+      await driver.tap(find.byValueKey('label_screen_drawer_burger'));
+      await driver.tap(notesDrawerItemFinder);
+    });
   });
 }
