@@ -974,5 +974,41 @@ void main() {
       await driver.tap(archiveScreenBurgerFinder);
       await driver.tap(notesDrawerItemFinder);
     });
+
+    test('pin and unarchive some archived notes', () async {
+      // go to archive
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(archiveDrawerItemFinder);
+
+      // enter note
+      await driver.tap(find.text('texto arquivada'));
+
+      // tap pin
+      await driver.tap(find.byValueKey('note_setup_pin_button'));
+
+      // back
+      await driver.tap(noteSetupBackFinder);
+
+      // not present in archive
+      await driver.waitForAbsent(find.text('texto arquivada'));
+
+      // enter another note
+      await driver.tap(find.text('nota com label nova'));
+
+      // unarchive
+      await driver.tap(find.byValueKey('note_setup_archive_button'));
+
+      // not present in archive
+      await driver.waitForAbsent(find.text('nota com label nova'));
+
+      // go to home
+      await driver.tap(archiveScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+
+      // both are there and there is a pinned note
+      await driver.waitFor(find.text('nota com label nova'));
+      await driver.waitFor(find.text('texto arquivada'));
+      await driver.waitFor(find.text('PINNED'));
+    });
   });
 }
