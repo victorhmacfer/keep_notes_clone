@@ -169,7 +169,7 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
             hintText: 'Create new label',
             suffixIcon: (isFocused)
                 ? IconButton(
-                  key: ValueKey('create_label_check_button'),
+                    key: ValueKey('create_label_check_button'),
                     icon: Icon(Icons.check),
                     color: appIconGrey,
                     onPressed: () {
@@ -232,7 +232,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
                 barrierDismissible:
                     true, // "shouldDelete" might be null as well.
                 context: context,
-                builder: deleteConfirmationDialog,
+                builder: (context) => LabelDeleteConfirmationDialog(),
               );
               if (shouldDelete) {
                 editLabelsBloc.onDeleteLabel(widget.label);

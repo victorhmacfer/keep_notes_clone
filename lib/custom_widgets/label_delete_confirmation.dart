@@ -2,23 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
-Widget deleteConfirmationDialog(BuildContext context) {
-  return AlertDialog(
-    title: Text('Delete label?'),
-    titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
-    titleTextStyle: cardTitleStyle,
-    content: Text(
-        "We'll delete this label and remove it from all of your Keep notes. Your notes won't be deleted."),
-    contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-    actions: <Widget>[
-      _CustomFlatButton('Cancel', onTap: () {
-        Navigator.pop<bool>(context, false);
-      }),
-      _CustomFlatButton('Delete', onTap: () {
-        Navigator.pop<bool>(context, true);
-      }),
-    ],
-  );
+// Widget deleteConfirmationDialog(BuildContext context) {
+//   return AlertDialog(
+//     title: Text('Delete label?'),
+//     titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
+//     titleTextStyle: cardTitleStyle,
+//     content: Text(
+//         "We'll delete this label and remove it from all of your Keep notes. Your notes won't be deleted."),
+//     contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+//     actions: <Widget>[
+//       _CustomFlatButton('Cancel', onTap: () {
+//         Navigator.pop<bool>(context, false);
+//       }),
+//       _CustomFlatButton('Delete', onTap: () {
+//         Navigator.pop<bool>(context, true);
+//       }),
+//     ],
+//   );
+// }
+
+class LabelDeleteConfirmationDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Delete label?'),
+      titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
+      titleTextStyle: cardTitleStyle,
+      content: Text(
+          "We'll delete this label and remove it from all of your Keep notes. Your notes won't be deleted."),
+      contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      actions: <Widget>[
+        _CustomFlatButton('Cancel', onTap: () {
+          Navigator.pop<bool>(context, false);
+        }),
+        _CustomFlatButton('Delete', onTap: () {
+          Navigator.pop<bool>(context, true);
+        }),
+      ],
+    );
+  }
 }
 
 class _CustomFlatButton extends StatelessWidget {
@@ -33,6 +55,7 @@ class _CustomFlatButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        key: ValueKey('label_delete_confirmation_dialog_$text'),
         padding: EdgeInsets.fromLTRB(0, 12, 12, 12),
         color: appWhite,
         child: Text(

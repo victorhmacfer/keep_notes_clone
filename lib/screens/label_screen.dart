@@ -360,7 +360,7 @@ class _LabelAppBar extends StatelessWidget {
                 barrierDismissible:
                     true, // "shouldDelete" might be null as well.
                 context: context,
-                builder: deleteConfirmationDialog,
+                builder: (context) => LabelDeleteConfirmationDialog(),
               );
               if (shouldDelete) {
                 drawerScreenSelection.changeSelectedScreenToIndex(0);
@@ -385,6 +385,7 @@ class _LabelAppBar extends StatelessWidget {
               child: Text('Rename label'),
             ),
             PopupMenuItem<LabelMenuAction>(
+              key: ValueKey('label_screen_menu_item_delete'),
               value: LabelMenuAction.deleteLabel,
               child: Text('Delete label'),
             ),

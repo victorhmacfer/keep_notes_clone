@@ -946,5 +946,33 @@ void main() {
       await driver.waitFor(find.text('label renomeada'));
       await driver.tap(notesDrawerItemFinder);
     });
+
+    test('delete label in label screen', () async {
+      // go to some label screen
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(find.byValueKey('drawer_label_label renomeada'));
+      await driver.waitFor(find.byType('LabelScreen'));
+
+      // delete it
+      await driver.tap(find.byValueKey('label_screen_menu_button'));
+      await driver.tap(find.byValueKey('label_screen_menu_item_delete'));
+      await driver
+          .tap(find.byValueKey('label_delete_confirmation_dialog_Delete'));
+
+      // is in home.. does not find it in drawer anymore
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.waitForAbsent(find.text('label renomeada'));
+
+      // go to archive, look for note that had this label
+      await driver.tap(archiveDrawerItemFinder);
+      await driver.waitFor(find.text('nota com label nova'));
+
+      // doesnt have it anymore
+      await driver.waitForAbsent(find.text('label renomeada'));
+
+      // back to home
+      await driver.tap(archiveScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+    });
   });
 }
