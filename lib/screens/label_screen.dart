@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:keep_notes_clone/blocs/bloc_base.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
 import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/bottom_appbar.dart';
@@ -22,6 +21,22 @@ import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:provider/provider.dart';
 
+class LabelNameNotifier with ChangeNotifier {
+  String _labelName;
+
+  LabelNameNotifier(String initialLabelName)
+      : assert(initialLabelName.isNotEmpty),
+        _labelName = initialLabelName;
+
+  String get labelName => _labelName;
+
+  set labelName(String newName) {
+    _labelName = newName;
+    notifyListeners();
+  }
+}
+
+// needs label
 class LabelScreen extends StatelessWidget {
   final Label label;
 
@@ -29,8 +44,17 @@ class LabelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MultiNoteSelection>(
-      create: (context) => MultiNoteSelection(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<MultiNoteSelection>(
+          create: (context) => MultiNoteSelection(),
+        ),
+        Provider<LabelScreenBloc>(
+            create: (context) => LabelScreenBloc(repo, label)),
+        ChangeNotifierProvider<LabelNameNotifier>(
+          create: (context) => LabelNameNotifier(label.name),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: appWhite,
         extendBody: true,
@@ -48,212 +72,14 @@ const double _bottomPadding = 56;
 
 enum LabelMenuAction { renameLabel, deleteLabel }
 
-class _Body extends StatefulWidget {
+TextEditingController labelRenamingController;
+final _formKey = GlobalKey<FormState>();
+
+class _Body extends StatelessWidget {
   final Label label;
 
-  final TextEditingController labelRenamingController;
-
-  _Body(this.label)
-      : labelRenamingController = TextEditingController(text: label.name);
-
-  @override
-  __BodyState createState() => __BodyState();
-}
-
-class __BodyState extends State<_Body> {
-  String labelName;
-
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    labelName = widget.label.name;
-  }
-
-  Widget _labelRenameDialog(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
-    var labelScreenBloc = Provider.of<LabelScreenBloc>(context);
-
-    return AlertDialog(
-      insetPadding: EdgeInsets.zero,
-      title: Text('Rename label'),
-      titleTextStyle: cardTitleStyle,
-      content: SizedBox(
-        width: screenWidth * 0.7,
-        child: Form(
-          key: _formKey,
-          child: TextFormField(
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Label name cannot be empty';
-              }
-
-              if (labelScreenBloc.renameLabel(widget.label, value) == false) {
-                return 'This label name is already in use';
-              }
-              return null;
-            },
-            controller: widget.labelRenamingController,
-            textAlignVertical: TextAlignVertical.center,
-            autofocus: true,
-            cursorColor: NoteColor.orange.getColor(),
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(bottom: 4),
-              enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: appDividerGrey, width: 2)),
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: appDividerGrey, width: 2)),
-              errorBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red, width: 2)),
-            ),
-          ),
-        ),
-      ),
-      titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
-      contentPadding: EdgeInsets.fromLTRB(24, 0, 24, 16),
-      actionsPadding: EdgeInsets.fromLTRB(0, 16, 4, 0),
-      buttonPadding: EdgeInsets.symmetric(horizontal: 8),
-      actions: <Widget>[
-        FlatButton(
-          color: appWhite,
-          onPressed: () {
-            widget.labelRenamingController.text = labelName;
-            Navigator.pop(context);
-          },
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Cancel',
-            style: cardTitleStyle.copyWith(fontSize: 14),
-          ),
-        ),
-        FlatButton(
-          color: NoteColor.orange.getColor(),
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          onPressed: () {
-            if (_formKey.currentState.validate()) {
-              Navigator.pop<String>(
-                  context, widget.labelRenamingController.text);
-            }
-          },
-          child: Text(
-            'Rename',
-            style: cardTitleStyle.copyWith(fontSize: 14),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _selectNoteCardModeButton(NoteCardModeSelection notifier) {
-    if (notifier.mode == NoteCardMode.extended) {
-      return PngIconButton(
-          backgroundColor: appWhite,
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          pngIcon: PngIcon(
-            fileName: 'outline_dashboard_black_48.png',
-          ),
-          onTap: () {
-            notifier.switchTo(NoteCardMode.small);
-          });
-    }
-    return PngIconButton(
-        backgroundColor: appWhite,
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        pngIcon: PngIcon(
-          fileName: 'outline_view_agenda_black_48.png',
-        ),
-        onTap: () {
-          notifier.switchTo(NoteCardMode.extended);
-        });
-  }
-
-  Widget _sliverAppBar(
-      {@required LabelDeleterBloc labelDeleterBloc,
-      @required NoteCardModeSelection cardModeNotifier,
-      @required DrawerScreenSelection drawerScreenSelection}) {
-    return SliverAppBar(
-      leading: IconButton(
-        key: ValueKey('label_screen_drawer_burger'),
-        icon: Icon(
-          Icons.menu,
-          color: appIconGrey,
-        ),
-        onPressed: () {
-          Scaffold.of(context).openDrawer();
-        },
-      ),
-      floating: true,
-      backgroundColor: appWhite,
-      iconTheme: IconThemeData(color: appIconGrey),
-      title: Text(
-        labelName,
-        style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
-      ),
-      actions: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(right: 4),
-          child: PngIconButton(
-              backgroundColor: appWhite,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              pngIcon: PngIcon(fileName: 'baseline_search_black_48.png'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => NoteSearchScreen()));
-              }),
-        ),
-        _selectNoteCardModeButton(cardModeNotifier),
-        PopupMenuButton<LabelMenuAction>(
-          onSelected: (action) async {
-            if (action == LabelMenuAction.renameLabel) {
-              var newName = await showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: _labelRenameDialog,
-              );
-              if (newName?.isNotEmpty ?? false) {
-                setState(() {
-                  labelName = newName;
-                });
-              }
-            } else if (action == LabelMenuAction.deleteLabel) {
-              var shouldDelete = await showDialog<bool>(
-                barrierDismissible:
-                    true, // "shouldDelete" might be null as well.
-                context: context,
-                builder: deleteConfirmationDialog,
-              );
-              if (shouldDelete) {
-                drawerScreenSelection.changeSelectedScreenToIndex(0);
-
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Provider<HomeBloc>(
-                              create: (context) => HomeBloc(repo),
-                              child: HomeScreen(),
-                            )));
-
-                labelDeleterBloc.onDeleteLabel(widget.label);
-              }
-            }
-          },
-          icon: Icon(Icons.more_vert),
-          itemBuilder: (context) => <PopupMenuEntry<LabelMenuAction>>[
-            PopupMenuItem<LabelMenuAction>(
-              value: LabelMenuAction.renameLabel,
-              child: Text('Rename label'),
-            ),
-            PopupMenuItem<LabelMenuAction>(
-              value: LabelMenuAction.deleteLabel,
-              child: Text('Delete label'),
-            ),
-          ],
-        ),
-      ],
-    );
+  _Body(this.label) {
+    labelRenamingController = TextEditingController(text: label.name);
   }
 
   @override
@@ -270,8 +96,8 @@ class __BodyState extends State<_Body> {
           child: CustomScrollView(
             slivers: <Widget>[
               (multiNoteSelection.inactive)
-                  ? _sliverAppBar(
-                      labelDeleterBloc: labelScreenBloc,
+                  ? _LabelAppBar(
+                      bloc: labelScreenBloc,
                       cardModeNotifier: noteCardModeNotifier,
                       drawerScreenSelection: drawerScreenSelection)
                   : SliverMultiNoteSelectionAppBar(
@@ -284,6 +110,36 @@ class __BodyState extends State<_Body> {
             ],
           ),
         ));
+  }
+}
+
+class _SelectNoteCardModeButton extends StatelessWidget {
+  final NoteCardModeSelection noteCardModeSelector;
+
+  _SelectNoteCardModeButton(this.noteCardModeSelector);
+
+  @override
+  Widget build(BuildContext context) {
+    if (noteCardModeSelector.mode == NoteCardMode.extended) {
+      return PngIconButton(
+          backgroundColor: appWhite,
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          pngIcon: PngIcon(
+            fileName: 'outline_dashboard_black_48.png',
+          ),
+          onTap: () {
+            noteCardModeSelector.switchTo(NoteCardMode.small);
+          });
+    }
+    return PngIconButton(
+        backgroundColor: appWhite,
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        pngIcon: PngIcon(
+          fileName: 'outline_view_agenda_black_48.png',
+        ),
+        onTap: () {
+          noteCardModeSelector.switchTo(NoteCardMode.extended);
+        });
   }
 }
 
@@ -349,5 +205,192 @@ class _StreamBuilderBody extends StatelessWidget {
           }
           return Container();
         });
+  }
+}
+
+class LabelRenameDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var labelScreenBloc = Provider.of<LabelScreenBloc>(context);
+
+    var labelNameNotifier = Provider.of<LabelNameNotifier>(context);
+
+    return AlertDialog(
+      insetPadding: EdgeInsets.zero,
+      title: Text('Rename label'),
+      titleTextStyle: cardTitleStyle,
+      content: SizedBox(
+        width: screenWidth * 0.7,
+        child: Form(
+          key: _formKey,
+          child: TextFormField(
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Label name cannot be empty';
+              }
+
+              if (labelScreenBloc.renameLabel(value) == false) {
+                return 'This label name is already in use';
+              }
+              return null;
+            },
+            controller: labelRenamingController,
+            textAlignVertical: TextAlignVertical.center,
+            autofocus: true,
+            cursorColor: NoteColor.orange.getColor(),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(bottom: 4),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: appDividerGrey, width: 2)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: appDividerGrey, width: 2)),
+              errorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red, width: 2)),
+            ),
+          ),
+        ),
+      ),
+      titlePadding: EdgeInsets.fromLTRB(24, 16, 24, 0),
+      contentPadding: EdgeInsets.fromLTRB(24, 0, 24, 16),
+      actionsPadding: EdgeInsets.fromLTRB(0, 16, 4, 0),
+      buttonPadding: EdgeInsets.symmetric(horizontal: 8),
+      actions: <Widget>[
+        FlatButton(
+          key: ValueKey('label_screen_dialog_cancel_button'),
+          color: appWhite,
+          onPressed: () {
+            labelRenamingController.text = labelNameNotifier.labelName;
+            Navigator.pop(context);
+          },
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Cancel',
+            style: cardTitleStyle.copyWith(fontSize: 14),
+          ),
+        ),
+        FlatButton(
+          key: ValueKey('label_screen_dialog_rename_button'),
+          color: NoteColor.orange.getColor(),
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          onPressed: () {
+            if (_formKey.currentState.validate()) {
+              Navigator.pop<String>(context, labelRenamingController.text);
+            }
+          },
+          child: Text(
+            'Rename',
+            style: cardTitleStyle.copyWith(fontSize: 14),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LabelAppBar extends StatelessWidget {
+  final LabelScreenBloc bloc;
+  final NoteCardModeSelection cardModeNotifier;
+  final DrawerScreenSelection drawerScreenSelection;
+
+  _LabelAppBar(
+      {@required this.bloc,
+      @required this.cardModeNotifier,
+      @required this.drawerScreenSelection});
+
+  @override
+  Widget build(BuildContext context) {
+    var labelNameNotifier = Provider.of<LabelNameNotifier>(context);
+
+    return SliverAppBar(
+      leading: IconButton(
+        key: ValueKey('label_screen_drawer_burger'),
+        icon: Icon(
+          Icons.menu,
+          color: appIconGrey,
+        ),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
+      floating: true,
+      backgroundColor: appWhite,
+      iconTheme: IconThemeData(color: appIconGrey),
+      title: Text(
+        labelNameNotifier.labelName,
+        key: ValueKey('label_screen_appbar_label_name'),
+        style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 4),
+          child: PngIconButton(
+              backgroundColor: appWhite,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              pngIcon: PngIcon(fileName: 'baseline_search_black_48.png'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NoteSearchScreen()));
+              }),
+        ),
+        _SelectNoteCardModeButton(cardModeNotifier),
+        PopupMenuButton<LabelMenuAction>(
+          key: ValueKey('label_screen_menu_button'),
+          onSelected: (action) async {
+            if (action == LabelMenuAction.renameLabel) {
+              var newName = await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => MultiProvider(
+                        providers: [
+                          Provider<LabelScreenBloc>.value(value: bloc),
+                          ChangeNotifierProvider.value(
+                              value: labelNameNotifier),
+                        ],
+                        child: LabelRenameDialog(),
+                      ));
+
+              if (newName?.isNotEmpty ?? false) {
+                labelNameNotifier.labelName = newName;
+              }
+            } else if (action == LabelMenuAction.deleteLabel) {
+              var shouldDelete = await showDialog<bool>(
+                barrierDismissible:
+                    true, // "shouldDelete" might be null as well.
+                context: context,
+                builder: deleteConfirmationDialog,
+              );
+              if (shouldDelete) {
+                drawerScreenSelection.changeSelectedScreenToIndex(0);
+
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Provider<HomeBloc>(
+                              create: (context) => HomeBloc(repo),
+                              child: HomeScreen(),
+                            )));
+
+                bloc.deleteLabel();
+              }
+            }
+          },
+          icon: Icon(Icons.more_vert),
+          itemBuilder: (context) => <PopupMenuEntry<LabelMenuAction>>[
+            PopupMenuItem<LabelMenuAction>(
+              key: ValueKey('label_screen_menu_item_rename'),
+              value: LabelMenuAction.renameLabel,
+              child: Text('Rename label'),
+            ),
+            PopupMenuItem<LabelMenuAction>(
+              value: LabelMenuAction.deleteLabel,
+              child: Text('Delete label'),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

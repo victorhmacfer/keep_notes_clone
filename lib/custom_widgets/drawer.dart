@@ -65,13 +65,18 @@ class _MyDrawer extends StatelessWidget {
           if (drawerScreenSelection.selectedScreenIndex != i + 4) {
             drawerScreenSelection.changeSelectedScreenToIndex(i + 4);
 
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => Provider<LabelScreenBloc>(
+            //               create: (context) => LabelScreenBloc(repo, labels[i]),
+            //               child: LabelScreen(labels[i]),
+            //             )));
+
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Provider<LabelScreenBloc>(
-                          create: (context) => LabelScreenBloc(repo, labels[i]),
-                          child: LabelScreen(labels[i]),
-                        )));
+                    builder: (context) => LabelScreen(labels[i])));
           }
         },
       );

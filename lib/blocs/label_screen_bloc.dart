@@ -38,11 +38,11 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
     repo.updateManyNotes(changedNotes);
   }
 
-  void onDeleteLabel(Label label) {
+  void deleteLabel() {
     repo.deleteLabel(label);
   }
 
-  bool renameLabel(Label label, String newName) {
+  bool renameLabel(String newName) {
     if (newName?.isEmpty ?? true) {
       return false;
     }

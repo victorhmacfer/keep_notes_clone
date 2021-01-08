@@ -912,5 +912,39 @@ void main() {
       await driver.tap(find.byValueKey('label_screen_drawer_burger'));
       await driver.tap(notesDrawerItemFinder);
     });
+
+    test('rename label in label screen', () async {
+      // go to some label screen
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(find.byValueKey('drawer_label_nova label dentro'));
+      await driver.waitFor(find.byType('LabelScreen'));
+
+      // initial label name
+      await driver.waitFor(find.text('nova label dentro'));
+
+      // tap rename item
+      await driver.tap(find.byValueKey('label_screen_menu_button'));
+      await driver.tap(find.byValueKey('label_screen_menu_item_rename'));
+      await driver.waitFor(find.byType('LabelRenameDialog'));
+
+      // enter new name and cancel... label isnt changed
+      await driver.enterText('label renomeada');
+      await driver.tap(find.byValueKey('label_screen_dialog_cancel_button'));
+      await driver.waitForAbsent(find.text('label renomeada'));
+
+      // now redo it, enter new name and press rename
+      await driver.tap(find.byValueKey('label_screen_menu_button'));
+      await driver.tap(find.byValueKey('label_screen_menu_item_rename'));
+      await driver.enterText('label renomeada');
+      await driver.tap(find.byValueKey('label_screen_dialog_rename_button'));
+
+      await driver.waitFor(find.text('label renomeada'));
+
+      // back to home.. new label name showing in drawer
+      await driver.tap(find.byValueKey('label_screen_drawer_burger'));
+      await driver.waitForAbsent(find.text('nova label dentro'));
+      await driver.waitFor(find.text('label renomeada'));
+      await driver.tap(notesDrawerItemFinder);
+    });
   });
 }
