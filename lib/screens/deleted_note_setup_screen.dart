@@ -157,6 +157,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           BottomSheetTile(
+            key: ValueKey('deleted_right_bs_restore_button'),
             noteSetupController: notifier,
             pngIcon: PngIcon(
               fileName: 'baseline_restore_black_48.png',
@@ -173,6 +174,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
             },
           ),
           BottomSheetTile(
+            key: ValueKey('deleted_right_bs_delete_forever_button'),
             noteSetupController: notifier,
             pngIcon: PngIcon(
               fileName: 'baseline_delete_forever_black_48.png',
@@ -184,7 +186,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
                 barrierDismissible:
                     true, // "shouldDelete" might be null as well.
                 context: context,
-                builder: _deleteConfirmationDialog,
+                builder: (context) => _DeleteForeverConfirmationDialog(),
               );
 
               if (shouldDelete) {
@@ -223,6 +225,7 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
                     ),
                     onTap: () {}),
                 PngIconButton(
+                    key: ValueKey('deleted_note_setup_right_bs_button'),
                     backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
                       fileName: 'outline_more_vert_black_48.png',
@@ -250,28 +253,31 @@ class _DeletedNoteSetupBottomAppBar extends StatelessWidget {
   }
 }
 
-Widget _deleteConfirmationDialog(BuildContext context) {
-  return AlertDialog(
-    title: Text('Delete this note forever?'),
-    titlePadding: EdgeInsets.fromLTRB(24, 24, 24, 16),
-    titleTextStyle: cardTitleStyle,
-    actions: <Widget>[
-      _CustomFlatButton('Cancel', onTap: () {
-        Navigator.pop<bool>(context, false);
-      }),
-      _CustomFlatButton('Delete', onTap: () {
-        Navigator.pop<bool>(context, true);
-      }),
-    ],
-  );
+class _DeleteForeverConfirmationDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Delete this note forever?'),
+      titlePadding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+      titleTextStyle: cardTitleStyle,
+      actions: <Widget>[
+        _DeleteNoteForeverDialogFlatButton('Cancel', onTap: () {
+          Navigator.pop<bool>(context, false);
+        }),
+        _DeleteNoteForeverDialogFlatButton('Delete', onTap: () {
+          Navigator.pop<bool>(context, true);
+        }),
+      ],
+    );
+  }
 }
 
-class _CustomFlatButton extends StatelessWidget {
+class _DeleteNoteForeverDialogFlatButton extends StatelessWidget {
   final String text;
 
   final void Function() onTap;
 
-  _CustomFlatButton(this.text, {@required this.onTap});
+  _DeleteNoteForeverDialogFlatButton(this.text, {@required this.onTap});
 
   @override
   Widget build(BuildContext context) {

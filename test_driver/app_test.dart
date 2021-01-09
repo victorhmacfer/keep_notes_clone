@@ -1010,5 +1010,56 @@ void main() {
       await driver.waitFor(find.text('texto arquivada'));
       await driver.waitFor(find.text('PINNED'));
     });
+
+    test('restore note from trash, delete note forever and empty trash',
+        () async {
+      // doesnt find in home note that is in trash
+      await driver.waitForAbsent(find.text('novo TITULO editado da primeira'));
+
+      // go to trash
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(trashDrawerItemFinder);
+
+      // tap note
+      await driver.tap(find.text('novo TITULO editado da primeira'));
+
+      // tap restore
+      await driver.waitFor(find.byType('DeletedNoteSetupScreen'));
+      await driver.tap(find.byValueKey('deleted_note_setup_right_bs_button'));
+      await driver.tap(find.byValueKey('deleted_right_bs_restore_button'));
+
+      // doesnt find it in trash anymore
+      await driver.waitForAbsent(find.text('novo TITULO editado da primeira'));
+
+      // tap another note
+      await driver.tap(find.text('titulo segunda'));
+
+      // tap delete forever
+      await driver.tap(find.byValueKey('deleted_note_setup_right_bs_button'));
+      await driver
+          .tap(find.byValueKey('deleted_right_bs_delete_forever_button'));
+      await driver.tap(find.text('Delete'));
+
+      // doesnt find it in trash.. still finds a single note
+      await driver.waitForAbsent(find.text('titulo segunda'));
+      await driver.waitFor(find.text('nota com reminder e texto'));
+
+      // tap empty trash
+      await driver.tap(find.byValueKey('trash_screen_menu_button'));
+      await driver.tap(find.byValueKey('trash_screen_menu_item_empty_trash'));
+      await driver.tap(find.text('Empty Trash'));
+
+      // finds nothing in trash
+      await driver.waitForAbsent(find.byType('SmallNoteCard'));
+      await driver.waitForAbsent(find.byType('ExtendedNoteCard'));
+      await driver.waitFor(find.text('Notes you add appear here'));
+
+      // go to home
+      await driver.tap(trashScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+
+      // novo TITULO is found in home
+      await driver.waitFor(find.text('novo TITULO editado da primeira'));
+    });
   });
 }

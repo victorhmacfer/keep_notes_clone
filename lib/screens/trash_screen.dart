@@ -64,6 +64,7 @@ class _TrashBody extends StatelessWidget {
       ),
       actions: <Widget>[
         PopupMenuButton<TrashMenuAction>(
+          key: ValueKey('trash_screen_menu_button'),
           onSelected: (action) {
             if (action == TrashMenuAction.emptyTrash) {
               showDialog(
@@ -105,6 +106,7 @@ class _TrashBody extends StatelessWidget {
           icon: Icon(Icons.more_vert),
           itemBuilder: (context) => <PopupMenuEntry<TrashMenuAction>>[
             PopupMenuItem<TrashMenuAction>(
+              key: ValueKey('trash_screen_menu_item_empty_trash'),
               value: TrashMenuAction.emptyTrash,
               child: Text('Empty Trash'),
             ),
