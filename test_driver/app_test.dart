@@ -935,6 +935,8 @@ void main() {
       // now redo it, enter new name and press rename
       await driver.tap(find.byValueKey('label_screen_menu_button'));
       await driver.tap(find.byValueKey('label_screen_menu_item_rename'));
+      await driver.waitFor(find.byType('LabelRenameDialog'));
+
       await driver.enterText('label renomeada');
       await driver.tap(find.byValueKey('label_screen_dialog_rename_button'));
 
