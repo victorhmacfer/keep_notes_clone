@@ -8,8 +8,6 @@ import 'package:keep_notes_clone/utils/styles.dart';
 import 'package:keep_notes_clone/viewmodels/note_labeling_view_model.dart';
 import 'package:provider/provider.dart';
 
-// FIXME: made these global for now.. better than creating notifier for exposing
-// just that.
 final _labelSearchController = TextEditingController();
 final _labelSearchFocusNode = FocusNode();
 

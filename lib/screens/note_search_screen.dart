@@ -59,7 +59,6 @@ class _SearchScaffold extends StatelessWidget {
 }
 
 class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
-  //FIXME: depending on framework code..
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
@@ -212,7 +211,7 @@ class _SearchResultBody extends StatelessWidget {
 }
 
 // FIXME: the grid crossaxis count is hardcoded everywhere as 3.
-// this is on purpose.. make this widget more general later !
+// this was on purpose.. make this widget more general later !
 class _OptionalExpandableGridSection extends StatefulWidget {
   final String sectionTitle;
 
@@ -457,7 +456,8 @@ class NoteSearchColorCircle extends StatelessWidget {
           searchNotifier.showingResult = true;
         },
         child: Container(
-          key: ValueKey('note_search_color_circle_${noteColor.colorDescription}'),
+          key: ValueKey(
+              'note_search_color_circle_${noteColor.colorDescription}'),
           decoration: BoxDecoration(
               color: noteColor.getColor(),
               border: Border.all(width: 0.5, color: appGreyForColoredBg),

@@ -228,7 +228,6 @@ void main() {
       await driver.waitFor(find.text('first note text'));
     });
 
-    //FIXME: hardcoded note data from test above for simplicity.
     test('create another note, shows both', () async {
       await driver.tap(fabFinder);
 
@@ -320,7 +319,7 @@ void main() {
       // finds home again
       await driver.waitFor(homeScreenFinder);
 
-      // FIXME: I do this to close drawer so it finds the home drawer burger
+      // I do this to close drawer so it finds the home drawer burger
       // When I run the app manually this drawer doesnt remain open !!
       // this drag is only needed for the test to work.. wtf
       await driver.scroll(

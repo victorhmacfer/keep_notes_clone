@@ -100,7 +100,7 @@ class AuthBloc {
     if (theId == null) {
       return LoginError.unknown;
     }
-    return LoginError.none; // FIXME: is this necessary ?
+    return LoginError.none;
   }
 
   Future<SignUpError> signup(String username, String email, String pwd) async {

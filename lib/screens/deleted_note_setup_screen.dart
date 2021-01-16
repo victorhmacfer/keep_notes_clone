@@ -44,7 +44,6 @@ class _DeletedNoteSetupAppBar extends StatelessWidget
 
   _DeletedNoteSetupAppBar({this.note});
 
-  //FIXME: depending on framework code..
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 

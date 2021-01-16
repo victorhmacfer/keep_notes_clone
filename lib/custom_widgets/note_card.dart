@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/custom_widgets/chip.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/models/note.dart';
+import 'package:keep_notes_clone/models/reminder.dart';
 import 'package:keep_notes_clone/notifiers/multi_note_selection.dart';
 import 'package:keep_notes_clone/screens/note_setup_screen.dart';
 
@@ -111,7 +112,7 @@ class ExtendedNoteCard extends StatelessWidget {
               ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
                   ? _ChipsContainer(
                       labels: note.labels,
-                      reminderTime: note.reminder?.time,
+                      reminder: note.reminder,
                     )
                   : Container(),
             ],
@@ -126,17 +127,17 @@ const double _chipsContainerTopPadding = 12;
 
 class _ChipsContainer extends StatelessWidget {
   final List<Label> labels;
-  final DateTime reminderTime;
+  final Reminder reminder;
 
-  _ChipsContainer({this.labels, this.reminderTime});
+  _ChipsContainer({this.labels, this.reminder});
 
   List<Widget> _chips() {
-    int maxTotalCharacters = (reminderTime != null) ? 24 : 32;
+    int maxTotalCharacters = (reminder != null) ? 24 : 32;
     const maxDisplayedLabels = 2;
 
     List<Widget> finalList = [];
 
-    if (reminderTime != null) finalList.add(NoteCardReminderChip(reminderTime));
+    if (reminder != null) finalList.add(NoteCardReminderChip(reminder));
 
     int accumulatedCharacters = 0;
     bool addedPlusLabel = false;
@@ -375,7 +376,7 @@ class SmallNoteCard extends StatelessWidget {
                 ((note.labels?.isNotEmpty ?? false) || (note.reminder != null))
                     ? _ChipsContainer(
                         labels: note.labels,
-                        reminderTime: note.reminder?.time,
+                        reminder: note.reminder,
                       )
                     : Container(),
               ],

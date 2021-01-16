@@ -26,7 +26,6 @@ class NoteLabelingBloc {
   Future<Label> onCreateLabelInsideNote(String text) async {
     // no need to check for existence because this is only called
     // by create label button, which only exists if label text does not exist.
-    // FIXME: but this is a dependency on implementation..
 
     var createdLabel = Label(name: text);
     var labelId = await repo.addLabel(createdLabel);
