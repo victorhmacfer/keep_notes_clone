@@ -32,9 +32,9 @@ dependencies:
   firebase_auth: ^0.18.0+1
   cloud_firestore: ^0.14.0+2
   connectivity: ^0.4.9+2
-
   sembast: ^2.4.8
   path_provider: ^1.6.24
+  shared_preferences: ^0.5.12+4
 
 
 
