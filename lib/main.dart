@@ -55,6 +55,12 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: appLightThemeData,
+        builder: (context, child) {
+          return ScrollConfiguration(
+            behavior: _MyBehavior(),
+            child: child,
+          );
+        },
         home: AuthStatusChecker(),
       ),
     );
@@ -90,5 +96,13 @@ class AuthStatusChecker extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }
