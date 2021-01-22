@@ -187,7 +187,10 @@ void main() {
       await driver.waitFor(homeScreenFinder);
       await driver.waitForAbsent(extendedNoteCardFinder);
       await driver.waitForAbsent(smallNoteCardFinder);
-    }, skip: true);
+
+      // shows snackbar with correct message
+      await driver.waitFor(find.text('Empty note discarded'));
+    });
 
     test('delete while creating a note will abort creation', () async {
       // fab
@@ -205,7 +208,7 @@ void main() {
       // finds home and does not find text
       await driver.waitFor(homeScreenFinder);
       await driver.waitForAbsent(find.text('some random text'));
-    }, skip: true);
+    });
 
     test('create a simple note, shows it', () async {
       // tap fab

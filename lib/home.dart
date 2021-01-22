@@ -77,6 +77,8 @@ class _WhiteScreen extends StatelessWidget {
   }
 }
 
+GlobalKey<ScaffoldState> globalHomeScaffoldKey = GlobalKey<ScaffoldState>();
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -87,6 +89,7 @@ class HomeScreen extends StatelessWidget {
     return ChangeNotifierProvider<MultiNoteSelection>(
       create: (context) => MultiNoteSelection(),
       child: Scaffold(
+        key: globalHomeScaffoldKey,
         backgroundColor: appWhite,
         extendBody: true, // making the bottom bar notch transparent
         floatingActionButton: MyCustomFab(),

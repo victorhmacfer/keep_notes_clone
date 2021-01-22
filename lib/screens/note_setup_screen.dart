@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/reminder_setup_dialog.dart';
+import 'package:keep_notes_clone/home.dart';
 import 'package:keep_notes_clone/models/reminder.dart';
 import 'package:provider/provider.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
@@ -88,17 +89,31 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
           key: ValueKey('note_setup_back'),
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
+          onPressed: () async {
+            var wasEditing = false;
             if (notifier.canCreateNote) {
               if (notifier.creating) {
                 noteSetupBloc.onCreateNote(notifier.noteBeingSetUp);
               } else {
+                wasEditing = true;
                 notifier.tryToUpdateLastEdited();
                 noteSetupBloc.onNoteChanged(notifier.noteBeingSetUp);
               }
             }
             notifier.closeLeftBottomSheet();
             notifier.closeRightBottomSheet();
+            if (!notifier.canCreateNote && !wasEditing) {
+              // the snackbar would only show after popping if I dismissed
+              // the keyboard before pressing back..
+              FocusScope.of(context).unfocus();
+              // I put a delay here cuz it takes a while to unfocus, apparently.
+              // FIXME: This is very very bad code... but will work for now.
+              // I just put some magic number for the duration here..
+              await Future.delayed(Duration(milliseconds: 400));
+
+              globalHomeScaffoldKey.currentState.showSnackBar(
+                  SnackBar(content: Text('Empty note discarded')));
+            }
             Navigator.pop(context);
           }),
       actions: <Widget>[
