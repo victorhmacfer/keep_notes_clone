@@ -1101,5 +1101,24 @@ void main() {
       await driver.tap(find.byValueKey('note_card_mode_button'));
       await driver.waitFor(find.byType('SmallNoteCard'));
     });
+
+    test('swipe to archive works on SMALL MODE note card too', () async {
+      // swipe note
+      await driver.scroll(
+          find.text('nota despinada'), 200, 0, Duration(milliseconds: 200));
+
+      // doesnt show note in home anymore
+      await driver.waitForAbsent(find.text('nota despinada'));
+
+      // shows it in archive
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(archiveDrawerItemFinder);
+      await driver.waitFor(archiveScreenFinder);
+      await driver.waitFor(find.text('texto arquivada'));
+
+      // back to home
+      await driver.tap(archiveScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+    });
   });
 }

@@ -88,6 +88,75 @@ class OptionalSection extends StatelessWidget {
   }
 }
 
+class DismissibleSmallModeGrid extends StatelessWidget {
+  final List<Note> notes;
+
+  final NoteArchiverBloc bloc;
+
+  DismissibleSmallModeGrid({@required this.notes, @required this.bloc});
+
+  void dismissibleAssignCardsToColumns(List<Note> theNotes, List<Widget> first,
+      List<Widget> second, double textSF) {
+    double accumFirstHeight = 0;
+    double accumSecondHeight = 0;
+
+    for (var n in theNotes) {
+      var estimatedHeight = SmallNoteCard.estimateHeight(n, textSF);
+
+      var theWidget = Dismissible(
+        key: ValueKey('extended_nc_${n.id}'),
+        onDismissed: (_) {
+          bloc.archiveNote(n);
+        },
+        child: SmallNoteCard(n, estimatedHeight),
+      );
+
+      if ((accumFirstHeight == 0) ||
+          (accumFirstHeight + estimatedHeight <=
+              accumSecondHeight + estimatedHeight)) {
+        first.add(theWidget);
+        accumFirstHeight += estimatedHeight;
+      } else {
+        second.add(theWidget);
+        accumSecondHeight += estimatedHeight;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var mq = MediaQuery.of(context);
+
+    List<Widget> c1 = [];
+    List<Widget> c2 = [];
+    dismissibleAssignCardsToColumns(notes, c1, c2, mq.textScaleFactor);
+
+    return Container(
+      margin: EdgeInsets.only(left: 8),
+      // color: Colors.grey,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: c1,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: c2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class SmallModeGrid extends StatelessWidget {
   final List<Note> notes;
 
