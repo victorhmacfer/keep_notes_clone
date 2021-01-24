@@ -7,3 +7,7 @@ abstract class NoteChangerBloc {
 abstract class LabelDeleterBloc {
   void deleteLabel();
 }
+
+abstract class NoteArchiverBloc {
+  void archiveNote(Note note);
+}

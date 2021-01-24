@@ -4,7 +4,9 @@ import 'package:keep_notes_clone/repository/repository.dart';
 import 'package:keep_notes_clone/viewmodels/home_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
-class HomeBloc implements NoteChangerBloc {
+//FIXME: this is kinda stupid... archiving couldve been implemented with
+// this notechanger interface... archiving is just a change in a single note.
+class HomeBloc implements NoteChangerBloc, NoteArchiverBloc {
   final GlobalRepository repo;
 
   final _notesBS = BehaviorSubject<List<Note>>();
@@ -22,7 +24,6 @@ class HomeBloc implements NoteChangerBloc {
   Stream<HomeViewModel> get homeViewModelStream =>
       _allNotesStream.map((notes) => HomeViewModel(notes));
 
-
   // this method is expected to be called only after bloc has any notelist
   // already streamed
   Note getNoteWithAlarmId(int alarmId) {
@@ -32,6 +33,11 @@ class HomeBloc implements NoteChangerBloc {
 
   void manyNotesChanged(List<Note> changedNotes) {
     repo.updateManyNotes(changedNotes);
+  }
+
+  void archiveNote(Note note) {
+    note.archived = true;
+    repo.updateNote(note);
   }
 
   void dispose() {

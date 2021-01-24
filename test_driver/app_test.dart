@@ -1065,5 +1065,41 @@ void main() {
       // novo TITULO is found in home
       await driver.waitFor(find.text('novo TITULO editado da primeira'));
     });
+
+    test('swiping EXTENDED MODE note to the side will archive it', () async {
+      // switch to extended mode
+      await driver.tap(find.byValueKey('note_card_mode_button'));
+      await driver.waitFor(find.byType('ExtendedNoteCard'));
+
+      // shows "pinned" and "others" sections
+      await driver.waitFor(find.text('PINNED'));
+      await driver.waitFor(find.text('OTHERS'));
+
+      // swipe the only pinned note to the side
+      await driver.scroll(
+          find.text('texto arquivada'), 250, 0, Duration(milliseconds: 200));
+
+      // doesnt show note in home anymore
+      await driver.waitForAbsent(find.text('texto arquivada'));
+
+      // doesnt show separate sections
+      await driver.waitForAbsent(find.text('PINNED'));
+      await driver.waitForAbsent(find.text('OTHERS'));
+
+      // go to archive
+      await driver.tap(homeDrawerBurgerFinder);
+      await driver.tap(archiveDrawerItemFinder);
+      await driver.waitFor(archiveScreenFinder);
+
+      // shows note there
+      await driver.waitFor(find.text('texto arquivada'));
+
+      // back to home and switch back to small note mode
+      await driver.tap(archiveScreenBurgerFinder);
+      await driver.tap(notesDrawerItemFinder);
+      await driver.waitFor(homeScreenFinder);
+      await driver.tap(find.byValueKey('note_card_mode_button'));
+      await driver.waitFor(find.byType('SmallNoteCard'));
+    });
   });
 }

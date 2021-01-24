@@ -152,7 +152,7 @@ class _StreamBuilderBody extends StatelessWidget {
               return Container(
                 margin: EdgeInsets.only(bottom: _bottomPadding),
                 child: (modeNotifier.mode == NoteCardMode.extended)
-                    ? ExtendedModeList(unpinnedNotes)
+                    ? DismissibleExtendedModeList(notes: unpinnedNotes, bloc: homeBloc)
                     : SmallModeGrid(unpinnedNotes),
               );
             }
@@ -163,7 +163,7 @@ class _StreamBuilderBody extends StatelessWidget {
                 children: <Widget>[
                   CardTypeSectionTitle('PINNED'),
                   (modeNotifier.mode == NoteCardMode.extended)
-                      ? ExtendedModeList(pinnedNotes)
+                      ? DismissibleExtendedModeList(notes: pinnedNotes, bloc: homeBloc)
                       : SmallModeGrid(pinnedNotes),
                   OptionalSection(
                     title: 'OTHERS',

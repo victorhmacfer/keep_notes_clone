@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/blocs/bloc_base.dart';
 import 'package:keep_notes_clone/custom_widgets/card_type_section_title.dart';
 import 'package:keep_notes_clone/custom_widgets/note_card.dart';
 import 'package:keep_notes_clone/models/note.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
+
+class DismissibleExtendedModeList extends StatelessWidget {
+  final List<Note> notes;
+
+  final NoteArchiverBloc bloc;
+
+  DismissibleExtendedModeList({@required this.notes, @required this.bloc});
+
+  Widget _cardBuilder(Note note) => Dismissible(
+        key: ValueKey('extended_nc_${note.id}'),
+        onDismissed: (_) {
+          bloc.archiveNote(note);
+        },
+        child: ExtendedNoteCard(note),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: notes.map(_cardBuilder).toList(),
+    );
+  }
+}
 
 class ExtendedModeList extends StatelessWidget {
   final List<Note> notes;
