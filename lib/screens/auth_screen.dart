@@ -5,63 +5,71 @@ import 'package:provider/provider.dart';
 
 const Color _backgroundColor = appWhite;
 
-final _forgotPwdStyle = TextStyle(
+TextStyle _forgotPwdStyle(double mediaQueryScreenWidth) => TextStyle(
     fontFamily: 'Montserrat',
     color: NoteColor.orange.getColor(),
-    fontWeight: FontWeight.w500);
+    fontWeight: FontWeight.w500,
+    fontSize: mediaQueryScreenWidth * 0.034);
 
-final _titleStyle = TextStyle(
+TextStyle _titleStyle(double mediaQueryScreenWidth) => TextStyle(
     fontFamily: 'Montserrat',
     fontWeight: FontWeight.w400,
     color: appIconGrey,
-    fontSize: 34);
+    fontSize: mediaQueryScreenWidth * 0.083);
 
-const double _donthaveAccountTextSpacing = 24;
+double _donthaveAccountTextSpacing(double mediaQueryScreenHeight) =>
+    mediaQueryScreenHeight * 0.023;
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var mediaQuerySize = MediaQuery.of(context).size;
+
     return Scaffold(
       key: ValueKey('login_screen'),
       body: Container(
         constraints: BoxConstraints.expand(),
         color: _backgroundColor,
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
+          padding: EdgeInsets.all(mediaQuerySize.width * 0.078),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 72),
+              SizedBox(height: mediaQuerySize.height * 0.085),
               ClipOval(
                 child: Image.asset(
                   'assets/images/keep-logo-square512.png',
-                  height: 100,
+                  height: mediaQuerySize.height * 0.118,
                 ),
               ),
-              SizedBox(height: 36),
+              SizedBox(height: mediaQuerySize.height * 0.043),
               Text(
                 'Welcome to Keep!',
-                style: _titleStyle,
+                style: _titleStyle(mediaQuerySize.width),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: mediaQuerySize.height * 0.009),
               Text(
                 'Sign in to continue',
                 style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w500),
+                  fontFamily: 'Montserrat',
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                  fontSize: mediaQuerySize.width * 0.034,
+                ),
               ),
-              SizedBox(height: 64),
-              LoginForm(),
-              SizedBox(height: _donthaveAccountTextSpacing),
+              SizedBox(height: mediaQuerySize.width * 0.076),
+              _LoginForm(mediaQuerySize),
+              SizedBox(
+                  height: _donthaveAccountTextSpacing(mediaQuerySize.height)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "Don't have an account?",
-                    style: _forgotPwdStyle.copyWith(color: Colors.grey),
+                    style: _forgotPwdStyle(mediaQuerySize.width)
+                        .copyWith(color: Colors.grey),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -73,10 +81,12 @@ class LoginScreen extends StatelessWidget {
                     },
                     child: Container(
                       color: _backgroundColor,
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      padding: EdgeInsets.symmetric(
+                          vertical: mediaQuerySize.width * 0.01,
+                          horizontal: mediaQuerySize.width * 0.02),
                       child: Text(
                         'Sign up',
-                        style: _forgotPwdStyle,
+                        style: _forgotPwdStyle(mediaQuerySize.width),
                       ),
                     ),
                   ),
@@ -90,12 +100,16 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class LoginForm extends StatefulWidget {
+class _LoginForm extends StatefulWidget {
+  final Size mediaQuerySize;
+
+  _LoginForm(this.mediaQuerySize);
+
   @override
   _LoginFormState createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginFormState extends State<_LoginForm> {
   final _loginFormKey = GlobalKey<FormState>();
 
   final _usernameKey = GlobalKey<FormFieldState>();
@@ -129,6 +143,7 @@ class _LoginFormState extends State<LoginForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _TextFormFieldContainer(
+            mediaQuerySize: widget.mediaQuerySize,
             containerKey: ValueKey('login_username'),
             textFormFieldKey: _usernameKey,
             controller: _usernameController,
@@ -146,8 +161,9 @@ class _LoginFormState extends State<LoginForm> {
             prefixIconData: Icons.person_outline,
             labelText: 'USERNAME',
           ),
-          SizedBox(height: 32),
+          SizedBox(height: widget.mediaQuerySize.height * 0.03),
           _TextFormFieldContainer(
+            mediaQuerySize: widget.mediaQuerySize,
             containerKey: ValueKey('login_pwd'),
             obscureText: true,
             textFormFieldKey: _passwordKey,
@@ -165,8 +181,8 @@ class _LoginFormState extends State<LoginForm> {
             labelText: 'PASSWORD',
           ),
           Container(
-              // color: Colors.indigo[200],
-              padding: EdgeInsets.only(top: 4, bottom: 24),
+              padding:
+                  EdgeInsets.only(bottom: widget.mediaQuerySize.height * 0.028),
               alignment: Alignment.centerRight,
               child: FlatButton(
                 onPressed: () {},
@@ -175,7 +191,7 @@ class _LoginFormState extends State<LoginForm> {
                 highlightColor: _backgroundColor,
                 child: Text(
                   'Forgot password?',
-                  style: _forgotPwdStyle,
+                  style: _forgotPwdStyle(widget.mediaQuerySize.width),
                 ),
               )),
           FlatButton(
@@ -183,7 +199,8 @@ class _LoginFormState extends State<LoginForm> {
             color: NoteColor.orange.getColor(),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            padding: EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(
+                vertical: widget.mediaQuerySize.height * 0.014),
             onPressed: () async {
               if (_loginFormKey.currentState.validate()) {
                 var loginError = await authBloc.login(
@@ -194,31 +211,38 @@ class _LoginFormState extends State<LoginForm> {
                 switch (loginError) {
                   case LoginError.usernameNotFound:
                     m = "Username not found";
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case LoginError.wrongPwd:
                     m = 'Wrong password';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case LoginError.userDisabled:
                     m = 'User disabled';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case LoginError.invalidEmail:
                     m = 'Sign in failed. Internal error.';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case LoginError.emailNotFound:
                     m = 'Sign in failed. Internal error.';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case LoginError.authenticationUnavailable:
                     m = "Login failed... Do you have an internet connection?";
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case LoginError.unknown:
                     m = "We couldn't sign you in. Please try again later";
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   default:
                     print('success');
@@ -230,7 +254,7 @@ class _LoginFormState extends State<LoginForm> {
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w500,
-                  fontSize: 20,
+                  fontSize: widget.mediaQuerySize.width * 0.049,
                   color: _backgroundColor),
             ),
           )
@@ -240,7 +264,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 }
 
-SnackBar _authErrorSnackBar(String message) {
+SnackBar _authErrorSnackBar(String message, double mediaScreenWidth) {
   return SnackBar(
     backgroundColor: Colors.red[400],
     content: Text(
@@ -248,12 +272,14 @@ SnackBar _authErrorSnackBar(String message) {
       style: TextStyle(
           color: appWhite,
           fontFamily: 'Montserrat',
-          fontWeight: FontWeight.w500),
+          fontWeight: FontWeight.w500,
+          fontSize: mediaScreenWidth * 0.034),
     ),
   );
 }
 
 class _TextFormFieldContainer extends StatelessWidget {
+  final Size mediaQuerySize;
   final ValueKey<String> containerKey;
   final GlobalKey<FormFieldState> textFormFieldKey;
   final TextEditingController controller;
@@ -268,7 +294,8 @@ class _TextFormFieldContainer extends StatelessWidget {
   final bool validateOnEveryChange;
 
   _TextFormFieldContainer(
-      {@required this.containerKey,
+      {@required this.mediaQuerySize,
+      @required this.containerKey,
       @required this.textFormFieldKey,
       @required this.controller,
       this.autofocus = false,
@@ -285,15 +312,26 @@ class _TextFormFieldContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       key: containerKey,
-      padding: EdgeInsets.fromLTRB(4, 6, 4, 4),
+      padding: EdgeInsets.fromLTRB(
+        mediaQuerySize.width * 0.01,
+        mediaQuerySize.height * 0.007,
+        mediaQuerySize.width * 0.01,
+        mediaQuerySize.height * 0.005,
+      ),
       decoration: BoxDecoration(
         color: _backgroundColor,
         boxShadow: focusNode.hasFocus
-            ? [BoxShadow(blurRadius: 6, color: Colors.grey[300])]
+            ? [
+                BoxShadow(
+                    blurRadius: mediaQuerySize.width * 0.015,
+                    color: Colors.grey[300])
+              ]
             : null,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(mediaQuerySize.width * 0.01),
       ),
       child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
+        cursorHeight: mediaQuerySize.width * 0.056,
         key: textFormFieldKey,
         maxLines: 1,
         controller: controller,
@@ -310,7 +348,7 @@ class _TextFormFieldContainer extends StatelessWidget {
           }
         },
         style: TextStyle(
-          fontSize: 15,
+          fontSize: mediaQuerySize.width * 0.037,
           fontFamily: 'MONTSERRAT',
           fontWeight: FontWeight.w500,
           color: NoteColor.orange.getColor(),
@@ -318,24 +356,30 @@ class _TextFormFieldContainer extends StatelessWidget {
         decoration: InputDecoration(
           prefixIcon: Icon(
             prefixIconData,
-            size: 26,
+            size: mediaQuerySize.width * 0.063,
             color: (focusNode.hasFocus)
                 ? NoteColor.orange.getColor()
                 : Colors.grey,
           ),
+          isCollapsed: true,
           contentPadding: EdgeInsets.zero,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
           focusedErrorBorder: InputBorder.none,
-          errorStyle:
-              TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w500),
+          errorBorder: InputBorder.none,
+          errorStyle: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w500,
+            fontSize: mediaQuerySize.width * 0.034,
+          ),
           errorMaxLines: 1,
           labelText: labelText,
           labelStyle: TextStyle(
-              fontSize: 14,
-              fontFamily: 'MONTSERRAT',
-              fontWeight: FontWeight.w500,
-              color: Colors.grey),
+            fontSize: mediaQuerySize.width * 0.034,
+            fontFamily: 'MONTSERRAT',
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+          ),
         ),
       ),
     );
@@ -345,6 +389,8 @@ class _TextFormFieldContainer extends StatelessWidget {
 class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var mediaQuerySize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: appIconGrey),
@@ -355,7 +401,7 @@ class SignUpScreen extends StatelessWidget {
         constraints: BoxConstraints.expand(),
         color: _backgroundColor,
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(32),
+          padding: EdgeInsets.all(mediaQuerySize.width * 0.078),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -364,23 +410,25 @@ class SignUpScreen extends StatelessWidget {
               ClipOval(
                 child: Image.asset(
                   'assets/images/keep-logo-square512.png',
-                  height: 100,
+                  height: mediaQuerySize.height * 0.118,
                 ),
               ),
-              SizedBox(height: 36),
+              SizedBox(height: mediaQuerySize.height * 0.043),
               Text(
                 'Sign Up',
-                style: _titleStyle,
+                style: _titleStyle(mediaQuerySize.width),
               ),
-              SizedBox(height: 24),
-              SignUpForm(),
-              SizedBox(height: _donthaveAccountTextSpacing),
+              SizedBox(height: mediaQuerySize.height * 0.028),
+              _SignUpForm(mediaQuerySize),
+              SizedBox(
+                  height: _donthaveAccountTextSpacing(mediaQuerySize.height)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "Already have an account?",
-                    style: _forgotPwdStyle.copyWith(color: Colors.grey),
+                    style: _forgotPwdStyle(mediaQuerySize.width)
+                        .copyWith(color: Colors.grey),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -391,7 +439,7 @@ class SignUpScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                       child: Text(
                         'Log in',
-                        style: _forgotPwdStyle,
+                        style: _forgotPwdStyle(mediaQuerySize.width),
                       ),
                     ),
                   ),
@@ -405,13 +453,16 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
-class SignUpForm extends StatefulWidget {
+class _SignUpForm extends StatefulWidget {
+  final Size mediaQuerySize;
+
+  _SignUpForm(this.mediaQuerySize);
+
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
 
-class _SignUpFormState extends State<SignUpForm> {
-  static const double _formFieldSpacing = 20;
+class _SignUpFormState extends State<_SignUpForm> {
   final _signUpFormKey = GlobalKey<FormState>();
 
   final _usernameKey = GlobalKey<FormFieldState>();
@@ -455,6 +506,7 @@ class _SignUpFormState extends State<SignUpForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _TextFormFieldContainer(
+            mediaQuerySize: widget.mediaQuerySize,
             containerKey: ValueKey('signup_username'),
             textFormFieldKey: _usernameKey,
             controller: _usernameController,
@@ -479,8 +531,9 @@ class _SignUpFormState extends State<SignUpForm> {
             prefixIconData: Icons.person_outline,
             labelText: 'USERNAME',
           ),
-          SizedBox(height: _formFieldSpacing),
+          SizedBox(height: widget.mediaQuerySize.height * 0.023),
           _TextFormFieldContainer(
+            mediaQuerySize: widget.mediaQuerySize,
             containerKey: ValueKey('signup_email'),
             textFormFieldKey: _emailKey,
             controller: _emailController,
@@ -503,8 +556,9 @@ class _SignUpFormState extends State<SignUpForm> {
             prefixIconData: Icons.mail_outline,
             labelText: 'EMAIL',
           ),
-          SizedBox(height: _formFieldSpacing),
+          SizedBox(height: widget.mediaQuerySize.height * 0.023),
           _TextFormFieldContainer(
+            mediaQuerySize: widget.mediaQuerySize,
             containerKey: ValueKey('signup_pwd'),
             obscureText: true,
             textFormFieldKey: _passwordKey,
@@ -529,8 +583,9 @@ class _SignUpFormState extends State<SignUpForm> {
             prefixIconData: Icons.lock_outline,
             labelText: 'PASSWORD',
           ),
-          SizedBox(height: _formFieldSpacing),
+          SizedBox(height: widget.mediaQuerySize.height * 0.023),
           _TextFormFieldContainer(
+            mediaQuerySize: widget.mediaQuerySize,
             containerKey: ValueKey('signup_confirm_pwd'),
             obscureText: true,
             textFormFieldKey: _confirmPasswordKey,
@@ -546,12 +601,13 @@ class _SignUpFormState extends State<SignUpForm> {
             prefixIconData: Icons.lock_outline,
             labelText: 'CONFIRM PASSWORD',
           ),
-          SizedBox(height: 32),
+          SizedBox(height: widget.mediaQuerySize.height * 0.037),
           FlatButton(
             color: NoteColor.orange.getColor(),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            padding: EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(
+                vertical: widget.mediaQuerySize.height * 0.014),
             onPressed: () async {
               if (_signUpFormKey.currentState.validate()) {
                 var signupError = await authBloc.signup(
@@ -564,27 +620,33 @@ class _SignUpFormState extends State<SignUpForm> {
                 switch (signupError) {
                   case SignUpError.usernameAlreadyInUse:
                     m = "This username is already in use";
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case SignUpError.authenticationUnavailable:
                     m = 'Sign up failed... Do you have an internet connection?';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case SignUpError.emailAlreadyInUse:
                     m = 'This email is already in use';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case SignUpError.invalidEmail:
                     m = 'Invalid email';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case SignUpError.weakPassword:
                     m = 'Password is too weak! Avoid using whole words and throw some numbers in there!';
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
                   case SignUpError.unknown:
                     m = "Sign up failed... Please try again later";
-                    Scaffold.of(context).showSnackBar(_authErrorSnackBar(m));
+                    Scaffold.of(context).showSnackBar(
+                        _authErrorSnackBar(m, widget.mediaQuerySize.width));
                     break;
 
                   default:
@@ -598,7 +660,7 @@ class _SignUpFormState extends State<SignUpForm> {
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w500,
-                  fontSize: 20,
+                  fontSize: widget.mediaQuerySize.width * 0.049,
                   color: _backgroundColor),
             ),
           )
