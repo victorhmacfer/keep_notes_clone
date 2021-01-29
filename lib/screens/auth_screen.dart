@@ -46,7 +46,7 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: mediaQuerySize.height * 0.043),
               Text(
-                'Welcome to Keep!',
+                'Keep Notes',
                 style: _titleStyle(mediaQuerySize.width),
               ),
               SizedBox(height: mediaQuerySize.height * 0.009),
