@@ -173,7 +173,8 @@ class _StreamBuilderBody extends StatelessWidget {
                           notes: pinnedNotes,
                           bloc: homeBloc,
                         ),
-                  OptionalSection(
+                  DismissibleOptionalSection(
+                    bloc: homeBloc,
                     title: 'OTHERS',
                     mode: modeNotifier.mode,
                     notes: unpinnedNotes,

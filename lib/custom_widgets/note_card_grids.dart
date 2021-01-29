@@ -46,6 +46,54 @@ class ExtendedModeList extends StatelessWidget {
   }
 }
 
+class DismissibleOptionalSection extends StatelessWidget {
+  final NoteCardMode mode;
+
+  final List<Note> notes;
+
+  final String title;
+
+  final bool spaceBelow;
+
+  final bool noSpacer;
+
+  final NoteArchiverBloc bloc;
+
+  static const double _spacerHeight = 24;
+
+  DismissibleOptionalSection(
+      {this.title = '',
+      @required this.mode,
+      @required this.notes,
+      @required this.bloc,
+      this.spaceBelow = false,
+      this.noSpacer = false});
+
+  @override
+  Widget build(BuildContext context) {
+    if (notes.isEmpty) {
+      return Container();
+    }
+
+    double spacerHeight = (noSpacer) ? 0 : _spacerHeight;
+
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: (spaceBelow) ? 0 : spacerHeight,
+        ),
+        (title.isNotEmpty) ? CardTypeSectionTitle(title) : Container(),
+        (mode == NoteCardMode.extended)
+            ? DismissibleExtendedModeList(notes: notes, bloc: bloc)
+            : DismissibleSmallModeGrid(notes: notes, bloc: bloc),
+        SizedBox(
+          height: (spaceBelow) ? spacerHeight : 0,
+        ),
+      ],
+    );
+  }
+}
+
 class OptionalSection extends StatelessWidget {
   final NoteCardMode mode;
 

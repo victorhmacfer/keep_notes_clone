@@ -7,7 +7,8 @@ import 'package:keep_notes_clone/repository/repository.dart';
 import 'package:keep_notes_clone/viewmodels/label_view_model.dart';
 import 'package:rxdart/subjects.dart';
 
-class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
+class LabelScreenBloc
+    implements NoteChangerBloc, LabelDeleterBloc, NoteArchiverBloc {
   final GlobalRepository repo;
   final Label label;
 
@@ -36,6 +37,11 @@ class LabelScreenBloc implements NoteChangerBloc, LabelDeleterBloc {
 
   void manyNotesChanged(List<Note> changedNotes) {
     repo.updateManyNotes(changedNotes);
+  }
+
+  void archiveNote(Note note) {
+    note.archived = true;
+    repo.updateNote(note);
   }
 
   void deleteLabel() {

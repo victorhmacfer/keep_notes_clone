@@ -168,7 +168,8 @@ class _StreamBuilderBody extends StatelessWidget {
               if (onlyHasUnpinnedNotes) {
                 return Container(
                   margin: EdgeInsets.only(bottom: _bottomPadding),
-                  child: OptionalSection(
+                  child: DismissibleOptionalSection(
+                    bloc: labelScreenBloc,
                     mode: modeNotifier.mode,
                     noSpacer: true,
                     notes: unpinnedNotes,
@@ -179,13 +180,15 @@ class _StreamBuilderBody extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: _bottomPadding),
                 child: Column(
                   children: <Widget>[
-                    OptionalSection(
+                    DismissibleOptionalSection(
+                      bloc: labelScreenBloc,
                       title: 'PINNED',
                       mode: modeNotifier.mode,
                       spaceBelow: true,
                       notes: pinnedNotes,
                     ),
-                    OptionalSection(
+                    DismissibleOptionalSection(
+                      bloc: labelScreenBloc,
                       title: 'OTHERS',
                       mode: modeNotifier.mode,
                       spaceBelow: true,
