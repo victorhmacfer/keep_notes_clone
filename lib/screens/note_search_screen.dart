@@ -95,7 +95,8 @@ class _NoteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         cursorWidth: 1,
         cursorColor: appSettingsBlue,
         decoration: InputDecoration.collapsed(
-            hintText: hintText, hintStyle: searchAppBarStyle),
+            hintText: hintText,
+            hintStyle: searchAppBarStyle(mqScreenSize.width)),
       ),
       iconTheme: IconThemeData(color: appIconGrey),
       backgroundColor: appWhite,

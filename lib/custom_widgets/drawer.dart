@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/drawer_bloc.dart';
 import 'package:keep_notes_clone/blocs/home_bloc.dart';
-import 'package:keep_notes_clone/blocs/label_screen_bloc.dart';
 import 'package:keep_notes_clone/screens/archive_screen.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
 import 'package:keep_notes_clone/screens/label_screen.dart';
@@ -40,7 +39,7 @@ class MyDrawer extends StatelessWidget {
 }
 
 class _MyDrawer extends StatelessWidget {
-  // this drawer item indexes (for the notifier to track the selected item) are:
+  // the drawer item indexes (for the notifier to track the selected item) are:
   // 'Notes' item         index 0
   // 'Reminders' item     index 1
   // some label           index 4

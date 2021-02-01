@@ -22,11 +22,13 @@ var cardBigTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     letterSpacing: -0.5);
 
-var searchAppBarStyle = TextStyle(
-    color: appIconGrey,
-    fontSize: 16,
-    fontFamily: 'Montserrat',
-    fontWeight: FontWeight.w500);
+TextStyle searchAppBarStyle(double mediaQueryScreenWidth) {
+  return TextStyle(
+      color: appIconGrey,
+      fontSize: mediaQueryScreenWidth * 0.039,
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.w500);
+}
 
 var drawerItemStyle = TextStyle(
     color: appBlack,
@@ -48,12 +50,14 @@ var dialogFlatButtonTextStyle = TextStyle(
   color: appSettingsBlue,
 );
 
-var noNotesMessageTextStyle = TextStyle(
-    color: appBlack,
-    fontSize: 14,
-    fontFamily: 'Montserrat',
-    fontWeight: FontWeight.w500,
-    letterSpacing: -0.5);
+TextStyle noNotesMessageTextStyle(double mediaQueryScreenWidth) {
+  return TextStyle(
+      color: appBlack,
+      fontSize: mediaQueryScreenWidth * 0.037, // fontSize aprox 15
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.w500,
+      letterSpacing: -0.5);
+}
 
 final appLightThemeData = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,

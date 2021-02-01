@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/auth_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/models/keep_clone_user.dart';
 import 'package:keep_notes_clone/notifiers/note_card_mode.dart';
 import 'package:keep_notes_clone/screens/note_search_screen.dart';
@@ -20,13 +21,11 @@ class SearchAppBar extends StatelessWidget {
 }
 
 class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
-  static const double APP_BAR_HEIGHT = 92;
+  @override
+  double get maxExtent => mqScreenSize.width * 0.165 + mqPaddingTop;
 
   @override
-  double get maxExtent => APP_BAR_HEIGHT;
-
-  @override
-  double get minExtent => APP_BAR_HEIGHT;
+  double get minExtent => mqScreenSize.width * 0.165 + mqPaddingTop;
 
   @override
   bool shouldRebuild(covariant _MyCustomSearchAppBarDelegate oldDelegate) =>
@@ -46,8 +45,9 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
     return PngIconButton(
         key: ValueKey('note_card_mode_button'),
         backgroundColor: appWhite,
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(mqScreenSize.width * 0.019),
         pngIcon: PngIcon(
+          size: mqScreenSize.width * 0.058,
           fileName: nextModeIconFile,
         ),
         onTap: () {
@@ -62,10 +62,13 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
     var authBloc = Provider.of<AuthBloc>(context);
 
     return Container(
-      padding: EdgeInsets.only(bottom: 8, left: 16, right: 16),
+      padding: EdgeInsets.only(
+          bottom: mqScreenSize.width * 0.019,
+          left: mqScreenSize.width * 0.039,
+          right: mqScreenSize.width * 0.039),
       alignment: Alignment.bottomCenter,
       child: SizedBox(
-        height: 50,
+        height: mqScreenSize.width * 0.122,
         width: double.infinity,
         child: GestureDetector(
           onTap: () {
@@ -80,7 +83,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                 boxShadow: [
                   BoxShadow(blurRadius: 1, color: Color.fromRGBO(0, 0, 0, 0.3)),
                 ],
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius:
+                    BorderRadius.circular(mqScreenSize.width * 0.019)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -89,6 +93,7 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                   children: <Widget>[
                     IconButton(
                       key: ValueKey('home_drawer_burger'),
+                      iconSize: mqScreenSize.width * 0.058,
                       icon: Icon(
                         Icons.menu,
                         color: appIconGrey,
@@ -100,7 +105,8 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                     SizedBox(
                       width: 4,
                     ),
-                    Text('Search your notes', style: searchAppBarStyle),
+                    Text('Search your notes',
+                        style: searchAppBarStyle(mqScreenSize.width)),
                   ],
                 ),
                 Row(
@@ -117,13 +123,15 @@ class _MyCustomSearchAppBarDelegate extends SliverPersistentHeaderDelegate {
                               },
                               child: Container(
                                 color: appWhite,
-                                padding:
-                                    const EdgeInsets.only(right: 12, left: 12),
+                                padding: EdgeInsets.only(
+                                    right: mqScreenSize.width * 0.029,
+                                    left: mqScreenSize.width * 0.029),
                                 child: CircleAvatar(
-                                  radius: 16,
+                                  radius: mqScreenSize.width * 0.039,
                                   child: Text(
                                     snapshot.data.username[0].toUpperCase(),
-                                    style: TextStyle(fontSize: 14),
+                                    style: TextStyle(
+                                        fontSize: mqScreenSize.width * 0.034),
                                   ),
                                 ),
                               ),

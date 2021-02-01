@@ -6,6 +6,8 @@ import 'package:keep_notes_clone/utils/colors.dart';
 
 import 'dart:math' as math;
 
+import 'package:keep_notes_clone/main.dart';
+
 class MyCustomFab extends StatelessWidget {
   final Label label;
 
@@ -13,15 +15,16 @@ class MyCustomFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return SizedBox(
-      height: 58,
-      width: 58,
+      height: mqScreenSize.width * 0.141,
+      width: mqScreenSize.width * 0.141,
       child: FloatingActionButton(
         backgroundColor: appWhite,
         child: Image.asset(
           'assets/icons/google-plus-icon.png',
-          width: 24,
-          height: 24,
+          width: mqScreenSize.width * 0.058,
+          height: mqScreenSize.width * 0.058,
         ),
         onPressed: () {
           if (label != null) {

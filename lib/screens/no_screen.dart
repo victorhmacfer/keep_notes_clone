@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
@@ -25,9 +26,7 @@ class NoSearchResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _NoScreenWithMaterialIcon(
-      icon: Icons.search, 
-      message: 'No matching notes'
-    );
+        icon: Icons.search, message: 'No matching notes');
   }
 }
 
@@ -39,7 +38,8 @@ class _NoScreenWithMaterialIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
+    var screenHeight = mqScreenSize.height;
+    var screenWidth = mqScreenSize.width;
 
     return Container(
       height: screenHeight * 0.82,
@@ -50,14 +50,14 @@ class _NoScreenWithMaterialIcon extends StatelessWidget {
           Icon(
             icon,
             color: NoteColor.orange.getColor(),
-            size: 120,
+            size: screenWidth * 0.292,
           ),
           SizedBox(
-            height: 16,
+            height: screenWidth * 0.039,
           ),
           Text(
             message,
-            style: noNotesMessageTextStyle,
+            style: noNotesMessageTextStyle(screenWidth),
           ),
         ],
       ),
@@ -68,7 +68,8 @@ class _NoScreenWithMaterialIcon extends StatelessWidget {
 class NoNotesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
+    var screenHeight = mqScreenSize.height;
+    var screenWidth = mqScreenSize.width;
 
     return Container(
       height: screenHeight * 0.8,
@@ -78,14 +79,14 @@ class NoNotesScreen extends StatelessWidget {
         children: <Widget>[
           Image.asset(
             'assets/icons/keep-logo.png',
-            height: 100,
+            height: screenWidth * 0.243,
           ),
           SizedBox(
-            height: 24,
+            height: screenWidth * 0.058,
           ),
           Text(
             'Notes you add appear here',
-            style: noNotesMessageTextStyle,
+            style: noNotesMessageTextStyle(screenWidth),
           ),
         ],
       ),

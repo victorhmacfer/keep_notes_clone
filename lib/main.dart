@@ -24,6 +24,10 @@ final flnp = FlutterLocalNotificationsPlugin();
 //       dependency explicit)
 GlobalRepository repo;
 
+Size mqScreenSize;
+
+double mqPaddingTop;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -35,10 +39,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ));
 
     return MultiProvider(
       providers: [
@@ -71,6 +71,10 @@ class AuthStatusChecker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);
+
+    var mq = MediaQuery.of(context);
+    mqScreenSize = mq.size;
+    mqPaddingTop = mq.padding.top;
 
     return StreamBuilder<KeepCloneUser>(
       stream: authBloc.loggedInUser,
