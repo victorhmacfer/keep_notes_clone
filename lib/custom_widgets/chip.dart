@@ -13,15 +13,17 @@ import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/main.dart';
 
-var _noteSetupChipDecoration = BoxDecoration(
-  borderRadius: BorderRadius.circular(32),
-  border: Border.all(color: appGreyForColoredBg, width: 1),
-);
+BoxDecoration _noteSetupChipDecoration(double mediaQueryScreenWidth) =>
+    BoxDecoration(
+      borderRadius: BorderRadius.circular(mediaQueryScreenWidth * 0.078),
+      border: Border.all(color: appGreyForColoredBg, width: 1),
+    );
 
-var _expiredReminderChipDecoration = BoxDecoration(
-  borderRadius: BorderRadius.circular(32),
-  border: Border.all(color: Color.fromRGBO(0, 0, 0, 0.1), width: 1),
-);
+BoxDecoration _expiredReminderChipDecoration(double mediaQueryScreenWidth) =>
+    BoxDecoration(
+      borderRadius: BorderRadius.circular(mqScreenSize.width * 0.078),
+      border: Border.all(color: Color.fromRGBO(0, 0, 0, 0.1), width: 1),
+    );
 
 class NoteSetupLabelChip extends StatelessWidget {
   final Label label;
@@ -60,11 +62,13 @@ class NoteSetupLabelChip extends StatelessWidget {
         }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 7, horizontal: 14),
-        decoration: _noteSetupChipDecoration,
+        padding: EdgeInsets.symmetric(
+            vertical: mqScreenSize.width * 0.017,
+            horizontal: mqScreenSize.width * 0.034),
+        decoration: _noteSetupChipDecoration(mqScreenSize.width),
         child: Text(
           label.name,
-          style: drawerItemStyle.copyWith(fontSize: 13),
+          style: drawerItemStyle.copyWith(fontSize: mqScreenSize.width * 0.032),
         ),
       ),
     );
@@ -122,25 +126,28 @@ class NoteSetupReminderChip extends StatelessWidget {
         );
       },
       child: Container(
-        padding: EdgeInsets.fromLTRB(8, 6, 14, 6),
+        padding: EdgeInsets.fromLTRB(
+            mqScreenSize.width * 0.019, 6, mqScreenSize.width * 0.034, 6),
         decoration: (reminder.expired)
-            ? _expiredReminderChipDecoration
-            : _noteSetupChipDecoration,
+            ? _expiredReminderChipDecoration(mqScreenSize.width)
+            : _noteSetupChipDecoration(mqScreenSize.width),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
               Icons.alarm,
-              size: 18,
+              size: mqScreenSize.width * 0.044,
               color: alarmIconColor,
             ),
             SizedBox(
-              width: 8,
+              width: mqScreenSize.width * 0.019,
             ),
             Text(
               chipReminderText(reminder.time),
               style: drawerItemStyle.copyWith(
-                  fontSize: 12, color: textColor, decoration: textDecoration),
+                  fontSize: mqScreenSize.width * 0.029,
+                  color: textColor,
+                  decoration: textDecoration),
             ),
           ],
         ),
@@ -166,8 +173,8 @@ class NoteCardReminderChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       decoration: (reminder.expired)
-          ? _expiredReminderChipDecoration
-          : _noteSetupChipDecoration,
+          ? _expiredReminderChipDecoration(mqScreenSize.width)
+          : _noteSetupChipDecoration(mqScreenSize.width),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

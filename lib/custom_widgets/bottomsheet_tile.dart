@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
@@ -26,18 +27,18 @@ class BottomSheetTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         alignment: Alignment.centerLeft,
-        height: 48,
+        height: mqScreenSize.width * 0.117,
         color: noteSetupController.selectedColor.getColor(),
         width: double.infinity,
-        padding: EdgeInsets.only(left: 16),
+        padding: EdgeInsets.only(left: mqScreenSize.width * 0.039),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             pngIcon,
             SizedBox(
-              width: 24,
+              width: mqScreenSize.width * 0.058,
             ),
-            Text(text, style: bottomSheetStyle)
+            Text(text, style: bottomSheetStyle(mqScreenSize.width))
           ],
         ),
       ),

@@ -73,7 +73,7 @@ class NoteSetupScreen extends StatelessWidget {
 
 class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(mqScreenSize.width * 0.136);
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +87,7 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: notifier.selectedColor.getColor(),
       iconTheme: IconThemeData(color: appIconGreyForColoredBg),
       leading: IconButton(
+          iconSize: mqScreenSize.width * 0.058,
           key: ValueKey('note_setup_back'),
           icon: Icon(Icons.arrow_back),
           onPressed: () async {
@@ -119,15 +120,17 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         Padding(
           key: ValueKey('note_setup_pin_button'),
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: mqScreenSize.width * 0.029),
           child: PngIconButton(
               backgroundColor: notifier.selectedColor.getColor(),
               pngIcon: (notifier.pinned)
                   ? PngIcon(
+                      size: mqScreenSize.width * 0.058,
                       fileName: 'baseline_push_pin_black_48.png',
                       iconColor: appIconGreyForColoredBg,
                     )
                   : PngIcon(
+                      size: mqScreenSize.width * 0.058,
                       fileName: 'outline_push_pin_black_48.png',
                       iconColor: appIconGreyForColoredBg,
                     ),
@@ -137,10 +140,11 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         Padding(
           key: ValueKey('note_setup_reminder_button'),
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: mqScreenSize.width * 0.029),
           child: PngIconButton(
               backgroundColor: notifier.selectedColor.getColor(),
               pngIcon: PngIcon(
+                size: mqScreenSize.width * 0.058,
                 fileName: 'outline_add_alert_black_48.png',
                 iconColor: appIconGreyForColoredBg,
               ),
@@ -160,15 +164,17 @@ class _NoteSetupAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         Padding(
           key: ValueKey('note_setup_archive_button'),
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: mqScreenSize.width * 0.029),
           child: PngIconButton(
               backgroundColor: notifier.selectedColor.getColor(),
               pngIcon: (shouldUnarchive)
                   ? PngIcon(
+                      size: mqScreenSize.width * 0.058,
                       fileName: 'outline_unarchive_black_48.png',
                       iconColor: appIconGreyForColoredBg,
                     )
                   : PngIcon(
+                      size: mqScreenSize.width * 0.058,
                       fileName: 'outline_archive_black_48.png',
                       iconColor: appIconGreyForColoredBg,
                     ),
@@ -233,11 +239,11 @@ class _NoteSetupBody extends StatelessWidget {
     chipList.addAll(_labelWidgets(theLabels));
 
     return Container(
-      margin: EdgeInsets.only(top: 16),
+      margin: EdgeInsets.only(top: mqScreenSize.width * 0.039),
       width: double.infinity,
       child: Wrap(
         spacing: 4,
-        runSpacing: 8,
+        runSpacing: mqScreenSize.width * 0.019,
         direction: Axis.horizontal,
         children: chipList,
       ),
@@ -265,8 +271,11 @@ class _NoteSetupBody extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: Container(
-                  padding:
-                      EdgeInsets.only(top: 24, bottom: 72, left: 20, right: 20),
+                  padding: EdgeInsets.only(
+                      top: mqScreenSize.width * 0.058,
+                      bottom: mqScreenSize.width * 0.175,
+                      left: mqScreenSize.width * 0.049,
+                      right: mqScreenSize.width * 0.049),
                   child: Column(
                     children: <Widget>[
                       TextField(
@@ -287,22 +296,24 @@ class _NoteSetupBody extends StatelessWidget {
                         cursorColor: appIconGrey,
                         style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 24,
+                            fontSize: mqScreenSize.width * 0.058,
                             fontWeight: FontWeight.w500,
                             letterSpacing: -0.5),
                         decoration: InputDecoration.collapsed(
                           hintText: 'Title',
                           hintStyle: TextStyle(
-                              color: appGreyForColoredBg, fontSize: 23),
+                              color: appGreyForColoredBg,
+                              fontSize: mqScreenSize.width * 0.056),
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: mqScreenSize.width * 0.029),
                       TextField(
                         key: ValueKey('note_setup_text'),
                         controller: notifier.textController,
                         focusNode: notifier.textFocusNode,
                         autofocus: notifier.creating,
-                        scrollPadding: const EdgeInsets.all(56),
+                        scrollPadding:
+                            EdgeInsets.all(mqScreenSize.width * 0.136),
                         onTap: () {
                           notifier.closeLeftBottomSheet();
                           notifier.closeRightBottomSheet();
@@ -317,13 +328,14 @@ class _NoteSetupBody extends StatelessWidget {
                         cursorColor: appIconGrey,
                         style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 15,
+                            fontSize: mqScreenSize.width * 0.036,
                             fontWeight: FontWeight.w500,
                             letterSpacing: -0.5),
                         decoration: InputDecoration.collapsed(
                           hintText: 'Note',
                           hintStyle: TextStyle(
-                              color: appGreyForColoredBg, fontSize: 15),
+                              color: appGreyForColoredBg,
+                              fontSize: mqScreenSize.width * 0.036),
                         ),
                       ),
                       _noteChips(notifier.savedReminder, noteLabels),
@@ -375,6 +387,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           BottomSheetTile(
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_photo_camera_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -384,6 +397,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           BottomSheetTile(
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_photo_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -393,6 +407,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           BottomSheetTile(
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_brush_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -402,6 +417,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           BottomSheetTile(
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_mic_none_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -411,6 +427,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           BottomSheetTile(
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_check_box_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -435,6 +452,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             key: ValueKey('right_bs_delete_button'),
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_delete_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -452,6 +470,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
           BottomSheetTile(
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_file_copy_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -480,6 +499,7 @@ class _MyStickyBottomAppBar extends StatelessWidget {
             key: ValueKey('right_bs_labels_button'),
             noteSetupController: notifier,
             pngIcon: PngIcon(
+              size: mqScreenSize.width * 0.058,
               fileName: 'outline_label_black_48.png',
               iconColor: appIconGreyForColoredBg,
             ),
@@ -520,14 +540,16 @@ class _MyStickyBottomAppBar extends StatelessWidget {
         child: BottomAppBar(
           color: notifier.selectedColor.getColor(),
           child: Container(
-            height: 48,
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            height: mqScreenSize.width * 0.117,
+            padding:
+                EdgeInsets.symmetric(horizontal: mqScreenSize.width * 0.039),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 PngIconButton(
                     backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
+                      size: mqScreenSize.width * 0.058,
                       fileName: 'outline_add_box_black_48.png',
                       iconColor: appIconGreyForColoredBg,
                     ),
@@ -550,12 +572,15 @@ class _MyStickyBottomAppBar extends StatelessWidget {
                     }),
                 Text(
                   lastEditedText,
-                  style: TextStyle(color: appVeryDarkGreyForColoredBg),
+                  style: TextStyle(
+                      color: appVeryDarkGreyForColoredBg,
+                      fontSize: mqScreenSize.width * 0.034),
                 ),
                 PngIconButton(
                     key: ValueKey('note_setup_right_bs_button'),
                     backgroundColor: notifier.selectedColor.getColor(),
                     pngIcon: PngIcon(
+                      size: mqScreenSize.width * 0.058,
                       fileName: 'outline_more_vert_black_48.png',
                       iconColor: appIconGreyForColoredBg,
                     ),
@@ -590,14 +615,14 @@ class _ColorSelectionList extends StatelessWidget {
 
     return Container(
       color: notifier.selectedColor.getColor(),
-      height: 52,
-      padding: EdgeInsets.symmetric(vertical: 10),
+      height: mqScreenSize.width * 0.126,
+      padding: EdgeInsets.symmetric(vertical: mqScreenSize.width * 0.024),
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.zero,
         children: <Widget>[
           SizedBox(
-            width: 8,
+            width: mqScreenSize.width * 0.019,
           ),
           _ColorSelectionCircle(index: 0, noteColor: NoteColor.white),
           _ColorSelectionCircle(index: 1, noteColor: NoteColor.red),
@@ -639,13 +664,14 @@ class _ColorSelectionCircle extends StatelessWidget {
         decoration: BoxDecoration(
             color: noteColor.getColor(),
             border: Border.all(width: 0.5, color: appGreyForColoredBg),
-            borderRadius: BorderRadius.circular(20)),
-        width: 32,
-        margin: EdgeInsets.symmetric(horizontal: 7),
+            borderRadius: BorderRadius.circular(mqScreenSize.width * 0.049)),
+        width: mqScreenSize.width * 0.078,
+        margin: EdgeInsets.symmetric(horizontal: mqScreenSize.width * 0.017),
         child: Visibility(
             visible: notifier.selectedColorIndex == index,
             child: Icon(
               Icons.check,
+              size: mqScreenSize.width * 0.058,
               color: appGreyForColoredBg,
             )),
       ),

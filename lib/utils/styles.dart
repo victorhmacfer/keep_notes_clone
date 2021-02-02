@@ -40,8 +40,9 @@ var drawerItemStyle = TextStyle(
 var drawerLabelsEditStyle =
     TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: appIconGrey);
 
-var bottomSheetStyle =
-    TextStyle(fontSize: 16, color: appVeryDarkGreyForColoredBg);
+TextStyle bottomSheetStyle(double mediaQueryScreenWidth) => TextStyle(
+    fontSize: mediaQueryScreenWidth * 0.039,
+    color: appVeryDarkGreyForColoredBg);
 
 var dialogFlatButtonTextStyle = TextStyle(
   fontFamily: 'Montserrat',

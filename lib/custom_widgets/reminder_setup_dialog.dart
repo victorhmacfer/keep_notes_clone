@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_setup_bloc.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/datetime_translation.dart';
@@ -48,7 +49,10 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
       if (hasSaved) {
         return FlatButton(
           key: ValueKey('reminder_dialog_delete_button'),
-          child: Text('Delete'),
+          child: Text(
+            'Delete',
+            style: TextStyle(fontSize: mqScreenSize.width * 0.034),
+          ),
           onPressed: () {
             notifier.removeSavedReminder();
             Navigator.pop(context);
@@ -64,7 +68,8 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
       borderRadius: BorderRadius.circular(4),
       child: Container(
         width: screenWidth * 0.93,
-        padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+        padding: EdgeInsets.fromLTRB(mqScreenSize.width * 0.039,
+            mqScreenSize.width * 0.039, mqScreenSize.width * 0.039, 4),
         child: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +80,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w600,
-                    fontSize: 16),
+                    fontSize: mqScreenSize.width * 0.039),
               ),
               GestureDetector(
                 onTap: () async {
@@ -95,12 +100,19 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 },
                 child: Container(
                   color: appWhite,
-                  padding: EdgeInsets.only(top: 24, bottom: 6),
+                  padding: EdgeInsets.only(
+                      top: mqScreenSize.width * 0.058, bottom: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(reminderDayText),
-                      Icon(Icons.calendar_today)
+                      Text(
+                        reminderDayText,
+                        style: TextStyle(fontSize: mqScreenSize.width * 0.034),
+                      ),
+                      Icon(
+                        Icons.calendar_today,
+                        size: mqScreenSize.width * 0.058,
+                      )
                     ],
                   ),
                 ),
@@ -137,12 +149,19 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 },
                 child: Container(
                   color: appWhite,
-                  padding: EdgeInsets.only(top: 24, bottom: 6),
+                  padding: EdgeInsets.only(
+                      top: mqScreenSize.width * 0.058, bottom: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(reminderTimeText),
-                      Icon(Icons.schedule)
+                      Text(
+                        reminderTimeText,
+                        style: TextStyle(fontSize: mqScreenSize.width * 0.034),
+                      ),
+                      Icon(
+                        Icons.schedule,
+                        size: mqScreenSize.width * 0.058,
+                      )
                     ],
                   ),
                 ),
@@ -151,17 +170,22 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
               Container(
                   // color: Colors.brown,
                   alignment: Alignment.centerLeft,
-                  height: 20,
+                  height: mqScreenSize.width * 0.049,
                   child: Text(
                     timeSettingFailureText,
-                    style: TextStyle(fontSize: 12, color: Colors.red),
+                    style: TextStyle(
+                        fontSize: mqScreenSize.width * 0.029,
+                        color: Colors.red),
                   )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   _deleteButton(hasSavedReminder),
                   FlatButton(
-                    child: Text('Cancel'),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: mqScreenSize.width * 0.034),
+                    ),
                     onPressed: () {
                       notifier.resetChangingReminder();
                       Navigator.pop(context);
@@ -170,7 +194,10 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                   FlatButton(
                     key: ValueKey('reminder_dialog_save_button'),
                     color: NoteColor.orange.getColor(),
-                    child: Text('Save'),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(fontSize: mqScreenSize.width * 0.034),
+                    ),
                     onPressed: () async {
                       if (chosenTimeIsPast == false) {
                         if (notifier.savedReminder != null) {
