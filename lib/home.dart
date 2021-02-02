@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: appStatusBarWhite,
+        statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark));
 
     return ChangeNotifierProvider<MultiNoteSelection>(
