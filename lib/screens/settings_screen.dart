@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
@@ -13,7 +14,7 @@ class SettingsScreen extends StatelessWidget {
         elevation: 0,
         title: Text(
           'Settings',
-          style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
+          style: drawerItemStyle(mqScreenSize.width).copyWith(fontSize: 18, letterSpacing: 0),
         ),
         iconTheme: IconThemeData(color: appIconGrey),
         backgroundColor: appWhite,
@@ -94,7 +95,7 @@ class _SectionTitle extends StatelessWidget {
       padding: EdgeInsets.only(left: _leftPadding, top: 16),
       child: Text(
         title.toUpperCase(),
-        style: drawerLabelsEditStyle.copyWith(
+        style: drawerLabelsEditStyle(mqScreenSize.width).copyWith(
             color: appSettingsBlue, fontSize: 11, letterSpacing: 0.5),
       ),
     );

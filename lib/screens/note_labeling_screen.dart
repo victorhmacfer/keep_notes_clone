@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keep_notes_clone/blocs/note_labeling_bloc.dart';
 import 'package:keep_notes_clone/custom_widgets/png.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/models/label.dart';
 import 'package:keep_notes_clone/notifiers/note_setup_screen_controller.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
@@ -99,7 +100,7 @@ class _NoteLabelListItem extends StatelessWidget {
                         label.name,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
-                        style: drawerItemStyle.copyWith(
+                        style: drawerItemStyle(mqScreenSize.width).copyWith(
                             fontSize: 15, letterSpacing: 0),
                       ),
                     ),
@@ -162,7 +163,7 @@ class _CreateLabelButton extends StatelessWidget {
               'Create "$labelText"',
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: drawerItemStyle.copyWith(fontSize: 15, letterSpacing: 0),
+              style: drawerItemStyle(mqScreenSize.width).copyWith(fontSize: 15, letterSpacing: 0),
             ))
           ],
         ),

@@ -19,14 +19,9 @@ import 'package:provider/provider.dart';
 
 import 'package:keep_notes_clone/main.dart';
 
-final _selectedBorderRadius = BorderRadius.only(
-    topRight: Radius.circular(48), bottomRight: Radius.circular(48));
+double _drawerItemHeight = mqScreenSize.width * 0.117;
 
-final _selectedMargin = EdgeInsets.only(right: 8);
-
-const double _drawerItemHeight = 48;
-
-const double _iconToTextSpacing = 16;
+double _iconToTextSpacing = mqScreenSize.width * 0.039;
 
 class MyDrawer extends StatelessWidget {
   @override
@@ -89,143 +84,155 @@ class _MyDrawer extends StatelessWidget {
     var drawerBloc = Provider.of<DrawerBloc>(context);
     var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
 
-    return Drawer(
-      key: ValueKey('drawer'),
-      child: ListView(
-        children: <Widget>[
-          _MyCustomDrawerHeader(),
-          _SelectableDrawerItem(
-            key: ValueKey('notes_drawer_item'),
-            text: 'Notes',
-            iconFileName: 'keep-quadrado.png',
-            drawerItemIndex: 0,
-            onPressed: () {
-              if (drawerScreenSelection.selectedScreenIndex != 0) {
-                drawerScreenSelection.changeSelectedScreenToIndex(0);
+    return Container(
+      width: mqScreenSize.width * 0.863,
+      child: Drawer(
+        key: ValueKey('drawer'),
+        child: ListView(
+          children: <Widget>[
+            _MyCustomDrawerHeader(),
+            _SelectableDrawerItem(
+              key: ValueKey('notes_drawer_item'),
+              text: 'Notes',
+              iconFileName: 'keep-quadrado.png',
+              drawerItemIndex: 0,
+              onPressed: () {
+                if (drawerScreenSelection.selectedScreenIndex != 0) {
+                  drawerScreenSelection.changeSelectedScreenToIndex(0);
 
-                Navigator.pushReplacement(
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Provider<HomeBloc>(
+                                create: (context) => HomeBloc(repo),
+                                child: HomeScreen(),
+                              )));
+                }
+              },
+            ),
+            _SelectableDrawerItem(
+              key: ValueKey('reminders_drawer_item'),
+              text: 'Reminders',
+              iconFileName: 'outline_notifications_black_48.png',
+              drawerItemIndex: 1,
+              onPressed: () {
+                if (drawerScreenSelection.selectedScreenIndex != 1) {
+                  drawerScreenSelection.changeSelectedScreenToIndex(1);
+
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RemindersScreen()));
+                }
+              },
+            ),
+            StreamBuilder<List<Label>>(
+                stream: drawerBloc.sortedLabelsStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                    return Column(
+                      children: <Widget>[
+                        Container(
+                          key: ValueKey('drawer_labels_edit'),
+                          padding: EdgeInsets.only(
+                              left: mqScreenSize.width * 0.039, right: 4),
+                          height: mqScreenSize.width * 0.097,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text('LABELS',
+                                  style: drawerLabelsEditStyle(
+                                      mqScreenSize.width)),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditLabelsScreen(
+                                                autoFocus: false,
+                                              )));
+                                },
+                                child: Container(
+                                  color: appWhite,
+                                  padding: EdgeInsets.all(
+                                      mqScreenSize.width * 0.029),
+                                  child: Text('EDIT',
+                                      style: drawerLabelsEditStyle(
+                                          mqScreenSize.width)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          children: _labelList(
+                              snapshot.data, drawerScreenSelection, context),
+                        ),
+                      ],
+                    );
+                  }
+                  return _MyCustomDrawerDivider();
+                }),
+            _SimpleDrawerItem(
+              key: ValueKey('create_new_label_drawer_item'),
+              text: 'Create new label',
+              iconFileName: 'outline_add_black_48.png',
+              onPressed: () {
+                Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Provider<HomeBloc>(
-                              create: (context) => HomeBloc(repo),
-                              child: HomeScreen(),
-                            )));
-              }
-            },
-          ),
-          _SelectableDrawerItem(
-            key: ValueKey('reminders_drawer_item'),
-            text: 'Reminders',
-            iconFileName: 'outline_notifications_black_48.png',
-            drawerItemIndex: 1,
-            onPressed: () {
-              if (drawerScreenSelection.selectedScreenIndex != 1) {
-                drawerScreenSelection.changeSelectedScreenToIndex(1);
+                        builder: (context) =>
+                            EditLabelsScreen(autoFocus: true)));
+              },
+            ),
+            _MyCustomDrawerDivider(),
+            _SelectableDrawerItem(
+              key: ValueKey('archive_drawer_item'),
+              text: 'Archive',
+              iconFileName: 'outline_archive_black_48.png',
+              drawerItemIndex: 2,
+              onPressed: () {
+                if (drawerScreenSelection.selectedScreenIndex != 2) {
+                  drawerScreenSelection.changeSelectedScreenToIndex(2);
 
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => RemindersScreen()));
-              }
-            },
-          ),
-          StreamBuilder<List<Label>>(
-              stream: drawerBloc.sortedLabelsStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data.isNotEmpty) {
-                  return Column(
-                    children: <Widget>[
-                      Container(
-                        key: ValueKey('drawer_labels_edit'),
-                        padding: EdgeInsets.only(left: 16, right: 4),
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text('LABELS', style: drawerLabelsEditStyle),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditLabelsScreen(
-                                              autoFocus: false,
-                                            )));
-                              },
-                              child: Container(
-                                color: appWhite,
-                                padding: EdgeInsets.all(12),
-                                child:
-                                    Text('EDIT', style: drawerLabelsEditStyle),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: _labelList(
-                            snapshot.data, drawerScreenSelection, context),
-                      ),
-                    ],
-                  );
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => ArchiveScreen()));
                 }
-                return _MyCustomDrawerDivider();
-              }),
-          _SimpleDrawerItem(
-            key: ValueKey('create_new_label_drawer_item'),
-            text: 'Create new label',
-            iconFileName: 'outline_add_black_48.png',
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditLabelsScreen(autoFocus: true)));
-            },
-          ),
-          _MyCustomDrawerDivider(),
-          _SelectableDrawerItem(
-            key: ValueKey('archive_drawer_item'),
-            text: 'Archive',
-            iconFileName: 'outline_archive_black_48.png',
-            drawerItemIndex: 2,
-            onPressed: () {
-              if (drawerScreenSelection.selectedScreenIndex != 2) {
-                drawerScreenSelection.changeSelectedScreenToIndex(2);
+              },
+            ),
+            _SelectableDrawerItem(
+              key: ValueKey('trash_drawer_item'),
+              text: 'Trash',
+              iconFileName: 'outline_delete_black_48.png',
+              drawerItemIndex: 3,
+              onPressed: () {
+                if (drawerScreenSelection.selectedScreenIndex != 3) {
+                  drawerScreenSelection.changeSelectedScreenToIndex(3);
 
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => ArchiveScreen()));
-              }
-            },
-          ),
-          _SelectableDrawerItem(
-            key: ValueKey('trash_drawer_item'),
-            text: 'Trash',
-            iconFileName: 'outline_delete_black_48.png',
-            drawerItemIndex: 3,
-            onPressed: () {
-              if (drawerScreenSelection.selectedScreenIndex != 3) {
-                drawerScreenSelection.changeSelectedScreenToIndex(3);
-
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => TrashScreen()));
-              }
-            },
-          ),
-          _MyCustomDrawerDivider(),
-          _SimpleDrawerItem(
-            key: ValueKey('settings_drawer_item'),
-            text: 'Settings',
-            iconFileName: 'outline_settings_black_48.png',
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SettingsScreen()));
-            },
-          ),
-          _SimpleDrawerItem(
-            key: ValueKey('help_drawer_item'),
-            text: 'Help & feedback',
-            iconFileName: 'outline_help_outline_black_48.png',
-            onPressed: () {},
-          ),
-        ],
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => TrashScreen()));
+                }
+              },
+            ),
+            _MyCustomDrawerDivider(),
+            _SimpleDrawerItem(
+              key: ValueKey('settings_drawer_item'),
+              text: 'Settings',
+              iconFileName: 'outline_settings_black_48.png',
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()));
+              },
+            ),
+            _SimpleDrawerItem(
+              key: ValueKey('help_drawer_item'),
+              text: 'Help & feedback',
+              iconFileName: 'outline_help_outline_black_48.png',
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -251,9 +258,12 @@ class _SelectableDrawerItem extends StatelessWidget {
     var pngIcon = (iconFileName == 'keep-quadrado.png')
         ? PngIcon(
             fileName: iconFileName,
-            size: 22,
+            size: mqScreenSize.width * 0.053,
           )
-        : PngIcon(fileName: iconFileName);
+        : PngIcon(
+            fileName: iconFileName,
+            size: mqScreenSize.width * 0.058,
+          );
 
     var drawerScreenSelection = Provider.of<DrawerScreenSelection>(context);
     var selected = drawerItemIndex == drawerScreenSelection.selectedScreenIndex;
@@ -263,12 +273,17 @@ class _SelectableDrawerItem extends StatelessWidget {
       child: Container(
         height: _drawerItemHeight,
         width: double.infinity,
-        padding: EdgeInsets.only(left: 24),
-        margin: (selected) ? _selectedMargin : EdgeInsets.zero,
+        padding: EdgeInsets.only(left: mqScreenSize.width * 0.058),
+        margin: (selected)
+            ? EdgeInsets.only(right: mqScreenSize.width * 0.019)
+            : EdgeInsets.zero,
         decoration: BoxDecoration(
             color: (selected) ? appDrawerItemSelected : appWhite,
-            borderRadius:
-                (selected) ? _selectedBorderRadius : BorderRadius.zero),
+            borderRadius: (selected)
+                ? BorderRadius.only(
+                    topRight: Radius.circular(mqScreenSize.width * 0.117),
+                    bottomRight: Radius.circular(mqScreenSize.width * 0.117))
+                : BorderRadius.zero),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -281,7 +296,7 @@ class _SelectableDrawerItem extends StatelessWidget {
                 text,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: drawerItemStyle,
+                style: drawerItemStyle(mqScreenSize.width),
               ),
             ),
           ],
@@ -312,17 +327,20 @@ class _SimpleDrawerItem extends StatelessWidget {
         color: appWhite,
         height: _drawerItemHeight,
         width: double.infinity,
-        padding: EdgeInsets.only(left: 24),
+        padding: EdgeInsets.only(left: mqScreenSize.width * 0.058),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            PngIcon(fileName: iconFileName),
+            PngIcon(
+              fileName: iconFileName,
+              size: mqScreenSize.width * 0.058,
+            ),
             SizedBox(
               width: _iconToTextSpacing,
             ),
             Text(
               text,
-              style: drawerItemStyle,
+              style: drawerItemStyle(mqScreenSize.width),
             ),
           ],
         ),
@@ -335,7 +353,8 @@ class _MyCustomDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+      padding: EdgeInsets.symmetric(
+          horizontal: mqScreenSize.width * 0.044, vertical: 0.049),
       color: appWhite,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -343,13 +362,13 @@ class _MyCustomDrawerHeader extends StatelessWidget {
         children: <Widget>[
           Image.asset(
             'assets/icons/google-logo.png',
-            width: 64,
+            width: mqScreenSize.width * 0.155,
           ),
           Text(
             ' Keep',
             style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontSize: 17,
+                fontSize: mqScreenSize.width * 0.041,
                 fontWeight: FontWeight.w500,
                 color: appIconGrey),
           )
@@ -365,7 +384,7 @@ class _MyCustomDrawerDivider extends StatelessWidget {
     return Container(
       height: 1,
       color: appDividerGrey,
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: EdgeInsets.symmetric(vertical: mqScreenSize.width * 0.019),
     );
   }
 }

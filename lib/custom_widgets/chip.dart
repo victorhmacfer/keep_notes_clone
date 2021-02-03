@@ -68,7 +68,7 @@ class NoteSetupLabelChip extends StatelessWidget {
         decoration: _noteSetupChipDecoration(mqScreenSize.width),
         child: Text(
           label.name,
-          style: drawerItemStyle.copyWith(fontSize: mqScreenSize.width * 0.032),
+          style: drawerItemStyle(mqScreenSize.width).copyWith(fontSize: mqScreenSize.width * 0.032),
         ),
       ),
     );
@@ -90,7 +90,7 @@ class NoteCardLabelChip extends StatelessWidget {
       ),
       child: Text(
         labelText,
-        style: drawerItemStyle.copyWith(fontSize: 12),
+        style: drawerItemStyle(mqScreenSize.width).copyWith(fontSize: 12),
       ),
     );
   }
@@ -144,7 +144,7 @@ class NoteSetupReminderChip extends StatelessWidget {
             ),
             Text(
               chipReminderText(reminder.time),
-              style: drawerItemStyle.copyWith(
+              style: drawerItemStyle(mqScreenSize.width).copyWith(
                   fontSize: mqScreenSize.width * 0.029,
                   color: textColor,
                   decoration: textDecoration),
@@ -188,7 +188,7 @@ class NoteCardReminderChip extends StatelessWidget {
           ),
           Text(
             chipReminderText(reminder.time),
-            style: drawerItemStyle.copyWith(
+            style: drawerItemStyle(mqScreenSize.width).copyWith(
                 fontSize: 12, color: textColor, decoration: textDecoration),
           ),
         ],

@@ -267,7 +267,7 @@ class _OptionalExpandableGridSectionState
             children: <Widget>[
               Text(
                 widget.sectionTitle,
-                style: drawerLabelsEditStyle.copyWith(
+                style: drawerLabelsEditStyle(mqScreenSize.width).copyWith(
                     fontSize: 11, letterSpacing: 0.5),
               ),
               (moreLessButtonIsVisible)
@@ -316,7 +316,7 @@ class _OptionalColorsGridSection extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             'COLORS',
-            style: drawerLabelsEditStyle.copyWith(
+            style: drawerLabelsEditStyle(mqScreenSize.width).copyWith(
                 fontSize: 11, letterSpacing: 0.5),
           ),
         ),
@@ -428,7 +428,7 @@ class _MoreLessFlatButton extends StatelessWidget {
         color: appWhite,
         child: Text(
           (expanded) ? 'LESS' : 'MORE',
-          style: drawerLabelsEditStyle.copyWith(
+          style: drawerLabelsEditStyle(mqScreenSize.width).copyWith(
               fontSize: 11, letterSpacing: 0.5, color: appSettingsBlue),
         ),
       ),

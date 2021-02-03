@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:keep_notes_clone/main.dart';
 import 'package:keep_notes_clone/utils/colors.dart';
 import 'package:keep_notes_clone/utils/styles.dart';
 
@@ -17,7 +18,7 @@ class CardTypeSectionTitle extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: drawerLabelsEditStyle.copyWith(fontSize: 11, letterSpacing: 0.5),
+        style: drawerLabelsEditStyle(mqScreenSize.width).copyWith(fontSize: 11, letterSpacing: 0.5),
       ),
     );
   }

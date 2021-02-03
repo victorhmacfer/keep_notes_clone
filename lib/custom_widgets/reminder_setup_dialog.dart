@@ -48,6 +48,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
     Widget _deleteButton(bool hasSaved) {
       if (hasSaved) {
         return FlatButton(
+          height: mqScreenSize.width * 0.087,
           key: ValueKey('reminder_dialog_delete_button'),
           child: Text(
             'Delete',
@@ -182,6 +183,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                 children: <Widget>[
                   _deleteButton(hasSavedReminder),
                   FlatButton(
+                    height: mqScreenSize.width * 0.087,
                     child: Text(
                       'Cancel',
                       style: TextStyle(fontSize: mqScreenSize.width * 0.034),
@@ -192,6 +194,7 @@ class _ReminderSetupDialogState extends State<ReminderSetupDialog> {
                     },
                   ),
                   FlatButton(
+                    height: mqScreenSize.width * 0.087,
                     key: ValueKey('reminder_dialog_save_button'),
                     color: NoteColor.orange.getColor(),
                     child: Text(

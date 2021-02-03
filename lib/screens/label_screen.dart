@@ -322,7 +322,7 @@ class _LabelAppBar extends StatelessWidget {
       title: Text(
         labelNameNotifier.labelName,
         key: ValueKey('label_screen_appbar_label_name'),
-        style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
+        style: drawerItemStyle(mqScreenSize.width).copyWith(fontSize: 18, letterSpacing: 0),
       ),
       actions: <Widget>[
         Padding(

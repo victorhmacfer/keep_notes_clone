@@ -110,7 +110,7 @@ class _RemindersAppBar extends StatelessWidget {
       iconTheme: IconThemeData(color: appIconGrey),
       title: Text(
         'Reminders',
-        style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
+        style: drawerItemStyle(mqScreenSize.width).copyWith(fontSize: 18, letterSpacing: 0),
       ),
       actions: <Widget>[
         Padding(

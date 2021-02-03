@@ -30,15 +30,15 @@ TextStyle searchAppBarStyle(double mediaQueryScreenWidth) {
       fontWeight: FontWeight.w500);
 }
 
-var drawerItemStyle = TextStyle(
+TextStyle drawerItemStyle(double mediaQueryScreenWidth) => TextStyle(
     color: appBlack,
-    fontSize: 15,
+    fontSize: mediaQueryScreenWidth * 0.036,
     fontFamily: 'Montserrat',
     fontWeight: FontWeight.w500,
     letterSpacing: -0.2);
 
-var drawerLabelsEditStyle =
-    TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: appIconGrey);
+TextStyle drawerLabelsEditStyle(double mediaQueryScreenWidth) =>
+    TextStyle(fontSize: mediaQueryScreenWidth * 0.025, fontWeight: FontWeight.w500, color: appIconGrey);
 
 TextStyle bottomSheetStyle(double mediaQueryScreenWidth) => TextStyle(
     fontSize: mediaQueryScreenWidth * 0.039,

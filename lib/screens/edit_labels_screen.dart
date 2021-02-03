@@ -46,7 +46,7 @@ class _EditLabelsScreen extends StatelessWidget {
         elevation: 0,
         title: Text(
           'Edit labels',
-          style: drawerItemStyle.copyWith(fontSize: 18, letterSpacing: 0),
+          style: drawerItemStyle(mqScreenSize.width).copyWith(fontSize: 18, letterSpacing: 0),
         ),
         iconTheme: IconThemeData(color: appIconGrey),
         backgroundColor: appWhite,
@@ -158,7 +158,7 @@ class _CreateLabelListItemState extends State<_CreateLabelListItem> {
         controller: newLabelTextController,
         cursorColor: appIconGrey,
         cursorWidth: 1,
-        style: drawerItemStyle,
+        style: drawerItemStyle(mqScreenSize.width),
         focusNode: newLabelFocusNode,
         autofocus: widget.autoFocus,
         decoration: InputDecoration(
@@ -271,7 +271,7 @@ class _EditLabelListItemState extends State<_EditLabelListItem> {
         controller: itemTextController,
         cursorColor: appIconGrey,
         cursorWidth: 1,
-        style: drawerItemStyle,
+        style: drawerItemStyle(mqScreenSize.width),
         focusNode: itemFocusNode,
         decoration: InputDecoration(
             prefixIcon: paddedPrefixIcon,
